@@ -23,7 +23,9 @@ public class RobotController : MonoBehaviour, IDirection {
 			try {
 				currentQuad = grid.GetQuad(currentQuadRow, currentQuadCol);
 			}
-			catch (Exception e) { }
+			catch (Exception e) {
+                Debug.Log(e.Message);
+            }
 
 		}
 		return currentQuad;
@@ -96,7 +98,7 @@ public class RobotController : MonoBehaviour, IDirection {
 			grid.inPause = true;
 	}
 
-	public bool isMoving() {
+	public bool IsMoving() {
 		return currentState != RobotStates.Idle;
 	}
 
@@ -136,11 +138,13 @@ public class RobotController : MonoBehaviour, IDirection {
 
 		direction = nextDirection;
 
+		sounds.StopPlaying();
+
 		yield return new WaitForSeconds(0.025f);
 
 		transform.rotation = Quaternion.LookRotation(direction);
 		
-		var quadPos = grid.getQuadPosition(currentQuadRow, currentQuadCol);
+		var quadPos = grid.GetQuadPosition(currentQuadRow, currentQuadCol);
 		transform.position = new Vector3(quadPos.x, transform.position.y, quadPos.z);
 
 		currentState = RobotStates.Idle;
@@ -193,7 +197,7 @@ public class RobotController : MonoBehaviour, IDirection {
 		*/
 	}
 
-	public bool canMoveForward() {
+    public bool CanMoveForward() {
 		int nextQuadCol = currentQuadCol + (int)direction.x;
 		int nextQuadRow = currentQuadRow + (int)direction.z;
 		bool canMove = nextQuadCol >= 0 && nextQuadCol < config.gridNumberX &&
@@ -208,10 +212,10 @@ public class RobotController : MonoBehaviour, IDirection {
 
 	}
 	public void MoveForward() {
-		if (isMoving())
+		if (IsMoving())
 			return;
 
-		if (!canMoveForward()) {
+		if (!CanMoveForward()) {
 		/* @tmp
 			DoLose();
 			if (currentQuad != null)
@@ -222,12 +226,13 @@ public class RobotController : MonoBehaviour, IDirection {
 
 		currentState = RobotStates.MovingForward;
 		animator.SetTrigger("Forward");
-		sounds.playSound(sounds.soundStep);
+		sounds.PlaySound(sounds.soundStep);
+		//sounds.PlayMoving();
 		Debug.Log("Move Forward");
 	}
 
 	protected void Turn(int degrees) {
-		if (isMoving())
+		if (IsMoving())
 			return;
 
 		if (!(degrees == 90 || degrees == -90))
@@ -253,7 +258,8 @@ public class RobotController : MonoBehaviour, IDirection {
 
 			Debug.Log("Turn Left");
 		}
-		sounds.playStep();
+		sounds.PlayStep();
+		//sounds.PlayMoving();
 	}
 
 	public void TurnLeft() {
@@ -322,7 +328,7 @@ public class RobotController : MonoBehaviour, IDirection {
 		switch (currentState)
 		{
 			case RobotStates.MovingForward:
-				var nextQuadPos = grid.getQuadPosition(currentQuadRow + (int)direction.z, currentQuadCol + (int)direction.x);
+				var nextQuadPos = grid.GetQuadPosition(currentQuadRow + (int)direction.z, currentQuadCol + (int)direction.x);
 				if (direction.z == 0) { // Left-Right direction
 					if ((nextQuadPos.x - transform.position.x) * direction.x <= 0) {
 						UpdateCurrentQuad();

@@ -54,7 +54,7 @@ public class Grid : MonoBehaviour {
         UpdateSize(uiSize);
     }
 
-    public Vector3 getQuadPosition(int row, int col) {
+    public Vector3 GetQuadPosition(int row, int col) {
 
 		var quadSize = quadTransforms[0].lossyScale.x;
 		var ratio = quadSize / config.size;
