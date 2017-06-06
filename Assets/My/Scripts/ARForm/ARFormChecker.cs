@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ARFormOptions;
 
-public class FollowCamera : MonoBehaviour {
+public class ARFormChecker : MonoBehaviour {
 
     public float offset = 3.84f;
 
@@ -16,6 +16,9 @@ public class FollowCamera : MonoBehaviour {
     public int gridRows = 15;
     public int gridCols = 15;
     public int texturePixelScale = 1;
+
+    [Range(0f, 1f)]
+    public float minChangeToApply = 0.03f;
 
     int textureWidth;
     int textureHeight;
@@ -69,13 +72,15 @@ public class FollowCamera : MonoBehaviour {
         cam.depth = 0;
         cam.cullingMask = 1 << 16;
         cam.backgroundColor = bgColor;
+        //cam.orthographic = true;
+        //cam.orthographicSize = 10f;
 
         var distanceY = (cam.ViewportToWorldPoint(new Vector3(0, 0, offset)) - cam.ViewportToWorldPoint(new Vector3(0, 1, offset))).magnitude;
         var distanceX = (cam.ViewportToWorldPoint(new Vector3(0, 0, offset)) - cam.ViewportToWorldPoint(new Vector3(1, 0, offset))).magnitude;
         var distance = Mathf.Min(distanceX, distanceY);
         transform.localScale = Vector3.one * distance;
 
-        if (!renderTexture || screenWidth != Screen.width) {
+        if (!renderTexture || screenWidth != Screen.width || screenHeight != Screen.height) {
             Debug.Log(new Vector4(screenWidth, Screen.width, screenHeight, Screen.height));
             if (distanceX > distanceY) {
                 var width = textureWidth * Screen.width / Screen.height;
@@ -83,7 +88,7 @@ public class FollowCamera : MonoBehaviour {
                 texOffset = new Vec2((width - textureWidth) / 2, 0);
                 renderTexture = new RenderTexture(width, textureWidth, -50);
             } else {
-                var height = 15 * Screen.height / Screen.width;
+                var height = textureHeight * Screen.height / Screen.width;
                 /*
                 if (height % 2 == 0)
                     height++;
@@ -94,8 +99,6 @@ public class FollowCamera : MonoBehaviour {
             }
             renderTexture.filterMode = FilterMode.Point;
 
-            screenWidth = Screen.width;
-            screenHeight = Screen.height;
         }
 
         cam.targetTexture = renderTexture;
@@ -116,7 +119,7 @@ public class FollowCamera : MonoBehaviour {
 
     void CheckColors() {
 
-        if (!tex2d) {
+        if (!tex2d || screenWidth != Screen.width || screenHeight != Screen.height) {
             tex2d = new Texture2D(renderTexture.width, renderTexture.height);
             tex2d.filterMode = FilterMode.Point;
         }
@@ -158,12 +161,12 @@ public class FollowCamera : MonoBehaviour {
                 bestGC = gc;
             }
         }
-        if (bestBorderGC != null) {
+        if (bestBorderGC != null && minChangeToApply <= (prevBestBorderColor - bestBorderColor)) {
             uiBorder.color = bestBorderGC.color;
             //Debug.Log(bestGC.name);
         }
 
-        if (bestGC != null) {
+        if (bestGC != null && minChangeToApply <= (prevBestColor - bestColor)) {
             uiQuad.color = bestGC.color;
             //Debug.Log(bestGC.name);
         }
@@ -172,7 +175,7 @@ public class FollowCamera : MonoBehaviour {
 
         // Debug texture
         if (true) {
-            if (!texDev) {
+            if (!texDev || screenWidth != Screen.width || screenHeight != Screen.height) {
                 texDev = new Texture2D(gridCols, gridRows);
                 texDev.filterMode = FilterMode.Point;
             }
@@ -186,6 +189,9 @@ public class FollowCamera : MonoBehaviour {
             texDev.Apply();
             outObj2.GetComponent<RawImage>().texture = texDev;
         }
+
+        screenWidth = Screen.width;
+        screenHeight = Screen.height;
 
     }
 
