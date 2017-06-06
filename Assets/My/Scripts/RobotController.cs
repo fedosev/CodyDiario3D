@@ -136,7 +136,7 @@ public class RobotController : MonoBehaviour, IDirection {
 
 		direction = nextDirection;
 
-		yield return new WaitForSeconds(0.25f);
+		yield return new WaitForSeconds(0.025f);
 
 		transform.rotation = Quaternion.LookRotation(direction);
 		
@@ -225,6 +225,7 @@ public class RobotController : MonoBehaviour, IDirection {
 		sounds.playSound(sounds.soundStep);
 		Debug.Log("Move Forward");
 	}
+
 	protected void Turn(int degrees) {
 		if (isMoving())
 			return;
@@ -258,6 +259,7 @@ public class RobotController : MonoBehaviour, IDirection {
 	public void TurnLeft() {
 		Turn(-90);
 	}
+
 	public void TurnRight() {
 		Turn(90);
 	}
@@ -353,7 +355,22 @@ public class RobotController : MonoBehaviour, IDirection {
 		}
 	}
 
-	void OnAnimatorIK() {
+    void OnAnimatorMove() {
+        switch (currentState) {
+            case RobotStates.MovingForward:
+                var vel = animator.velocity;
+                vel.x *= Mathf.Abs(direction.x);
+                vel.z *= Mathf.Abs(direction.z);
+                transform.position += vel * Time.deltaTime;
+                break;
+            case RobotStates.TurningLeft:
+            case RobotStates.TurningRight:
+                transform.rotation *= Quaternion.Euler(animator.angularVelocity * Time.deltaTime * Mathf.Rad2Deg);
+                break;
+        }
+    }
+
+    void OnAnimatorIK() {
 
 	}	
 }
