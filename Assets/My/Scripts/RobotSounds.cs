@@ -40,6 +40,7 @@ public class RobotSounds : MonoBehaviour {
 
 	public void StopPlaying() {
 		aSource.Stop();
+		aSource.clip = null;
 	}
 
 	public void playWin() {

@@ -13,8 +13,8 @@ public class ARFormChecker : MonoBehaviour {
     public GameObject outObj2;
     public Color bgColor;
 
-    public int gridRows = 15;
     public int gridCols = 15;
+    public int gridRows = 15;
     public int texturePixelScale = 1;
 
     [Range(0f, 1f)]
@@ -75,27 +75,58 @@ public class ARFormChecker : MonoBehaviour {
         //cam.orthographic = true;
         //cam.orthographicSize = 10f;
 
+        // Viewport frustum width and heigth
         var distanceY = (cam.ViewportToWorldPoint(new Vector3(0, 0, offset)) - cam.ViewportToWorldPoint(new Vector3(0, 1, offset))).magnitude;
         var distanceX = (cam.ViewportToWorldPoint(new Vector3(0, 0, offset)) - cam.ViewportToWorldPoint(new Vector3(1, 0, offset))).magnitude;
+        
+        /*
         var distance = Mathf.Min(distanceX, distanceY);
         transform.localScale = Vector3.one * distance;
+        */
+        float ratioScreen = (float)Screen.width / (float)Screen.height;
+        float ratioObject = (float)gridCols / (float)gridRows;
+        RawImage img2 = null;
+        if (outObj2 != null)
+            img2 = outObj2.GetComponent<RawImage>();
+
+        if (ratioObject > ratioScreen) {
+            transform.localScale = new Vector3(distanceX, distanceX / ratioObject, 1f);
+            if (img2 != null)
+                img2.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, outObjWidth * ratioObject);
+        } else {
+            transform.localScale = new Vector3(distanceY * ratioObject, distanceY, 1f);
+            if (img2 != null)
+                img2.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, outObjWidth / ratioObject);
+        }
+
 
         if (!renderTexture || screenWidth != Screen.width || screenHeight != Screen.height) {
-            Debug.Log(new Vector4(screenWidth, Screen.width, screenHeight, Screen.height));
-            if (distanceX > distanceY) {
+            //Debug.Log(new Vector4(screenWidth, Screen.width, screenHeight, Screen.height));
+            if (ratioObject > ratioScreen) {
+                // Add top and bottom padding
+                /*
                 var width = textureWidth * Screen.width / Screen.height;
-                width -= (textureWidth - width) % texturePixelScale;
+                width -= (textureWidth - width) % texturePixelScale; // ?
                 texOffset = new Vec2((width - textureWidth) / 2, 0);
                 renderTexture = new RenderTexture(width, textureWidth, -50);
-            } else {
-                var height = textureHeight * Screen.height / Screen.width;
-                /*
-                if (height % 2 == 0)
-                    height++;
                 */
-                height -= (textureHeight - height) % texturePixelScale;
+                int heightWithPadding = (int)(textureHeight * ratioScreen);
+                // @todo: edge cases (remainder int conversion)
+                texOffset = new Vec2(0, (heightWithPadding - textureHeight) / 2);
+                renderTexture = new RenderTexture(textureWidth, heightWithPadding, -50);
+            } else {
+                /*
+                var height = textureHeight * Screen.height / Screen.width;
+                // if (height % 2 == 0)
+                //    height++;
+                height -= (textureHeight - height) % texturePixelScale; // ?
                 texOffset = new Vec2(0, (height - textureHeight) / 2);
                 renderTexture = new RenderTexture(textureHeight, height, -50);
+                */
+                int widthWithPadding = (int)(textureWidth * ratioScreen);
+                // @todo: edge cases (remainder int conversion)
+                texOffset = new Vec2((widthWithPadding - textureWidth) / 2, 0);
+                renderTexture = new RenderTexture(widthWithPadding, textureHeight, -50);
             }
             renderTexture.filterMode = FilterMode.Point;
 
@@ -107,12 +138,14 @@ public class ARFormChecker : MonoBehaviour {
         CheckColors();
 
         //outObj.GetComponent<Renderer>().material.SetTexture("_MainTex", renderTexture);
-        var img = outObj.GetComponent<RawImage>();
-        if (outObjWidth == 0)
-            outObjWidth = (int)img.rectTransform.rect.width;
-        img.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, outObjWidth * Screen.width / Screen.height);
-        //img.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height / 3);
-        img.texture = renderTexture;
+        if (outObj != null) {
+            var img = outObj.GetComponent<RawImage>();
+            if (outObjWidth == 0)
+                outObjWidth = (int)img.rectTransform.rect.width;
+            img.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, outObjWidth * Screen.width / Screen.height);
+            //img.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height / 3);
+            img.texture = renderTexture;
+        }
     }
 
     private int outObjWidth = 0;
@@ -174,7 +207,7 @@ public class ARFormChecker : MonoBehaviour {
         uiText.text = "Border: " + (int)((prevBestBorderColor - bestBorderColor) * 100) + ", Quad: (" + (int)((prevBestColor - bestColor) * 100) + ")";
 
         // Debug texture
-        if (true) {
+        if (outObj2 != null) {
             if (!texDev || screenWidth != Screen.width || screenHeight != Screen.height) {
                 texDev = new Texture2D(gridCols, gridRows);
                 texDev.filterMode = FilterMode.Point;
