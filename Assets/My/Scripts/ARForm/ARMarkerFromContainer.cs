@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using ARFormOptions;
 
-public class ARFormChecker : MonoBehaviour {
+namespace ARFormOptions {
+
+public class ARMarkerFromContainer : MonoBehaviour {
+
+    private ARForm form;
 
     public float offset = 3.84f;
 
     public RenderTexture renderTexture;
     public GameObject outObj;
-    public GameObject outObj2;
     public Color bgColor;
 
     public int gridCols = 15;
@@ -24,27 +26,27 @@ public class ARFormChecker : MonoBehaviour {
     int textureHeight;
 
     Camera cam;
-    int screenWidth = 0;
-    int screenHeight = 0;
+
+    [HideInInspector]
+    public int screenWidth = 0;
+
+    [HideInInspector]
+    public int screenHeight = 0;
 
     public Texture2D tex2d;
-
-    Texture2D texDev;
 
 
     Vec2 texOffset;
 
-    public Image uiBorder;
-    public Image uiQuad;
-
-    public Text uiText;
-
-    public GridColors gridColors;
 
     // Use this for initialization
     void Start() {
+
         textureWidth = gridCols * texturePixelScale;
         textureHeight = gridRows * texturePixelScale;
+
+        form = GetComponentInChildren<ARForm>();
+        form.FormContainer = this;
     }
 
     // Update is called once per frame
@@ -85,18 +87,11 @@ public class ARFormChecker : MonoBehaviour {
         */
         float ratioScreen = (float)Screen.width / (float)Screen.height;
         float ratioObject = (float)gridCols / (float)gridRows;
-        RawImage img2 = null;
-        if (outObj2 != null)
-            img2 = outObj2.GetComponent<RawImage>();
 
         if (ratioObject > ratioScreen) {
             transform.localScale = new Vector3(distanceX, distanceX / ratioObject, 1f);
-            if (img2 != null)
-                img2.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, outObjWidth * ratioObject);
         } else {
             transform.localScale = new Vector3(distanceY * ratioObject, distanceY, 1f);
-            if (img2 != null)
-                img2.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, outObjWidth / ratioObject);
         }
 
 
@@ -173,62 +168,14 @@ public class ARFormChecker : MonoBehaviour {
         //tex2d.ReadPixels(new Rect(0, 0, 150*3, 150), 0, 0);
         //tex2d.Apply();
 
-        GridColor bestBorderGC = null;
-        float bestBorderColor = 1f;
-        float prevBestBorderColor = 1f;
-        GridColor bestGC = null;
-        float bestColor = 1f;
-        float prevBestColor = 1f;
-        foreach (GridColor gc in gridColors.items) {
-            //Color c = tex2d.GetPixel(gc.posForBorder.x + texOffset.x, gc.posForBorder.y + texOffset.y);
-            float c = GetAvgGrayscale(gc.posForBorder);
-            if (GridColor.IsBetter(c, bestBorderColor)) {
-                prevBestBorderColor = bestBorderColor;
-                bestBorderColor = c;
-                bestBorderGC = gc;
-            }
-            c = GetAvgGrayscale(gc.posForQuad);
-            if (GridColor.IsBetter(c, bestColor)) {
-                prevBestColor = bestColor;
-                bestColor = c;
-                bestGC = gc;
-            }
-        }
-        if (bestBorderGC != null && minChangeToApply <= (prevBestBorderColor - bestBorderColor)) {
-            uiBorder.color = bestBorderGC.color;
-            //Debug.Log(bestGC.name);
-        }
-
-        if (bestGC != null && minChangeToApply <= (prevBestColor - bestColor)) {
-            uiQuad.color = bestGC.color;
-            //Debug.Log(bestGC.name);
-        }
-
-        uiText.text = "Border: " + (int)((prevBestBorderColor - bestBorderColor) * 100) + ", Quad: (" + (int)((prevBestColor - bestColor) * 100) + ")";
-
-        // Debug texture
-        if (outObj2 != null) {
-            if (!texDev || screenWidth != Screen.width || screenHeight != Screen.height) {
-                texDev = new Texture2D(gridCols, gridRows);
-                texDev.filterMode = FilterMode.Point;
-            }
-
-            for (var i = 0; i < gridCols; i++) {
-                for (var j = 0; j < gridRows; j++) {
-                    float avgGr = GetAvgGrayscale(new Vec2(i, j));
-                    texDev.SetPixel(i, j, new Color(avgGr, avgGr, avgGr, 1f));
-                }
-            }
-            texDev.Apply();
-            outObj2.GetComponent<RawImage>().texture = texDev;
-        }
+        form.CheckElements();
 
         screenWidth = Screen.width;
         screenHeight = Screen.height;
 
     }
 
-    float GetAvgGrayscale(Vec2 pos) {
+    public float GetAvgGrayscale(Vec2 pos) {
         float avg = 0;
         for (var i = 0; i < texturePixelScale; i++) {
             for (var j = 0; j < texturePixelScale; j++) {
@@ -241,5 +188,7 @@ public class ARFormChecker : MonoBehaviour {
 
         return avg / (texturePixelScale * texturePixelScale);
     }
+
+}
 
 }
