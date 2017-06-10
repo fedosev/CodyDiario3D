@@ -12,15 +12,17 @@ public class GridColorsFormElement : ARFormElement {
 
     public Image uiBorder;
     public Image uiQuad;
+    public Text uiText;
 
-    public Text uiText;	
+	public GameConfig gameConfig;	
+
+	GridColor bestBorderGC = null;
+	GridColor bestGC = null;
 
 	public override void CheckValues() {
 
-        GridColor bestBorderGC = null;
         float bestBorderColor = 1f;
         float prevBestBorderColor = 1f;
-        GridColor bestGC = null;
         float bestColor = 1f;
         float prevBestColor = 1f;
 
@@ -53,6 +55,16 @@ public class GridColorsFormElement : ARFormElement {
         uiText.text = "Border: " + (int)((prevBestBorderColor - bestBorderColor) * 100) + ", Quad: (" + (int)((prevBestColor - bestColor) * 100) + ")";
 
 	}
+
+	public override void SubmitElement() {
+
+        if (bestBorderGC != null && bestGC != null) {
+            Debug.Log("Saving colors...");
+			gameConfig.borderColor = bestBorderGC.color;
+			gameConfig.quadColor = bestGC.color;
+        }
+		
+	}	
 
 }
 

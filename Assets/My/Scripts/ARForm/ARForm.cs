@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace ARFormOptions {
 
@@ -15,6 +16,8 @@ public class ARForm : MonoBehaviour {
 		}
 	} }
 
+	public UnityEvent AfterSubmit;
+
 	private ARFormElement[] formElements;
 
 	void Awake() {
@@ -28,6 +31,18 @@ public class ARForm : MonoBehaviour {
 			elm.CheckValues();
 		}
 	}
+
+	public void Submit() {
+
+		foreach (var elm in formElements) {
+			elm.SubmitElement();
+		}
+
+		if (AfterSubmit != null) {
+			AfterSubmit.Invoke();
+		}
+	}
+
 
 }
 
@@ -45,6 +60,8 @@ public abstract class ARFormElement : MonoBehaviour {
 
 	public abstract void CheckValues();
 
+	public abstract void SubmitElement();
+
 }
 
 public class ARFormElementRadio : ARFormElement {
@@ -52,6 +69,11 @@ public class ARFormElementRadio : ARFormElement {
 	public override void CheckValues() {
 
 	}
+
+	public override void SubmitElement() {
+
+		
+	}	
 
 }
 

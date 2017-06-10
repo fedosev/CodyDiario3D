@@ -46,6 +46,10 @@ public class OutputPixelsFormElement : ARFormElement {
         }		
 	}
 
+	public override void SubmitElement() {
+		
+	}
+
 }
 
 }
