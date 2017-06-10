@@ -87,16 +87,28 @@ public class Grid : MonoBehaviour {
 		}
 	}
 
+	private void CreateBorder(Vector3 pos, float width, float height) {
+			var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+			quad.transform.rotation = Quaternion.AngleAxis(90, Vector3.right);
+			quad.transform.position = pos;
+			if (width > 0)
+				quad.transform.localScale = new Vector3(width, config.borderSize, 1f);
+			else
+				quad.transform.localScale = new Vector3(config.borderSize, height, 1f);
+			quad.transform.parent = this.transform;
+			quad.tag = "Border";
+			var rend = quad.GetComponent<Renderer>();
+			rend.material = config.borderMaterial;
+			rend.material.color = config.gameConfig.GetBorderColor();
+
+	}
+
 	public void GenerateGrid() {
 
 		var width = config.gridNumberX * (config.size + config.borderSize) + config.borderSize;
 		var height = config.gridNumberZ * (config.size + config.borderSize) + config.borderSize;
 
-		baseScale = new Vector3(
-			width,
-			height,
-			1f
-		);
+		baseScale = new Vector3(width, height,1f);
 		this.transform.localScale = baseScale;
 
 		config.quadPrefab.transform.localScale = new Vector3(
@@ -113,14 +125,7 @@ public class Grid : MonoBehaviour {
 				0.0001f,
 				0
 			) + transform.position;
-			var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-			quad.transform.rotation = Quaternion.AngleAxis(90, Vector3.right);
-			quad.transform.position = pos;
-			quad.transform.localScale = new Vector3(config.borderSize, height, 1f);
-			quad.transform.parent = this.transform;
-            quad.tag = "Border";
-            var rend = quad.GetComponent<Renderer>();
-			rend.material = config.borderMaterial;
+			CreateBorder(pos, 0, height);
 		}
 		for (var z = 0; z <= config.gridNumberZ; z++) {
 			Vector3 pos = new Vector3(
@@ -128,19 +133,14 @@ public class Grid : MonoBehaviour {
 				0.0001f,
 				z * (config.size + config.borderSize) + config.borderSize / 2 - height / 2
 			) + transform.position;
-			var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-			quad.transform.rotation = Quaternion.AngleAxis(90, Vector3.right);
-			quad.transform.position = pos;
-			quad.transform.localScale = new Vector3(width, config.borderSize, 1f);
-			quad.transform.parent = this.transform;
-            quad.tag = "Border";
-			var rend = quad.GetComponent<Renderer>();
-			rend.material = config.borderMaterial;
+			CreateBorder(pos, width, 0);
 		}
 
 		var quadLength = config.gridNumberX * config.gridNumberZ;
 		quadTransforms = new Transform[quadLength];
 		//quadPositions = new Vector3[quadLength];
+
+		QuadBehaviour.GetMaterialForModifying(config.quadMaterial).color = config.gameConfig.GetQuadColor();
 
 		var i = 0;
 		for (var z = 0; z < config.gridNumberZ; z++) {

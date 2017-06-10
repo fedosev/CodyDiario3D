@@ -1,10 +1,21 @@
 fileFormatVersion: 2
 guid: e8502921ba61744d48bf663bb061c5ce
-timeCreated: 1482821520
+timeCreated: 1497106757
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - borderMaterial: {instanceID: 0}
+  - quadMaterial: {instanceID: 0}
+  - quadActiveMaterial: {instanceID: 0}
+  - quadOnMaterial: {instanceID: 0}
+  - quadWarningMaterial: {instanceID: 0}
+  - quadErrorMaterial: {instanceID: 0}
+  - quadPathMaterial: {instanceID: 0}
+  - obstacleMaterial: {instanceID: 0}
+  - transparentMaterial: {instanceID: 0}
+  - quadPrefab: {instanceID: 0}
+  - gameConfig: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -43,6 +43,35 @@ public class QuadBehaviour : MonoBehaviour {
 		Debug.Log(prevDirection + ", " + prevMainState + ", " + prevOtherState);
 	}
 
+	// For material instances
+	private static Dictionary<Material, Material> materials = new Dictionary<Material, Material>();
+
+	static public Material GetMaterialForModifying(Material material) {
+		Material mat;
+		if (materials.TryGetValue(material, out mat)) {
+			return mat;
+		} else {
+			var newMat = new Material(material);
+			materials.Add(material, newMat);
+			return materials[material];
+		}
+	}
+
+	private Material GetMaterial(Material material) {
+		Material mat;
+		if (materials.TryGetValue(material, out mat)) {
+			return mat;
+		}
+		return material;
+	}
+	
+	void OnEnable() {
+		
+	}
+
+	void OnDisable() {
+
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -51,7 +80,8 @@ public class QuadBehaviour : MonoBehaviour {
 
 		mainState = QuadStates.DEFAULT;
 		otherState = QuadStates.DEFAULT;
-		//rend = GetComponent<Renderer>();
+		rend = GetComponent<Renderer>();
+		rend.material = GetMaterial(config.quadMaterial);
 
 		defaultMesh = MyMeshFilter.mesh;
 		
@@ -71,7 +101,7 @@ public class QuadBehaviour : MonoBehaviour {
 
 		switch (quadState) {
 			case QuadStates.DEFAULT:
-				rend.material = config.quadMaterial;
+				rend.material = GetMaterial(config.quadMaterial);
 				otherState = QuadStates.DEFAULT;
 				mainState = quadState;
 				break;

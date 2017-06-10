@@ -21,5 +21,7 @@ public class ConfigScriptableObject : ScriptableObject {
     public GameObject quadPrefab;
 	public GameObject[] robotPrefabs;
 
+	public GameConfig gameConfig;
+
 
 }

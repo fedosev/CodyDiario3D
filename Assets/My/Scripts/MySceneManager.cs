@@ -7,8 +7,8 @@ public class MySceneManager : MonoBehaviour {
 
 	public string sceneName;
 	public void LoadScene() {
-		//SceneManager.UnloadScene();
-		SceneManager.LoadScene(sceneName);
+		SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
+		SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
 
 	}
 	// Use this for initialization

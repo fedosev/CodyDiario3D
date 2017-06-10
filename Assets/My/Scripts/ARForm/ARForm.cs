@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+// @tmp:
+using UnityEngine.UI;
 
 namespace ARFormOptions {
 
 
 public class ARForm : MonoBehaviour {
+
+	// @tmp
+	public GameConfig tmpGameConfig;
 
 	protected ARMarkerFromContainer formContainer;
 	public ARMarkerFromContainer FormContainer { set {
@@ -37,6 +42,16 @@ public class ARForm : MonoBehaviour {
 		foreach (var elm in formElements) {
 			elm.SubmitElement();
 		}
+
+		// @tmp {
+			var borderSave = GameObject.Find("BorderSave").GetComponent<Image>();
+			var quadSave = GameObject.Find("QuadSave").GetComponent<Image>();
+			if (borderSave && quadSave) {
+				borderSave.color = tmpGameConfig.GetBorderColor();
+				quadSave.color = tmpGameConfig.GetQuadColor();
+			}
+			
+		// }
 
 		if (AfterSubmit != null) {
 			AfterSubmit.Invoke();
