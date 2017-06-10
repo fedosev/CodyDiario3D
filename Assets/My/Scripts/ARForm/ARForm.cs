@@ -64,6 +64,61 @@ public abstract class ARFormElement : MonoBehaviour {
 
 }
 
+public class ARFormElementValue<t> {
+
+	private const int numSamples = 15;
+	private t[] vals = new t[numSamples];
+	private int index = 0;
+
+	private bool hasAllSamples = false;
+
+	private Dictionary<t, int> valsCounts = new Dictionary<t, int>();
+
+	// /*
+	private t defaultValue;
+
+	public ARFormElementValue(t defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+	// */
+
+	public void SetValue(t val) {
+		vals[index] = val;
+		if (!hasAllSamples && index + 1 == numSamples)
+			hasAllSamples = true;
+		index = (index + 1) % numSamples;
+	}
+
+	public bool TryGetValue(out t key) {
+
+		key = defaultValue;
+		if (!hasAllSamples)
+			return false;
+		
+		valsCounts.Clear();
+		for (int i = 0; i < numSamples; i++) {
+			int val;
+			if (valsCounts.TryGetValue(vals[i], out val)) {
+				valsCounts[vals[i]] = val + 1;
+			} else {
+				valsCounts.Add(vals[i], val + 1);
+			}
+		}
+
+		int maxCount = 0;
+		t maxFormElmVal = vals[0];
+		foreach (KeyValuePair<t, int> kvp in valsCounts) {
+			if (kvp.Value > maxCount)
+				maxFormElmVal = kvp.Key;
+		}
+		key = maxFormElmVal;
+
+		return true;
+	}
+	
+}
+
+
 public class ARFormElementRadio : ARFormElement {
 
 	public override void CheckValues() {

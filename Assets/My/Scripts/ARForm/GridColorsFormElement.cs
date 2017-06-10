@@ -19,6 +19,9 @@ public class GridColorsFormElement : ARFormElement {
 	GridColor bestBorderGC = null;
 	GridColor bestGC = null;
 
+    ARFormElementValue<Color> borderColorValue = new ARFormElementValue<Color>(new Color());
+    ARFormElementValue<Color> quadColorValue = new ARFormElementValue<Color>(new Color());
+
 	public override void CheckValues() {
 
         float bestBorderColor = 1f;
@@ -43,11 +46,13 @@ public class GridColorsFormElement : ARFormElement {
         }
 
         if (bestBorderGC != null && formContainer.minChangeToApply <= (prevBestBorderColor - bestBorderColor)) {
+            borderColorValue.SetValue(bestBorderGC.color);
             uiBorder.color = bestBorderGC.color;
             //Debug.Log(bestGC.name);
         }
 
         if (bestGC != null && formContainer.minChangeToApply <= (prevBestColor - bestColor)) {
+            quadColorValue.SetValue(bestGC.color);
             uiQuad.color = bestGC.color;
             //Debug.Log(bestGC.name);
         }
@@ -58,10 +63,11 @@ public class GridColorsFormElement : ARFormElement {
 
 	public override void SubmitElement() {
 
-        if (bestBorderGC != null && bestGC != null) {
+        Color quadColor, borderColor;
+        if (quadColorValue.TryGetValue(out quadColor) && borderColorValue.TryGetValue(out borderColor)) {
             Debug.Log("Saving colors...");
-			gameConfig.borderColor = bestBorderGC.color;
-			gameConfig.quadColor = bestGC.color;
+			gameConfig.borderColor = borderColor;
+			gameConfig.quadColor = quadColor;
         }
 		
 	}	
