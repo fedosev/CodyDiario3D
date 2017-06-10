@@ -66,8 +66,8 @@ public class GridTransparenciesFormElement : ARFormElement {
 
         float quadAlpha, borderAlpha;
         if (quadAlphaValue.TryGetValue(out quadAlpha) && borderAlphaValue.TryGetValue(out borderAlpha)) {
-			gameConfig.quadColorAlpha = borderAlpha;
-			gameConfig.borderColorAlpha = quadAlpha;
+			gameConfig.quadColorAlpha = quadAlpha;
+			gameConfig.borderColorAlpha = borderAlpha;
         }
 		
 	}	
