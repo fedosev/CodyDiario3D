@@ -261,8 +261,9 @@ public class Grid : MonoBehaviour {
 			Debug.LogError("Max 2 players");
 		}
 
-		for (var i = 0; i < 9; i++)
+		for (var i = 0; i < 9; i++) // @tmp
 			ClearGrid();
+		config.gameConfig.Init();
 		GenerateGrid();
 		inPause = false;
 	}

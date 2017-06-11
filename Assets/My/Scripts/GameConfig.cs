@@ -26,20 +26,25 @@ public class GameConfig : ScriptableObject {
 
 
 	public void Init() {
-
-		var config = ScriptableObject.FindObjectOfType<ConfigScriptableObject>();
-		/*
-		config.borderMaterial.color = borderColor;
-		config.quadMaterial.color = quadColor;
-		*/
+		
+		Load();
 	}
 
 	public void Save() {
 
 		Debug.Log("GameConfig - Save");
+		PlayerPrefs.SetString("GameConfig", JsonUtility.ToJson(this));
 
-		quadColor.a = quadColorAlpha;
-		borderColor.a = borderColorAlpha;
+	}
+
+	public void Load() {
+
+		var jsonStr = PlayerPrefs.GetString("GameConfig");
+		if (jsonStr.Length > 0) {
+			JsonUtility.FromJsonOverwrite(jsonStr, this);
+		}
+
+		Debug.Log("GameConfig - Load");
 		
 	}
 
