@@ -38,6 +38,15 @@ public class DevBoardFormElement : ARFormElement {
 
 	CardType bestCard;
 	CardType[] bestCards = new CardType[boadLength];
+	
+	private string GetCardChar(CardType card) {
+		switch (card) {
+			case CardType.Left: return "S";
+			case CardType.Forward: return "A";
+			case CardType.Right: return "D";
+		}
+		return "_";
+	}
 
 
     ARFormElementValue<CardType>[] cardsValues = new ARFormElementValue<CardType>[boadLength];
@@ -55,7 +64,7 @@ public class DevBoardFormElement : ARFormElement {
 	public override void CheckValues() {
 
         float bestColorIntensity;
-        float prevBestColorIntensity;
+        float avgColorIntensity;
 
 		// @tmp:
 		StringBuilder sb = new StringBuilder();
@@ -64,19 +73,20 @@ public class DevBoardFormElement : ARFormElement {
         for (i = 0; i < boadLength; i++) {
 			bestCard = CardType.Null;
 			bestColorIntensity = 1f;
-			prevBestColorIntensity = 1f;
+			avgColorIntensity = 0f;
 			for (var j = 0; j < cardsNumber; j++) {
 				float c = formContainer.GetAvgGrayscale(new Vec2(i * colDistance + colStarting, (int)CardRows[j]));
+				avgColorIntensity += c;
 				if (IsBetter(c, bestColorIntensity)) {
-					prevBestColorIntensity = bestColorIntensity;
 					bestColorIntensity = c;
 					bestCard = (CardType)j;
 				}
 			}
-			if (bestCard != CardType.Null && minColorIntensityDifference <= (prevBestColorIntensity - bestColorIntensity)) {
+			avgColorIntensity /= cardsNumber;
+			if (bestCard != CardType.Null && minColorIntensityDifference <= (avgColorIntensity - bestColorIntensity)) {
 				bestCards[i] = bestCard;
 				cardsValues[i].SetValue(bestCard);
-				sb.Append((int)bestCard);
+				sb.Append(GetCardChar(bestCard));
 				sb.Append(" ");
 			} else {
 				cardsValues[i].SetValue(CardType.Null);
@@ -95,7 +105,7 @@ public class DevBoardFormElement : ARFormElement {
 		for (int i = 0; i < boadLength; i++) {
 			CardType card;
 			if (cardsValues[i].TryGetValue(out card) && card != CardType.Null) {
-				sb.Append((int)card);
+				sb.Append(GetCardChar(card));
 				sb.Append(" ");
 			} else {
 				break;
