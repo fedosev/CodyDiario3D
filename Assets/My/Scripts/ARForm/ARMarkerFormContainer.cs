@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace ARFormOptions {
 
-public class ARMarkerFromContainer : MonoBehaviour {
+public class ARMarkerFormContainer : MonoBehaviour {
 
     private ARForm form;
 
@@ -33,8 +33,8 @@ public class ARMarkerFromContainer : MonoBehaviour {
     [HideInInspector]
     public int screenHeight = 0;
 
-    public Texture2D tex2d;
-
+    [SerializeField]
+    private Texture2D tex2d;
 
     Vec2 texOffset;
 
@@ -105,7 +105,7 @@ public class ARMarkerFromContainer : MonoBehaviour {
                 texOffset = new Vec2((width - textureWidth) / 2, 0);
                 renderTexture = new RenderTexture(width, textureWidth, -50);
                 */
-                int heightWithPadding = (int)(textureHeight * ratioScreen);
+                int heightWithPadding = (int)(textureHeight * ratioObject / ratioScreen);
                 // @todo: edge cases (remainder int conversion)
                 texOffset = new Vec2(0, (heightWithPadding - textureHeight) / 2);
                 renderTexture = new RenderTexture(textureWidth, heightWithPadding, -50);

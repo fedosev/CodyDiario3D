@@ -13,8 +13,8 @@ public class ARForm : MonoBehaviour {
 	// @tmp
 	public GameConfig tmpGameConfig;
 
-	protected ARMarkerFromContainer formContainer;
-	public ARMarkerFromContainer FormContainer { set {
+	protected ARMarkerFormContainer formContainer;
+	public ARMarkerFormContainer FormContainer { set {
 		formContainer = value;
 		foreach (var elm in formElements) {
 			elm.FormContainer = value;
@@ -44,11 +44,11 @@ public class ARForm : MonoBehaviour {
 		}
 
 		// @tmp {
-			var borderSave = GameObject.Find("BorderSave").GetComponent<Image>();
-			var quadSave = GameObject.Find("QuadSave").GetComponent<Image>();
+			var borderSave = GameObject.Find("BorderSave");
+			var quadSave = GameObject.Find("QuadSave");
 			if (borderSave && quadSave) {
-				borderSave.color = tmpGameConfig.GetBorderColor();
-				quadSave.color = tmpGameConfig.GetQuadColor();
+				borderSave.GetComponent<Image>().color = tmpGameConfig.GetBorderColor();
+				quadSave.GetComponent<Image>().color = tmpGameConfig.GetQuadColor();
 			}
 			
 		// }
@@ -63,8 +63,8 @@ public class ARForm : MonoBehaviour {
 
 public abstract class ARFormElement : MonoBehaviour {
 
-	protected ARMarkerFromContainer formContainer;
-	public ARMarkerFromContainer FormContainer { set {
+	protected ARMarkerFormContainer formContainer;
+	public ARMarkerFormContainer FormContainer { set {
 		formContainer = value;
 	} }
 
