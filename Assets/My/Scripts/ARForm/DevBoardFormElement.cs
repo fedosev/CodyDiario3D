@@ -26,7 +26,7 @@ public class DevBoardFormElement : ARFormElement {
 	public int rowForwardCard = 5;
 	public int rowRightCard = 3;
 
-	public const int boadLength = 13;
+	public int boadLength = 25;
 
 	[Range(0f, 1f)]
 	public float minColorIntensityDifference = 0.06f;
@@ -37,7 +37,7 @@ public class DevBoardFormElement : ARFormElement {
 	float bestColorIntensity;
 
 	CardType bestCard;
-	CardType[] bestCards = new CardType[boadLength];
+	CardType[] bestCards;
 	
 	private string GetCardChar(CardType card) {
 		switch (card) {
@@ -49,12 +49,15 @@ public class DevBoardFormElement : ARFormElement {
 	}
 
 
-    ARFormElementValue<CardType>[] cardsValues = new ARFormElementValue<CardType>[boadLength];
+    ARFormElementValue<CardType>[] cardsValues;
 
 	public void Awake() {
 		CardRows[(int)CardType.Left] = rowLeftCard;
 		CardRows[(int)CardType.Forward] = rowForwardCard;
 		CardRows[(int)CardType.Right] = rowRightCard;
+
+		bestCards = new CardType[boadLength];
+		cardsValues = new ARFormElementValue<CardType>[boadLength];
 
 		for (int i = 0; i < boadLength; i++) {
 			cardsValues[i] = new ARFormElementValue<CardType>(CardType.Null);
