@@ -16,8 +16,8 @@ namespace EasyARSample
         protected override void Awake()
         {
             base.Awake();
-            TargetFound += OnTargetFound;
-            TargetLost += OnTargetLost;
+            //TargetFound += OnTargetFound;
+            //TargetLost += OnTargetLost;
             subGameObject = GameObject.Find("Game2").transform.GetChild(0).gameObject;
             /*
             subGameObject = Instantiate(Resources.Load("Game2", typeof(GameObject))) as GameObject;

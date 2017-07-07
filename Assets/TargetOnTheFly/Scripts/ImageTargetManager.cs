@@ -32,7 +32,7 @@ namespace EasyARSample
                 behaviour.Name = obj.Key;
                 behaviour.Path = obj.Value.Replace(@"\", "/");
                 behaviour.Storage = StorageType.Absolute;
-                behaviour.Bind(ARBuilder.Instance.TrackerBehaviours[0]);
+                behaviour.Bind(ARBuilder.Instance.ImageTrackerBehaviours[0]);
                 imageTargetDic.Add(obj.Key, behaviour);
             }
         }

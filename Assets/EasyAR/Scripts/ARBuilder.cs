@@ -1,8 +1,10 @@
-/**
-* Copyright (c) 2015-2016 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
-* EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
-* and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
-*/
+//=============================================================================================================================
+//
+// Copyright (c) 2015-2017 VisionStar Information Technology (Shanghai) Co., Ltd. All Rights Reserved.
+// EasyAR is the registered trademark or trademark of VisionStar Information Technology (Shanghai) Co., Ltd in China
+// and other countries for the augmented reality technology developed by VisionStar Information Technology (Shanghai) Co., Ltd.
+//
+//=============================================================================================================================
 
 using System;
 using System.Collections.Generic;
@@ -15,8 +17,10 @@ namespace EasyAR
     {
         private static readonly ARBuilder instance = new ARBuilder();
         public List<CameraDeviceBaseBehaviour> CameraDeviceBehaviours = new List<CameraDeviceBaseBehaviour>();
-        public List<AugmenterBaseBehaviour> AugmenterBehaviours = new List<AugmenterBaseBehaviour>();
-        public List<ImageTrackerBaseBehaviour> TrackerBehaviours = new List<ImageTrackerBaseBehaviour>();
+        public List<ARCameraBaseBehaviour> ARCameraBehaviours = new List<ARCameraBaseBehaviour>();
+        public List<ImageTrackerBaseBehaviour> ImageTrackerBehaviours = new List<ImageTrackerBaseBehaviour>();
+        public List<ObjectTrackerBaseBehaviour> ObjectTrackerBehaviours = new List<ObjectTrackerBaseBehaviour>();
+        public RecorderBaseBehaviour RecorderBehaviour;
 
         static ARBuilder()
         {
@@ -38,16 +42,18 @@ namespace EasyAR
         {
             bool success;
 #if UNITY_ANDROID && !UNITY_EDITOR
-            using (new AndroidJavaClass("cn.easyar.engine.EasyARNative"))
+            using (var easyarClass = new AndroidJavaClass("cn.easyar.engine.EasyAR"))
             {
+                easyarClass.CallStatic("loadLibraries");
             }
             using (var actClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
             {
                 var playerActivityContext = actClass.GetStatic<AndroidJavaObject>("currentActivity");
-                success = Engine.Initialize(key, playerActivityContext.GetRawObject());
+                var activityclassloader = playerActivityContext.Call<AndroidJavaObject>("getClass").Call<AndroidJavaObject>("getClassLoader");
+                success = Engine.Initialize(key, activityclassloader.GetRawObject(), playerActivityContext.GetRawObject());
             }
 #else
-            success = Engine.Initialize(key, IntPtr.Zero);
+            success = Engine.Initialize(key, IntPtr.Zero, IntPtr.Zero);
 #endif
             if (!success)
             {
@@ -59,17 +65,19 @@ namespace EasyAR
 
         public bool EasyBuild()
         {
-            AugmenterBehaviours.Clear();
+            ARCameraBehaviours.Clear();
             CameraDeviceBehaviours.Clear();
-            TrackerBehaviours = GameObject.FindObjectsOfType<ImageTrackerBaseBehaviour>().ToList();
+            ImageTrackerBehaviours = GameObject.FindObjectsOfType<ImageTrackerBaseBehaviour>().ToList();
+            ObjectTrackerBehaviours = GameObject.FindObjectsOfType<ObjectTrackerBaseBehaviour>().ToList();
+            RecorderBehaviour = GameObject.FindObjectOfType<RecorderBaseBehaviour>();
 
-            var augmenterbehaviour = GameObject.FindObjectOfType<AugmenterBaseBehaviour>();
-            if (augmenterbehaviour == null)
+            var arcamerabehaviour = GameObject.FindObjectOfType<ARCameraBaseBehaviour>();
+            if (arcamerabehaviour == null)
             {
                 Debug.LogError("ARBuilder: fail to build AR");
                 return false;
             }
-            AugmenterBehaviours.Add(augmenterbehaviour);
+            ARCameraBehaviours.Add(arcamerabehaviour);
 
             var cambehaviour = GameObject.FindObjectOfType<CameraDeviceBaseBehaviour>();
             if (cambehaviour == null)
@@ -84,7 +92,7 @@ namespace EasyAR
                 behaviour.Bind(cambehaviour);
                 Debug.Log("ARBuilder: " + behaviour + " bind " + cambehaviour);
             }
-            foreach (var behaviour in AugmenterBehaviours)
+            foreach (var behaviour in ARCameraBehaviours)
             {
                 behaviour.Bind(cambehaviour);
             }

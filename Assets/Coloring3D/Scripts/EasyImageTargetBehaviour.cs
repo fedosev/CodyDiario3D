@@ -13,8 +13,8 @@ namespace EasyAR
         protected override void Awake()
         {
             base.Awake();
-            TargetFound += OnTargetFound;
-            TargetLost += OnTargetLost;
+            //TargetFound += OnTargetFound;
+            //TargetLost += OnTargetLost;
         }
 
         protected override void Start()
