@@ -13,8 +13,8 @@ namespace EasyAR
         protected override void Awake()
         {
             base.Awake();
-            //TargetFound += OnTargetFound;
-            //TargetLost += OnTargetLost;
+            TargetFound += OnTargetFound;
+            TargetLost += OnTargetLost;
         }
 
         protected override void Start()
@@ -39,12 +39,12 @@ namespace EasyAR
                 gameObject.SetActive(true);
         }
 
-        void OnTargetFound(ImageTargetBaseBehaviour behaviour)
+        void OnTargetFound(TargetAbstractBehaviour behaviour)
         {
             ShowObjects(transform);
         }
 
-        void OnTargetLost(ImageTargetBaseBehaviour behaviour)
+        void OnTargetLost(TargetAbstractBehaviour behaviour)
         {
             HideObjects(transform);
         }
