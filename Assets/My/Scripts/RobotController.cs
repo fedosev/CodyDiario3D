@@ -66,8 +66,46 @@ public class RobotController : MonoBehaviour, IDirection {
 	} }
 
 	public event DirectionChangeAction OnDirectionChange;
+	public event Action OnFinishMovementOnce;
 
-	public void UpdateCurrentQuad() {
+	private bool isUpdatingCurrentQuad = false;
+
+	private void CheckByGameType(GameObject currentQuad, GameObject nextQuad) { // @todo refactorig
+
+		var quadBh = nextQuad.GetComponent<QuadBehaviour>();
+		var prevQuadBh = currentQuad.GetComponent<QuadBehaviour>();
+
+		// FREE MODE
+		switch (grid.gameType) {
+			case GameTypes.FREE:
+				prevQuadBh.SetState(QuadStates.DEFAULT);
+				quadBh.SetState(QuadStates.ACTIVE);
+				break;
+			case GameTypes.SNAKE:
+			case GameTypes.PATH:
+				// SNAKE (and PATH?)
+				prevQuadBh.SetState(QuadStates.OBSTACLE);
+				if (quadBh.IsFreeToGoIn()) {
+					quadBh.SetState(QuadStates.ACTIVE);
+					//sounds.playSound(sounds.soundStep);
+				} else {
+					quadBh.SetState(QuadStates.ERROR);
+					DoLose();
+				}
+				break;
+		}
+		
+	}
+
+	private void UpdateCurrentQuadBegin() {
+		CheckByGameType(
+			grid.GetQuad(currentQuadRow, currentQuadCol),
+			grid.GetQuad(currentQuadRow + (int)direction.z, currentQuadCol + (int)direction.x)
+		);
+		isUpdatingCurrentQuad = true;
+	}
+
+	public void UpdateCurrentQuadEnd() {
 		prevQuad = grid.GetQuad(currentQuadRow, currentQuadCol);
 
 		currentQuadCol += (int)direction.x;
@@ -75,27 +113,19 @@ public class RobotController : MonoBehaviour, IDirection {
 
 		currentQuad = grid.GetQuad(currentQuadRow, currentQuadCol);
 
+		isUpdatingCurrentQuad = false;
+
 		// @tmp
 		// if (true || GetComponent<HighlightBehaviour>().isActiveAndEnabled || isFreeMove)
-			return;
+		// return;
 
-		var quadBh = currentQuad.GetComponent<QuadBehaviour>();
-		var prevQuadBh = prevQuad.GetComponent<QuadBehaviour>();
-		prevQuadBh.SetState(QuadStates.OBSTACLE);
-		if (quadBh.IsFreeToGoIn()) {
-			quadBh.SetState(QuadStates.ACTIVE);
-			//sounds.playSound(sounds.soundStep);
-		} else {
-			quadBh.SetState(QuadStates.ERROR);
-			DoLose();
-		}
 	}
 
 	public void DoLose() {
-			animator.SetTrigger("Lose");
-			sounds.playLose();
-			Debug.Log("You lose!");
-			grid.inPause = true;
+		animator.SetTrigger("Lose");
+		sounds.playLose();
+		Debug.Log("You lose!");
+		grid.inPause = true;
 	}
 
 	public bool IsMoving() {
@@ -150,6 +180,11 @@ public class RobotController : MonoBehaviour, IDirection {
 		currentState = RobotStates.Idle;
 		
 		StopCoroutine("WaitAndFixTransform");
+
+		if (OnFinishMovementOnce != null) {
+			OnFinishMovementOnce();
+			OnFinishMovementOnce = null;
+		}
 
 		if (!grid.inPause)
 			grid.NextTurn();
@@ -209,18 +244,18 @@ public class RobotController : MonoBehaviour, IDirection {
 		var nextQuad = grid.GetQuad(nextQuadRow, nextQuadCol);
 
 		return nextQuad.GetComponent<QuadBehaviour>().IsFreeToGoIn();
-
 	}
+
 	public void MoveForward() {
 		if (IsMoving())
 			return;
 
 		if (!CanMoveForward()) {
-		/* @tmp
-			DoLose();
-			if (currentQuad != null)
-				currentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ERROR);
-		*/
+			if (grid.gameType != GameTypes.FREE) {
+				DoLose();
+				if (currentQuad != null)
+					currentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ERROR);
+			}
 			return;
 		}
 
@@ -325,19 +360,24 @@ public class RobotController : MonoBehaviour, IDirection {
 			return;
 		}
 
-		switch (currentState)
-		{
+		switch (currentState){
 			case RobotStates.MovingForward:
 				var nextQuadPos = grid.GetQuadPosition(currentQuadRow + (int)direction.z, currentQuadCol + (int)direction.x);
 				if (direction.z == 0) { // Left-Right direction
+					if (!isUpdatingCurrentQuad && (nextQuadPos.x - transform.position.x) * direction.x - grid.QuadSize / 2 <= 0) {
+						UpdateCurrentQuadBegin();
+					}
 					if ((nextQuadPos.x - transform.position.x) * direction.x <= 0) {
-						UpdateCurrentQuad();
+						UpdateCurrentQuadEnd();
 						StopMove();
 					}
 				}
 				else if (direction.x == 0) { // Back-Forward direction
+					if (!isUpdatingCurrentQuad && (nextQuadPos.z - transform.position.z) * direction.z - grid.QuadSize / 2 <= 0) {
+						UpdateCurrentQuadBegin();
+					}
 					if ((nextQuadPos.z - transform.position.z) * direction.z <= 0) {
-						UpdateCurrentQuad();
+						UpdateCurrentQuadEnd();
 						StopMove();
 					}
 				}

@@ -19,6 +19,7 @@ public class HighlightBehaviour : MonoBehaviour, IDirection {
 	private int quadLength;
 
 	public bool useDirectionalCursor = true;
+	public bool isActiveChecking = false; // @tmp: get value by REAL / VIRTUAL
 
 	private Vector3 direction;
 
@@ -61,6 +62,9 @@ public class HighlightBehaviour : MonoBehaviour, IDirection {
 	
 	// Update is called once per frame
 	void Update() {
+
+		//@tmp (temporarily disabled)
+		return;
 		
 		var pos = this.transform.position;
 		int l = quadLength = config.gridNumberX * config.gridNumberZ;
@@ -88,7 +92,7 @@ public class HighlightBehaviour : MonoBehaviour, IDirection {
 					}
 					quad = quadTransformIn.GetComponent<QuadBehaviour>();
 					if (quad) {
-						if (true && quad.IsFreeToGoIn()) { // @tmp
+						if (quad.IsFreeToGoIn()) { // @tmp
 							var player = GetComponent<PlayerBehaviour>();
 							if (player.IsMyTurn())
 								quad.SetState(QuadStates.ACTIVE);
@@ -98,7 +102,7 @@ public class HighlightBehaviour : MonoBehaviour, IDirection {
 								quad.SetDirection(Direction);
 							}
 						}
-						else {
+						else if (isActiveChecking) {
 							RobotController rc = GetComponent<RobotController>();
 							if (rc) {
 								quad.SetState(QuadStates.ERROR);

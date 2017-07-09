@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum GameTypes { SNAKE, PATH };
+public enum GameTypes { FREE, SNAKE, PATH };
 
 public enum PlayerTypes { VIRTUAL, REAL };
 
@@ -28,6 +28,8 @@ public class Grid : MonoBehaviour {
 
     private float uiSize = 1;
 
+	public float scaleSize = 4f;
+
 	public GameObject UIControlls;
 
 	public int playersNumber = 1;
@@ -37,6 +39,10 @@ public class Grid : MonoBehaviour {
 	public GameObject[] players;
 
 	public int playerTurn = 1;
+
+	public float QuadSize { get {
+		return quadTransforms[0].lossyScale.x;
+	} }
 
 	public RobotController CurrentRobotController { get {
 		if (playerTurn >= 0)
@@ -88,19 +94,19 @@ public class Grid : MonoBehaviour {
 	}
 
 	private void CreateBorder(Vector3 pos, float width, float height) {
-			var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-			quad.transform.rotation = Quaternion.AngleAxis(90, Vector3.right);
-			quad.transform.position = pos;
-			if (width > 0)
-				quad.transform.localScale = new Vector3(width, config.borderSize, 1f);
-			else
-				quad.transform.localScale = new Vector3(config.borderSize, height, 1f);
-			quad.transform.parent = this.transform;
-			quad.tag = "Border";
-			var rend = quad.GetComponent<Renderer>();
-			rend.material = config.borderMaterial;
-			rend.material.color = config.gameConfig.GetBorderColor();
 
+		var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+		quad.transform.rotation = Quaternion.AngleAxis(90, Vector3.right);
+		quad.transform.position = pos;
+		if (width > 0)
+			quad.transform.localScale = new Vector3(width, config.borderSize, 1f);
+		else
+			quad.transform.localScale = new Vector3(config.borderSize, height, 1f);
+		quad.transform.parent = this.transform;
+		quad.tag = "Border";
+		var rend = quad.GetComponent<Renderer>();
+		rend.material = config.borderMaterial;
+		rend.material.color = config.gameConfig.GetBorderColor();
 	}
 
 	public void GenerateGrid() {
@@ -223,7 +229,7 @@ public class Grid : MonoBehaviour {
 		}
 		
 		//@tmp
-		transform.parent.localScale *= 4;
+		transform.parent.localScale *= scaleSize;
 
 	}
 
