@@ -174,6 +174,7 @@ public class Grid : MonoBehaviour {
 					players[0].transform.parent = this.transform;
 					players[0].GetComponent<PlayerBehaviour>().Index = 0;
 					//robotController = robotPrefabs.GetComponent<RobotController>();
+					quad.GetComponent<QuadBehaviour>().SetState(QuadStates.ACTIVE);
 				}
 				if (playersNumber > 1 &&
 					// playerTypes[1] == PlayerTypes.VIRTUAL &&
@@ -189,6 +190,7 @@ public class Grid : MonoBehaviour {
 					players[1].transform.parent = this.transform;
 					players[1].GetComponent<PlayerBehaviour>().Index = 1;
 					//robotController = robotPrefabs.GetComponent<RobotController>();
+					quad.GetComponent<QuadBehaviour>().SetState(QuadStates.ON);
 
 					// @todo 
 					if (playerTypes[1] == PlayerTypes.REAL) {
@@ -255,7 +257,7 @@ public class Grid : MonoBehaviour {
 		movableBehaviour = GetComponent<GridMovableBehaviour>();
 		switchQuadStateBehaviour = GetComponent<SwitchQuadStateBehaviour>();
 
-		gameType = GameTypes.SNAKE;
+		//gameType = GameTypes.SNAKE;
 		/*
 		GenerateGrid();
 		ClearGrid();

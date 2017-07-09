@@ -73,17 +73,22 @@ public class QuadBehaviour : MonoBehaviour {
 
 	}
 
-	// Use this for initialization
-	void Start () {
+	void Awake() {
 		grid = GameObject.Find("Grid").GetComponent<Grid>();
 		config = grid.config;
-
+		
 		mainState = QuadStates.DEFAULT;
 		otherState = QuadStates.DEFAULT;
 		rend = GetComponent<Renderer>();
 		rend.material = GetMaterial(config.quadMaterial);
 
 		defaultMesh = MyMeshFilter.mesh;
+	}
+
+	// Use this for initialization
+	void Start () {
+		grid = GameObject.Find("Grid").GetComponent<Grid>();
+		config = grid.config;
 		
 		RecordUndo();
 	}
