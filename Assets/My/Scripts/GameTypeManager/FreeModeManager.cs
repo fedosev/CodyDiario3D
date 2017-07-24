@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RobotGameType {
+public class FreeModeManager : GridRobyManager {
 
-	//abstract 
-
+	
 }

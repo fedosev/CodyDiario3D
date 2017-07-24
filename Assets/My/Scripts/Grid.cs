@@ -40,6 +40,10 @@ public class Grid : MonoBehaviour {
 
 	public int playerTurn = 1;
 
+	public GridRobyManager gameTypeManager;
+
+	public BaseGridRobyGameType gameTypeConfig;
+
 	public float QuadSize { get {
 		return quadTransforms[0].lossyScale.x;
 	} }
@@ -82,6 +86,8 @@ public class Grid : MonoBehaviour {
 
 	public void ClearGrid() {
 
+		Debug.Log("Clear grid");
+
 		//this.transform.parent = null;
 		foreach (Transform child in this.transform) {
 			#if UNITY_EDITOR
@@ -109,7 +115,19 @@ public class Grid : MonoBehaviour {
 		rend.material.color = config.gameConfig.GetBorderColor();
 	}
 
+	private float GetAngleFromDirection(RobyDirection direction) {
+        switch (direction) {
+            case RobyDirection.North: return -90f;
+            case RobyDirection.East: return 0f;
+            case RobyDirection.South: return 90f;
+            case RobyDirection.West: return -180f;
+            default: return 0f;
+		}
+	}
+
 	public void GenerateGrid() {
+
+		Debug.Log("Generate grid");
 
 		var width = config.gridNumberX * (config.size + config.borderSize) + config.borderSize;
 		var height = config.gridNumberZ * (config.size + config.borderSize) + config.borderSize;
@@ -163,12 +181,12 @@ public class Grid : MonoBehaviour {
 				quadTransforms[i] = quad.transform;
 				i ++;
 
-				if (playerTypes[0] == PlayerTypes.VIRTUAL && x == 0 && z == 0) {
-					players[0] = Instantiate(config.robotPrefabs[0], pos, Quaternion.AngleAxis(90, Vector3.up));
+				if (playerTypes[0] == PlayerTypes.VIRTUAL && x == gameTypeConfig.startPosition.col && z == gameTypeConfig.startPosition.row) {
+					players[0] = Instantiate(config.robotPrefabs[0], pos, Quaternion.AngleAxis(GetAngleFromDirection(gameTypeConfig.startPosition.direction), Vector3.up));
 					players[0].name = "Player 1";
 					RobotController rc = players[0].GetComponent<RobotController>();
-					rc.SetRowCol(x, z);
-					rc.SetDirection(Vector3.right);
+					rc.SetRowCol(z, x);
+					rc.SetDirection(gameTypeConfig.startPosition.GetDirection());
 					rc.CurrentQuad = quad;
 					players[0].transform.localScale *= 2.5f * config.size;
 					players[0].transform.parent = this.transform;
@@ -183,7 +201,7 @@ public class Grid : MonoBehaviour {
 					players[1] = Instantiate(config.robotPrefabs[1], pos, Quaternion.AngleAxis(-90, Vector3.up));
 					players[1].name = "Player 2";
 					RobotController rc = players[1].GetComponent<RobotController>();
-					rc.SetRowCol(x, z);
+					rc.SetRowCol(z, x);
 					rc.SetDirection(Vector3.left);
 					rc.CurrentQuad = quad;
 					players[1].transform.localScale *= 2.5f * config.size;
@@ -251,12 +269,7 @@ public class Grid : MonoBehaviour {
 
     }
 
-	// Use this for initialization
-	void Start () {
-
-		movableBehaviour = GetComponent<GridMovableBehaviour>();
-		switchQuadStateBehaviour = GetComponent<SwitchQuadStateBehaviour>();
-
+	public void Init() {
 		//gameType = GameTypes.SNAKE;
 		/*
 		GenerateGrid();
@@ -274,6 +287,21 @@ public class Grid : MonoBehaviour {
 		config.gameConfig.Init();
 		GenerateGrid();
 		inPause = false;
+	}
+
+	// Use this for initialization
+	void Awake () {
+
+		movableBehaviour = GetComponent<GridMovableBehaviour>();
+		switchQuadStateBehaviour = GetComponent<SwitchQuadStateBehaviour>();
+
+		//gameTypeManager = FindObjectOfType<BaseGridRobyManager>();
+
+		/*
+		for (var i = 0; i < 9; i++) // @tmp
+			ClearGrid();
+		*/
+		//gameTypeManager.Init();
 	}
 	
 	/*
