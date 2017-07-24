@@ -10,8 +10,23 @@ public abstract class BaseGameType : ScriptableObject {
     public abstract string sceneName { get; }
 
     public virtual void Init() {
-        Debug.Log("BaseGameType init");
+
+        BeforeInit();
+        InitBody();
+        AfterInit();
+    }
+
+    public virtual void BeforeInit() {
+        Debug.Log("BaseGameType INIT");
         Debug.Log("Scene: " + sceneName);
+    }
+
+    public abstract void InitBody();
+
+    public virtual void AfterInit() {
+        if (useAR) {
+            Component.FindObjectOfType<BaseGameTypeManager>().ShowGame(false);
+        }
     }
 
 }

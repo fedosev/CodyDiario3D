@@ -7,6 +7,15 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 	//[System.NonSerialized]
 	public BaseGameType gameType;
 
+	public GameObject gameObj;
+
+	public void ShowGame(bool show) {
+
+		foreach (var rend in gameObj.GetComponentsInChildren<Renderer>()) {
+			rend.enabled = show;
+		}
+	}
+
 	public virtual void InitConfig() {
 		//@todo remove me
 	}

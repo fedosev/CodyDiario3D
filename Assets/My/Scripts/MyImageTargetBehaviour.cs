@@ -11,7 +11,7 @@ namespace EasyARSample
 {
     public class MyImageTargetBehaviour : ImageTargetBehaviour
     {
-        public GameObject gameObject;
+        protected MainGameManager gameManager;
 
         protected override void Awake()
         {
@@ -24,16 +24,22 @@ namespace EasyARSample
             subGameObject.transform.parent = transform;
             subGameObject.SetActive(false);
             // */
+            gameManager = FindObjectOfType<MainGameManager>();
+            
         }
 
-        void OnTargetFound(TargetAbstractBehaviour behaviour)
-        {
-            gameObject.SetActive(true);
+        void OnTargetFound(TargetAbstractBehaviour behaviour) {
+
+            //gameObj.SetActive(true);
+            Debug.Log("TargetFound");
+            gameManager.ShowGame(true);
         }
 
-        void OnTargetLost(TargetAbstractBehaviour behaviour)
-        {
-            gameObject.SetActive(false);
+        void OnTargetLost(TargetAbstractBehaviour behaviour) {
+
+            //gameObj.SetActive(false);
+            Debug.Log("TargetLost");
+            gameManager.ShowGame(false);
         }
     }
 }

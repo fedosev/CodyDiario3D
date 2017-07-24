@@ -2,83 +2,76 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using EasyAR;
 
 public class MainGameManager : MonoBehaviour {
 
 	public AllGameTypes allGameTypes;
 
 	BaseGameTypeManager gameTypeManager;
-
 	BaseGameType gameType;
 
-	AsyncOperation asyncOp;
+	int gameTypeIndex = 0;
+    private ImageTrackerBaseBehaviour imageTracker;
 
-	public IEnumerator InitCover() {
-
-		if (SceneManager.sceneCount > 1) {
-			SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
-		}
-
-		if (allGameTypes.TryGetValue("Cover", out gameType)) {
-			SceneManager.LoadScene(((CoverGameType)gameType).sceneName, LoadSceneMode.Additive);
-
-			yield return new WaitUntil(() => {
-				gameTypeManager = GameObject.FindObjectOfType<CoverManager>();
-				return gameTypeManager != null;
-			});
-			 
-			gameTypeManager.gameType = (CoverGameType)gameType;
-			//gameTypeManager.Init();
-		}
-
-		
-	}
-
-	public IEnumerator Init(string gameTypeKey) {
+    public IEnumerator Init(string gameTypeKey) {
 
 
 		if (SceneManager.sceneCount > 1) {
-			asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
+			imageTracker.StopTrack();
+			var asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
 			yield return new WaitUntil(() => asyncOp.isDone);
 		}
 
-		if (allGameTypes.TryGetValue(gameTypeKey, out gameType)) {
+		// Scene unloaded here
 
+		if (allGameTypes.TryGetValue(gameTypeKey, out gameType)) {
 
 			SceneManager.LoadScene((gameType).sceneName, LoadSceneMode.Additive);
 
 			yield return new WaitUntil(() => {
 				gameTypeManager = GameObject.FindObjectOfType<GridRobyManager>();
-				/*
-				GameObject gtm;
-				gtm = GameObject.Find("GameTypeManager");
-				if (gtm != null) {
-					gameTypeManager = gtm.AddComponent<GridRobyManager>() as GridRobyManager;
-				}
-				*/
+
 				return gameTypeManager != null;
 			});
 
 			gameTypeManager.gameType = gameType;
+
+			imageTracker.StartTrack();
+
+			//gameTypeManager.ShowGame(false);
+
 			//gameTypeManager.Init();
 		}
 
 	}
 
+	public void ShowGame(bool show) {
+
+		gameTypeManager.ShowGame(show);
+	}
+
+	void Awake() {
+
+		imageTracker = FindObjectOfType<ImageTrackerBaseBehaviour>();
+	}
+
 	void Start () {
 
-		//StartCoroutine(InitCover());
 		//StartCoroutine(Init("FreeMode01"));
 		StartCoroutine(Init("Cover"));
-		//SceneManager.LoadScene("SceneSelector", LoadSceneMode.Additive);
 	}
 	
+	void LoadNextGameType() {
+		// @tmp
+		StartCoroutine(Init(allGameTypes.items[(++gameTypeIndex) % allGameTypes.items.Count].name));
+	}
+
 	void Update () {
-		/*
+	
 		if (Input.GetKeyDown(KeyCode.Escape)) {
-			SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
-			SceneManager.LoadScene("SceneSelector", LoadSceneMode.Additive);
+			LoadNextGameType();
 		}
-		 */
+		
 	}
 }

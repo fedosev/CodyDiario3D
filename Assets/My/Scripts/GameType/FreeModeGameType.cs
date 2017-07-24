@@ -8,10 +8,10 @@ public class FreeModeGameType : BaseGridRobyGameType {
 
     public bool trace = false;
 
-    public override void Init() {
+    public override void InitBody() {
 
-		grid.gameType = GameTypes.SNAKE;
-		grid.playersNumber = 2;
+		grid.gameType = GameTypes.FREE;
+		grid.playersNumber = 1;
 
 		grid.Init();
     }

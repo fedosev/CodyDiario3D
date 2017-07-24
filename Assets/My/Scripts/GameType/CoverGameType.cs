@@ -4,11 +4,9 @@ using UnityEngine;
 
 
 [CreateAssetMenu]
-public class CoverGameType : FreeModeGameType {
+public class CoverGameType : BaseGridRobyGameType {
 
-    public override void Init() {
-
-		Debug.Log("Cover InitConfig");
+    public override void InitBody() {
 
 		grid.gameType = GameTypes.FREE;
 		grid.playersNumber = 1;
