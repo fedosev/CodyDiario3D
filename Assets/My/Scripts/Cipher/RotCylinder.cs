@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using TMPro;
+
 
 
 /* @todo {
@@ -83,6 +85,38 @@ public class RotCylinder : MonoBehaviour {
 
 	public UnityEvent onRotNumberChange;
 
+	public void GenerateChars() {
+
+		// Clear
+		while (this.transform.childCount > 0) { // ???
+			foreach (Transform child in this.transform) {
+				#if UNITY_EDITOR
+					Object.DestroyImmediate(child.gameObject, true);
+				#else
+					Destroy(child.gameObject);
+				#endif
+			}
+		}
+
+		// Generate
+		var n = 26 + (withSpace ? 1 : 0);
+		string charStr;
+		GameObject charGameObj;
+		for (var i = 0; i < n; i++) {
+			charGameObj = Instantiate(/*config.RotCylinderCharPrefab*/charPrefab, transform.position, Quaternion.Euler(-(360f * i / n), 0, 0));
+			charGameObj.transform.parent = transform;
+			charGameObj.transform.localScale = new Vector3(20f, 1f, 1f);
+			if (i < 26) {
+				charStr = ((char)(65 + i)).ToString();
+			} else {
+				charStr = " ";
+			}
+			charGameObj.GetComponentInChildren<TextMeshPro>().text = charStr;
+			charGameObj.name = "Char(" + charStr + ")";
+		}
+		
+	}
+
 	void Awake() {
 
 		nChars = 26 + (withSpace ? 1 : 0);
@@ -128,14 +162,14 @@ public class RotCylinder : MonoBehaviour {
 			var rotNum = GetRotNumber();
 			if (rotNum != rotNumber) {
 
-				print(rotNum);
+				//print(rotNum);
 				rotNumber = rotNum;
 				
 				if (onRotNumberChange != null)
 					onRotNumberChange.Invoke();
 
-				print("" + mainRotCylinder.transform.rotation.eulerAngles + " - " + transform.rotation.eulerAngles);
-				print("" + mainRotCylinder.transform.localRotation.eulerAngles + " - " + transform.localRotation.eulerAngles);
+				//print("" + mainRotCylinder.transform.rotation.eulerAngles + " - " + transform.rotation.eulerAngles);
+				//print("" + mainRotCylinder.transform.localRotation.eulerAngles + " - " + transform.localRotation.eulerAngles);
 			}
 		}
 		
