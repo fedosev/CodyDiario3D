@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 
 /* @todo {
@@ -49,11 +50,19 @@ public class RotCylinder : MonoBehaviour {
 	public GameObject charPrefab;
 
 	public bool isFixed = false;
+	public RotCylinder mainRotCylinder;
+
+	public float minAngularSpeed = 0.03f;
 
 	int nChars;
 	bool isTouching = false;
 	RaycastHit lastHit;
 	float lastRotationAngle = 0f;
+	int rotNumber = 0;
+
+	public int RotNumber { get {
+		return rotNumber;
+	}}
 
 	/*
 	float avgRotationAngle = new AvgValue<float>(3, 0f,
@@ -72,6 +81,8 @@ public class RotCylinder : MonoBehaviour {
 	RotCylinder[] rotCylinders;
 	List<Rigidbody> rotCylindersRB = new List<Rigidbody>();
 
+	public UnityEvent onRotNumberChange;
+
 	void Awake() {
 
 		nChars = 26 + (withSpace ? 1 : 0);
@@ -80,6 +91,11 @@ public class RotCylinder : MonoBehaviour {
 		for (var i = 0; i < nFramesAvgMomentum; i++) {
 			rotationAngles[i] = 0f;
 		}
+
+		if (onRotNumberChange == null) {
+			onRotNumberChange = new UnityEvent();
+		}
+		
 	}
 
 	// Use this for initialization
@@ -94,7 +110,78 @@ public class RotCylinder : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+		// @tmp
+		if (mainRotCylinder != null) {
+			if (Input.GetKey(KeyCode.Alpha1)) {
+				SetRotNumber(1);
+			}
+			if (Input.GetKey(KeyCode.Alpha2)) {
+				SetRotNumber(2);
+			}
+			if (Input.GetKey(KeyCode.Alpha3)) {
+				SetRotNumber(3);
+			}
+		}
+
+		if (!isFixed && mainRotCylinder != null && (isTouching || rb.angularVelocity != Vector3.zero)) {
+			var rotNum = GetRotNumber();
+			if (rotNum != rotNumber) {
+
+				print(rotNum);
+				rotNumber = rotNum;
+				
+				if (onRotNumberChange != null)
+					onRotNumberChange.Invoke();
+
+				print("" + mainRotCylinder.transform.rotation.eulerAngles + " - " + transform.rotation.eulerAngles);
+				print("" + mainRotCylinder.transform.localRotation.eulerAngles + " - " + transform.localRotation.eulerAngles);
+			}
+		}
 		
+	}
+
+	public void SetRotNumber(int rotNumber) {
+
+		foreach (var rotCylRB in rotCylindersRB) {
+			rotCylRB.angularVelocity = Vector3.zero;
+		}
+		transform.rotation = Quaternion.Euler(
+			mainRotCylinder.transform.rotation.eulerAngles.x + 360f * rotNumber / nChars, 0f, 90f
+		);
+		this.rotNumber = rotNumber;
+
+		if (onRotNumberChange != null)
+			onRotNumberChange.Invoke();
+	}
+
+	public int GetRotNumber() {
+
+		var mainRot = mainRotCylinder.transform.rotation;
+		var myRot = transform.rotation;
+
+		/*
+		float mainAngle = mainRot.eulerAngles.x;
+		float myAngle = myRot.eulerAngles.x;
+		// */
+		//print("" + mainAngle + " - " + myAngle);
+		// /*
+		/*
+		if (mainAngle < 0f)
+			mainAngle = 360f - mainAngle;
+		if (myAngle < 0f)
+			myAngle = 360f - myAngle;
+		// */
+
+		var angle = Quaternion.Angle(mainRot, myRot);
+		if (Vector3.Cross(mainRotCylinder.transform.forward, transform.forward).x < 0f) {
+			angle = 360f - angle;
+		}
+
+		// */
+		//return -(int)((mainAngle - myAngle - 180f / nChars) * nChars / 360f) % nChars;
+		return (int)((angle + Mathf.Sign(angle) * (180f / nChars)) * nChars / 360f) % nChars;
+
 	}
 
     void FixedUpdate() {
@@ -160,6 +247,10 @@ public class RotCylinder : MonoBehaviour {
 			
 			rb.angularVelocity = new Vector3(sumRotationAngles / nFramesAvgMomentum * Mathf.Deg2Rad / Time.deltaTime, 0, 0);
 			isTouching = false;
+		}
+
+		if (rb.angularVelocity != Vector3.zero && Mathf.Abs(rb.angularVelocity.x) < minAngularSpeed) {
+			rb.angularVelocity = Vector3.zero;
 		}
 	}
 }

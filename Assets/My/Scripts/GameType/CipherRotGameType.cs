@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CipherRotGameType : MonoBehaviour {
+public class CipherRotGameType : BaseGameType {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+	public bool withSpace = false;
+	public int rotNumber = 0;
+	public bool isFixed = false;
+
+    public override string sceneName { get {
+        return "CipherRot";
+    } }
+
+	public override void InitBody() {
 	
-	// Update is called once per frame
-	void Update () {
-		
 	}
+
 }
