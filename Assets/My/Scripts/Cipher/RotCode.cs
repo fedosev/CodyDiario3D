@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class RotCode : MonoBehaviour {
 
@@ -9,10 +10,14 @@ public class RotCode : MonoBehaviour {
 
 	public bool withSpace = false;
 
+	public bool isFixed = false;
+
 	public int[] code;
 
-	// Use this for initialization
-	void Start () {
+	public UnityEvent onCodeChange;
+	
+
+	public void Init() {
 
 		//rotCylinders = FindObjectsOfType<RotCylinder>();
 		//@tmp
@@ -23,11 +28,27 @@ public class RotCode : MonoBehaviour {
 				rc.withSpace = true;
 				rc.GenerateChars();
 			}
+			if (isFixed) {
+				rc.isFixed = true;
+			}
 		}
 		if (withSpace) {
 			fixedRotCylinders.withSpace = true;
 			fixedRotCylinders.GenerateChars();
 		}
+	}
+
+	void Awake() {
+
+		if (onCodeChange == null) {
+			onCodeChange = new UnityEvent();
+		}
+	}
+
+	// Use this for initialization
+	void Start () {
+
+		Init();
 	}
 
 	void OnEnable() {
@@ -39,7 +60,9 @@ public class RotCode : MonoBehaviour {
 		foreach (var rc in rotCylinders) {
 			code[i++] = rc.RotNumber;
 		}
-	
+		if (onCodeChange != null) {
+			onCodeChange.Invoke();
+		}
 	}
 
 	public void SetCode(int[] code) {
