@@ -59,7 +59,7 @@ public class RotCode : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		Init();
+		//Init();
 	}
 
 	void OnEnable() {

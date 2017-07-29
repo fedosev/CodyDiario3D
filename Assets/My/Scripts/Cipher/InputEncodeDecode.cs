@@ -17,6 +17,14 @@ public class InputEncodeDecode : MonoBehaviour {
 
 	InputEncodeDecode otherInputEncodeDecode;
 
+	public void SetText(string text) {
+		inputField.text = text;
+	}
+
+	public void SetFixed(bool isFixed) {
+		inputField.readOnly = isFixed;
+	}
+
     public void UpdateText() {
 		if (isLastFocused) {
 			 otherInputField.text = rotCode.EncodeDecode(inputField.text, !isEncoded);
@@ -29,6 +37,10 @@ public class InputEncodeDecode : MonoBehaviour {
 		if (inputField.isFocused) {
 			otherInputField.text = rotCode.EncodeDecode(str, !isEncoded);
 		}
+	}
+
+	public void InitOtherText() {
+		otherInputField.text = rotCode.EncodeDecode(inputField.text, !isEncoded);
 	}
 
 	void Awake() {
@@ -47,12 +59,16 @@ public class InputEncodeDecode : MonoBehaviour {
 		}
 	}
 	
+	public void SetLastFocused() {
+		otherInputEncodeDecode.isLastFocused = false;
+		isLastFocused = true;
+
+	}
 	// Update is called once per frame
 	void Update () {
 
-		if (!isLastFocused && inputField.isFocused) {
-			otherInputEncodeDecode.isLastFocused = false;
-			isLastFocused = true;
+		if (!inputField.readOnly && !isLastFocused && inputField.isFocused) {
+			SetLastFocused();
 			//rotCode.onCodeChange.RemoveListener(otherInputField.GetComponent<InputEncodeDecode>().UpdateText);
 			//rotCode.onCodeChange.AddListener(UpdateText);
 		}
