@@ -67,9 +67,8 @@ public class RotCode : MonoBehaviour {
 	}
 	
 	public void UpdateCodeFromCylinders() {
-
 		for (var i = 0; i < code.Length; i++) {
-			code[i] = rotCylinders[i++].RotNumber;
+			code[i] = rotCylinders[i].RotNumber;
 		}
 		if (onCodeChange != null) {
 			onCodeChange.Invoke();

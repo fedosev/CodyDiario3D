@@ -88,15 +88,17 @@ public class RotCylinder : MonoBehaviour {
 	public void GenerateChars() {
 
 		// Clear
-		while (this.transform.childCount > 0) { // ???
-			foreach (Transform child in this.transform) {
-				#if UNITY_EDITOR
+		#if UNITY_EDITOR
+			while (this.transform.childCount > 0) { // ???
+				foreach (Transform child in this.transform) {
 					Object.DestroyImmediate(child.gameObject, true);
-				#else
-					Destroy(child.gameObject);
-				#endif
+				}
 			}
-		}
+		#else
+			foreach (Transform child in this.transform) {
+				Destroy(child.gameObject);
+			}
+		#endif
 
 		// Generate
 		var n = 26 + (withSpace ? 1 : 0);
