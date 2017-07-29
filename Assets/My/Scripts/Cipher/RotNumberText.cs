@@ -9,14 +9,14 @@ public class RotNumberText : MonoBehaviour {
 	
 	Text text;
 	
-	public RotCylinder[] rotCylinders;
+	public RotCode rotCode;
 
 	public void UpdateText() {
 
-		if (rotCylinders != null) {
+		if (rotCode != null) {
 			text.text = textPrefix;
-			foreach (var rc in rotCylinders) {
-				text.text += "-" + rc.RotNumber;
+			foreach (var c in rotCode.code) {
+				text.text += "-" + c;
 			}
 		}
 	}
@@ -24,11 +24,8 @@ public class RotNumberText : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		text = GetComponent<Text>();
-		if (rotCylinders != null) {
-			text.text = textPrefix;
-			foreach (var rc in rotCylinders) {
-				rc.onRotNumberChange.AddListener(UpdateText);
-			}
+		if (rotCode != null) {
+			rotCode.onCodeChange.AddListener(UpdateText);
 		}
 		UpdateText();
 	}

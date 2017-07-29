@@ -21,13 +21,18 @@ public class RotCode : MonoBehaviour {
 	public void Init() {
 
 		//rotCylinders = FindObjectsOfType<RotCylinder>();
-		foreach (var rc in rotCylinders) {
+		if (code.Length < rotCylinders.Length) {
+			for (var i = code.Length; i < rotCylinders.Length; i++) {
+				rotCylinders[i].gameObject.SetActive(false);
+			}
+		}
+		for (var i = 0; i < code.Length; i++) {
 			if (withSpace) {
-				rc.withSpace = true;
-				rc.GenerateChars();
+				rotCylinders[i].withSpace = true;
+				rotCylinders[i].GenerateChars();
 			}
 			if (isFixed) {
-				rc.isFixed = true;
+				rotCylinders[i].isFixed = true;
 			}
 		}
 		if (withSpace) {
@@ -35,12 +40,16 @@ public class RotCode : MonoBehaviour {
 			fixedRotCylinder.GenerateChars();
 		}
 		SetCode(code);
-		foreach (var rc in rotCylinders) {
-			rc.onRotNumberChange.AddListener(UpdateCodeFromCylinders);
+		for (var i = 0; i < code.Length; i++) {
+			rotCylinders[i].onRotNumberChange.AddListener(UpdateCodeFromCylinders);
 		}
 	}
 
 	void Awake() {
+
+		if (code.Length > rotCylinders.Length) {
+			Debug.LogError("code.Length > rotCylinders.Length");
+		}
 
 		if (onCodeChange == null) {
 			onCodeChange = new UnityEvent();
@@ -59,9 +68,8 @@ public class RotCode : MonoBehaviour {
 	
 	public void UpdateCodeFromCylinders() {
 
-		var i = 0;
-		foreach (var rc in rotCylinders) {
-			code[i++] = rc.RotNumber;
+		for (var i = 0; i < code.Length; i++) {
+			code[i] = rotCylinders[i++].RotNumber;
 		}
 		if (onCodeChange != null) {
 			onCodeChange.Invoke();
@@ -71,9 +79,8 @@ public class RotCode : MonoBehaviour {
 	public void SetCode(int[] code) {
 
 		this.code = code;
-		var i = 0;
-		foreach (var rc in rotCylinders) {
-			rc.SetRotNumber(code[i++]);
+		for (var i = 0; i < code.Length; i++) {
+			rotCylinders[i].SetRotNumber(code[i]);
 		}
 	}
 
