@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using EasyAR;
 
 public class MainGameManager : MonoBehaviour {
 
 	public AllGameTypes allGameTypes;
+
+	public MainMenu mainMenu;
+
+	public Text gameTitle; //@todo
 
 	BaseGameTypeManager gameTypeManager;
 	BaseGameType gameType;
@@ -30,7 +35,8 @@ public class MainGameManager : MonoBehaviour {
 			SceneManager.LoadScene((gameType).sceneName, LoadSceneMode.Additive);
 
 			yield return new WaitUntil(() => {
-				gameTypeManager = GameObject.FindObjectOfType<GridRobyManager>();
+				//gameTypeManager = GameObject.FindObjectOfType<GridRobyManager>();
+				gameTypeManager = GameObject.FindObjectOfType<BaseGameTypeManager>();
 
 				return gameTypeManager != null;
 			});
@@ -59,9 +65,14 @@ public class MainGameManager : MonoBehaviour {
 	void Start () {
 
 		//StartCoroutine(Init("FreeMode01"));
-		StartCoroutine(Init("Cover"));
+		//StartCoroutine(Init("Cover"));
+		LoadGameType(0);
 	}
 	
+	public void LoadGameType(int index) {
+		StartCoroutine(Init(allGameTypes.items[index].name));
+	}
+
 	void LoadNextGameType() {
 		// @tmp
 		StartCoroutine(Init(allGameTypes.items[(++gameTypeIndex) % allGameTypes.items.Count].name));
@@ -69,9 +80,10 @@ public class MainGameManager : MonoBehaviour {
 
 	void Update () {
 	
+		/*
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			LoadNextGameType();
 		}
-		
+		*/
 	}
 }
