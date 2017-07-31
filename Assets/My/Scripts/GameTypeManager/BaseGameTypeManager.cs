@@ -9,7 +9,12 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 	public GameObject gameObj;
 
+	public bool useAR = true;
+
 	public void ShowGame(bool show) {
+
+		if (!useAR)
+			return;
 
 		foreach (var rend in gameObj.GetComponentsInChildren<Renderer>()) {
 			rend.enabled = show;
@@ -30,6 +35,8 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 		InitConfig();
 		gameType.Init();
+
+		ShowGame(false);
 
 		yield return null;
 	}

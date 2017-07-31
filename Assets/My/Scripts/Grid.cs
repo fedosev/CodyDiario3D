@@ -40,7 +40,12 @@ public class Grid : MonoBehaviour {
 
 	public int playerTurn = 1;
 
+	public Queue<CardTypes?> actionsQueue;
+
+	public bool InExecution { get; private set; }
+
 	public GridRobyManager gameTypeManager;
+
 
 	public BaseGridRobyGameType gameTypeConfig;
 
@@ -286,6 +291,9 @@ public class Grid : MonoBehaviour {
 			ClearGrid();
 		config.gameConfig.Init();
 		GenerateGrid();
+
+        actionsQueue = new Queue<CardTypes?>();
+
 		inPause = false;
 	}
 
@@ -350,6 +358,42 @@ public class Grid : MonoBehaviour {
 		}
 		// }
 	}
+
+    public void NextAction() {
+        if (gameType == GameTypes.SNAKE) {
+            NextTurn();
+        } else {
+            if (actionsQueue.Count > 0) {
+                InExecution = true;
+                var cardType = actionsQueue.Dequeue();
+                switch (cardType) {
+                    case CardTypes.LEFT:
+                        CurrentRobotController.TurnLeft();
+                        break;
+                    case CardTypes.FORWARD:
+                        CurrentRobotController.MoveForward();
+                        break;
+                    case CardTypes.RIGHT:
+                        CurrentRobotController.TurnRight();
+                        break;
+                }
+
+            } else {
+                NextTurn();
+                InExecution = false;
+            }
+        }
+        
+    }
+
+    public void ClearActions() {
+        actionsQueue.Clear();
+    }
+
+    public void AddAction(CardTypes? type) {
+        actionsQueue.Enqueue(type);
+    }
+
 
 	// Update is called once per frame
 	void Update () {

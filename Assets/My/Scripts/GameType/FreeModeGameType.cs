@@ -10,10 +10,10 @@ public class FreeModeGameType : BaseGridRobyGameType {
 
     public override void InitBody() {
 
-		grid.gameType = GameTypes.FREE;
-		grid.playersNumber = 1;
+        grid.gameType = GameTypes.FREE;
+        grid.playersNumber = 1;
 
-		grid.Init();
+        grid.Init();
     }
 
 }

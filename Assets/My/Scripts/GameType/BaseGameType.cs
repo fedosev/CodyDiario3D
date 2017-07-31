@@ -5,8 +5,6 @@ using UnityEngine;
 
 public abstract class BaseGameType : ScriptableObject {
 
-    public bool useAR = true;
-
     public abstract string sceneName { get; }
 
     public virtual void Init() {
@@ -24,9 +22,11 @@ public abstract class BaseGameType : ScriptableObject {
     public abstract void InitBody();
 
     public virtual void AfterInit() {
+        /*
         if (useAR) {
             Component.FindObjectOfType<BaseGameTypeManager>().ShowGame(false);
         }
+        */
     }
 
 }

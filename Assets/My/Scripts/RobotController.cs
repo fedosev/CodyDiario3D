@@ -114,11 +114,6 @@ public class RobotController : MonoBehaviour, IDirection {
 		currentQuad = grid.GetQuad(currentQuadRow, currentQuadCol);
 
 		isUpdatingCurrentQuad = false;
-
-		// @tmp
-		// if (true || GetComponent<HighlightBehaviour>().isActiveAndEnabled || isFreeMove)
-		// return;
-
 	}
 
 	public void DoLose() {
@@ -187,7 +182,7 @@ public class RobotController : MonoBehaviour, IDirection {
 		}
 
 		if (!grid.inPause)
-			grid.NextTurn();
+			grid.NextAction();
 	}
 
 	private void MoveArroundUpdate() {

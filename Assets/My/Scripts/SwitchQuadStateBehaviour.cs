@@ -5,13 +5,25 @@ using UnityEngine.EventSystems;
 
 public class SwitchQuadStateBehaviour : MonoBehaviour {
 
+
+	Grid grid;
+
 	// Use this for initialization
 	void Start () {
-		
+		grid = GetComponent<Grid>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		
+		QuadStates state;
+		if (grid.gameType == GameTypes.PATH) {
+			state = QuadStates.PATH;
+		} else if (grid.gameType == GameTypes.SNAKE) {
+			state = QuadStates.OBSTACLE;
+		} else
+			return;
+
 		if (Input.GetMouseButtonDown(0)) {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
@@ -30,9 +42,9 @@ public class SwitchQuadStateBehaviour : MonoBehaviour {
 				if (hit.transform.gameObject.tag == "Quad") {
 					QuadBehaviour quad = hit.transform.GetComponent<QuadBehaviour>();
 					if (quad.mainState == QuadStates.DEFAULT) {
-						quad.SetState(QuadStates.OBSTACLE);
+						quad.SetState(state);
 					}
-					else if (quad.mainState == QuadStates.OBSTACLE) {
+					else if (quad.mainState == state) {
 						quad.SetState(QuadStates.DEFAULT);
 					}
 				}
