@@ -12,7 +12,6 @@ public class CipherRotGameType : BaseGameType {
 
 	public int[] rotCode = { 0 };
 	public bool withSpace = false;
-	public bool isFixed = false;
 	public string statringText = "";
 	//public bool isStatringTextEncoded;
 	public bool isDecodedTextFixed = false;
