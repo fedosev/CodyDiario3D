@@ -4,16 +4,16 @@ using UnityEngine;
 
 
 [CreateAssetMenu]
-public class PathGameType : BaseGridRobyGameType {
+public class GridTapGameType : BaseGridRobyGameType {
 
     public override void InitBody() {
 
-		grid.gameType = GameTypes.PATH;
-		grid.playersNumber = 1;
+        grid.gameType = GameTypes.TAP;
+        grid.playersNumber = 0;
 
 		grid.GetComponent<SwitchQuadStateBehaviour>().enabled = true;
 
-		grid.Init();
+        grid.Init();
     }
 
 }

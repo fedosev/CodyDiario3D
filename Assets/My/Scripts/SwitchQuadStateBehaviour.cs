@@ -19,7 +19,7 @@ public class SwitchQuadStateBehaviour : MonoBehaviour {
 		QuadStates state;
 		if (grid.gameType == GameTypes.PATH) {
 			state = QuadStates.PATH;
-		} else if (grid.gameType == GameTypes.SNAKE) {
+		} else if (true || grid.gameType == GameTypes.SNAKE) {
 			state = QuadStates.OBSTACLE;
 		} else
 			return;
@@ -36,8 +36,10 @@ public class SwitchQuadStateBehaviour : MonoBehaviour {
 				var raycastResults = new List<RaycastResult>();
 				EventSystem.current.RaycastAll(pointerData, raycastResults);
 				//Debug.Log(raycastResults.Count);
-				if (raycastResults.Count > 0)
+				if (raycastResults.Count > 2)
 					return;
+				/*
+				*/
 
 				if (hit.transform.gameObject.tag == "Quad") {
 					QuadBehaviour quad = hit.transform.GetComponent<QuadBehaviour>();

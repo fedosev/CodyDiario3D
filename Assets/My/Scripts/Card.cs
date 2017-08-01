@@ -24,7 +24,7 @@ public class Card : MonoBehaviour, IPointerClickHandler
         if (grid.inPause)
             return;
 
-        if (grid.gameType == GameTypes.SNAKE) {
+        if (grid.gameType != GameTypes.PATH) {
             switch (cardType) {
                 case CardTypes.LEFT:
                     grid.CurrentRobotController.TurnLeft();

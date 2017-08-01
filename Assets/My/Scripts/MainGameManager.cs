@@ -13,11 +13,19 @@ public class MainGameManager : MonoBehaviour {
 
 	public Text gameTitle; //@todo
 
+	public bool useAR = true;
+
+	public GameObject aRGameObject;
+
 	BaseGameTypeManager gameTypeManager;
 	BaseGameType gameType;
 
 	int gameTypeIndex = 0;
-    private ImageTrackerBaseBehaviour imageTracker;
+
+	CameraDeviceBehaviour cameraDevice;
+	EasyARBehaviour easyARBehaviour;
+    ImageTrackerBaseBehaviour imageTracker;
+
 
     public IEnumerator Init(string gameTypeKey) {
 
@@ -28,11 +36,19 @@ public class MainGameManager : MonoBehaviour {
 			yield return new WaitUntil(() => asyncOp.isDone);
 		}
 
+		SetUseAR();
+
 		// Scene unloaded here
 
 		if (allGameTypes.TryGetValue(gameTypeKey, out gameType)) {
 
-			SceneManager.LoadScene((gameType).sceneName, LoadSceneMode.Additive);
+			var sceneName = gameType.sceneName;
+
+			if (!useAR) {
+				sceneName += "NoAR";
+			}
+
+			SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
 
 			yield return new WaitUntil(() => {
 				//gameTypeManager = GameObject.FindObjectOfType<GridRobyManager>();
@@ -42,14 +58,37 @@ public class MainGameManager : MonoBehaviour {
 			});
 
 			gameTypeManager.gameType = gameType;
+			gameTypeManager.useAR = useAR;
 
-			imageTracker.StartTrack();
+			if (useAR) {
+				imageTracker.StartTrack();
+			}
 
 			//gameTypeManager.ShowGame(false);
 
 			//gameTypeManager.Init();
 		}
 
+	}
+
+	public void SetUseAR() {
+
+		if (useAR) {
+			//easyARBehaviour.gameObject.SetActive(true);
+			aRGameObject.gameObject.SetActive(true);
+			EasyAR.Engine.Resume();
+			cameraDevice.OpenAndStart();
+		} else {
+			EasyAR.Engine.Pause();
+			cameraDevice.Close();
+			//easyARBehaviour.gameObject.SetActive(false);
+			aRGameObject.gameObject.SetActive(false);
+		}
+	}
+	
+	public void RestartWithAR(bool useAR) {
+		this.useAR = useAR;
+		LoadGameType(gameTypeIndex);
 	}
 
 	public void ShowGame(bool show) {
@@ -59,7 +98,9 @@ public class MainGameManager : MonoBehaviour {
 
 	void Awake() {
 
+		easyARBehaviour = FindObjectOfType<EasyARBehaviour>();
 		imageTracker = FindObjectOfType<ImageTrackerBaseBehaviour>();
+		cameraDevice = FindObjectOfType<CameraDeviceBehaviour>();
 	}
 
 	void Start () {
@@ -70,6 +111,7 @@ public class MainGameManager : MonoBehaviour {
 	}
 	
 	public void LoadGameType(int index) {
+		gameTypeIndex = index;
 		StartCoroutine(Init(allGameTypes.items[index].name));
 	}
 

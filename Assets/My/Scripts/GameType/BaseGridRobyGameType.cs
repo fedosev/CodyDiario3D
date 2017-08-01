@@ -15,13 +15,24 @@ public class RobyStartPosition {
     public bool IsSet() {
         return col >= 0 && row >= 0 && direction != RobyDirection.Null;
     }
+    
+    public bool IsSetPosition() {
+        return col >= 0 && row >= 0;
+    }
+
+    public bool IsSetDirection() {
+        return  direction != RobyDirection.Null;
+    }
 
     public Vector3 GetDirection() {
+        return GetDirection(this.direction);
+    }
+    public static Vector3 GetDirection(RobyDirection direction) {
         switch (direction) {
-            case RobyDirection.North: return Vector3.left;
-            case RobyDirection.East: return Vector3.forward;
-            case RobyDirection.South: return Vector3.right;
-            case RobyDirection.West: return Vector3.back;
+            case RobyDirection.North: return Vector3.forward;
+            case RobyDirection.East: return Vector3.right;
+            case RobyDirection.South: return Vector3.back;
+            case RobyDirection.West: return Vector3.left;
             default: return Vector3.forward;
         }
     }

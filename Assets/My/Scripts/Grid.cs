@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum GameTypes { FREE, SNAKE, PATH };
+public enum GameTypes { FREE, TAP, SNAKE, PATH };
 
 public enum PlayerTypes { VIRTUAL, REAL };
 
@@ -32,6 +32,9 @@ public class Grid : MonoBehaviour {
 
 	public GameObject UIControlls;
 
+	public int nCols = 0;
+	public int nRows = 0;
+
 	public int playersNumber = 1;
 
 	public PlayerTypes[] playerTypes;
@@ -44,8 +47,14 @@ public class Grid : MonoBehaviour {
 
 	public bool InExecution { get; private set; }
 
+
 	public GridRobyManager gameTypeManager;
 
+	public BaseGameObjectState state;
+
+	public PositionInGrid startPosInGrid;
+
+	public List<QuadBehaviour> selectDirectionQuads = new List<QuadBehaviour>();
 
 	public BaseGridRobyGameType gameTypeConfig;
 
@@ -54,7 +63,7 @@ public class Grid : MonoBehaviour {
 	} }
 
 	public RobotController CurrentRobotController { get {
-		if (playerTurn >= 0)
+		if (playerTurn >= 0 && players[playerTurn] != null)
 			return players[playerTurn].GetComponent<RobotController>();
 
 		return null;
@@ -85,8 +94,19 @@ public class Grid : MonoBehaviour {
 	}
 
 	public GameObject GetQuad(int row, int col) {
-		var index = row * config.gridNumberX + col;
+		var index = row * nCols + col;
 		return quadTransforms[index].gameObject;
+	}
+
+	public PositionInGrid GetQuadPositionInGrid(GameObject quad) {
+		int i = 0;
+		foreach (var quadTransform in quadTransforms) {
+			if (quad.transform == quadTransform) {
+				return new PositionInGrid((int)i / nCols, i % nRows);
+			}
+			i++;
+		}
+		return new PositionInGrid(-1, -1);
 	}
 
 	public void ClearGrid() {
@@ -122,20 +142,78 @@ public class Grid : MonoBehaviour {
 
 	private float GetAngleFromDirection(RobyDirection direction) {
         switch (direction) {
-            case RobyDirection.North: return -90f;
-            case RobyDirection.East: return 0f;
-            case RobyDirection.South: return 90f;
-            case RobyDirection.West: return -180f;
+            case RobyDirection.North: return 0f;
+            case RobyDirection.East: return 90f;
+            case RobyDirection.South: return -180f;
+            case RobyDirection.West: return -90f;
             default: return 0f;
 		}
+	}
+
+	private Vector3 GetVector3FromDirection(RobyDirection direction) {
+        switch (direction) {
+            case RobyDirection.North: return Vector3.forward;
+            case RobyDirection.East: return Vector3.right;
+            case RobyDirection.South: return Vector3.back;
+            case RobyDirection.West: return Vector3.left;
+            default: return Vector3.forward;
+		}
+	}
+
+	public void InitRobot(int index, string name, Vector3 pos, int x, int z, RobyDirection direction, GameObject quad, QuadStates quadState) {
+
+		players[index] = Instantiate(config.robotPrefabs[index], pos, Quaternion.AngleAxis(GetAngleFromDirection(direction), Vector3.up));
+		players[index].name = name;
+		RobotController rc = players[index].GetComponent<RobotController>();
+		rc.SetRowCol(z, x);
+		rc.SetDirection(RobyStartPosition.GetDirection(direction));
+		rc.CurrentQuad = quad;
+		players[index].transform.localScale *= 2.5f * config.size;
+		players[index].transform.parent = this.transform;
+		players[index].GetComponent<PlayerBehaviour>().Index = index;
+		//robotController = robotPrefabs.GetComponent<RobotController>();
+		quad.GetComponent<QuadBehaviour>().SetState(quadState);
+	}
+
+	public void InitRobot(int index, string name, int col, int row, RobyDirection direction, QuadStates quadState) {
+		var quad = GetQuad(row, col);
+		InitRobot(index, name, quad.transform.position, col, row, direction, quad, quadState);
+	}
+
+	public void InitRobot1(int col, int row, RobyDirection direction) {
+		InitRobot(0, "Player 1", col, row, direction, QuadStates.ACTIVE);
+	}
+
+	public QuadBehaviour InitDirectionalQuad(Vector3 pos, RobyDirection direction) {
+		var quad = Instantiate(config.quadPrefab, pos, Quaternion.AngleAxis(90, Vector3.right));
+		quad.transform.parent = this.transform;
+		quad.tag = "DirectionSelector";
+		var quadBh = quad.GetComponent<QuadBehaviour>();
+		quadBh.SetDirection(GetVector3FromDirection(direction));
+		return quadBh;
+	}
+
+	public void InitDirectionalQuads() {
+		var yOffset = new Vector3(0f, 0.01f, 0f);
+		selectDirectionQuads.Add(InitDirectionalQuad(GetQuadPosition(startPosInGrid.row + 1, startPosInGrid.col) + yOffset, RobyDirection.North));
+		selectDirectionQuads.Add(InitDirectionalQuad(GetQuadPosition(startPosInGrid.row, startPosInGrid.col + 1) + yOffset, RobyDirection.East));
+		selectDirectionQuads.Add(InitDirectionalQuad(GetQuadPosition(startPosInGrid.row - 1, startPosInGrid.col) + yOffset, RobyDirection.South));
+		selectDirectionQuads.Add(InitDirectionalQuad(GetQuadPosition(startPosInGrid.row, startPosInGrid.col - 1) + yOffset, RobyDirection.West));
+	}
+
+	public void ClearDirectionalQuads() {
+		foreach (var quad in selectDirectionQuads) {
+			Destroy(quad.gameObject);
+		}
+		selectDirectionQuads.Clear();
 	}
 
 	public void GenerateGrid() {
 
 		Debug.Log("Generate grid");
 
-		var width = config.gridNumberX * (config.size + config.borderSize) + config.borderSize;
-		var height = config.gridNumberZ * (config.size + config.borderSize) + config.borderSize;
+		var width = nCols * (config.size + config.borderSize) + config.borderSize;
+		var height = nRows * (config.size + config.borderSize) + config.borderSize;
 
 		baseScale = new Vector3(width, height,1f);
 		this.transform.localScale = baseScale;
@@ -148,7 +226,7 @@ public class Grid : MonoBehaviour {
 
 		players = new GameObject[playersNumber];
 
-		for (var x = 0; x <= config.gridNumberX; x++) {
+		for (var x = 0; x <= nCols; x++) {
 			Vector3 pos = new Vector3(
 				x * (config.size + config.borderSize) + config.borderSize / 2 - width / 2,
 				0.0001f,
@@ -156,7 +234,7 @@ public class Grid : MonoBehaviour {
 			) + transform.position;
 			CreateBorder(pos, 0, height);
 		}
-		for (var z = 0; z <= config.gridNumberZ; z++) {
+		for (var z = 0; z <= nRows; z++) {
 			Vector3 pos = new Vector3(
 				0,
 				0.0001f,
@@ -165,15 +243,15 @@ public class Grid : MonoBehaviour {
 			CreateBorder(pos, width, 0);
 		}
 
-		var quadLength = config.gridNumberX * config.gridNumberZ;
+		var quadLength = nCols * nRows;
 		quadTransforms = new Transform[quadLength];
 		//quadPositions = new Vector3[quadLength];
 
 		QuadBehaviour.GetMaterialForModifying(config.quadMaterial).color = config.gameConfig.GetQuadColor();
 
 		var i = 0;
-		for (var z = 0; z < config.gridNumberZ; z++) {
-			for (var x = 0; x < config.gridNumberX; x++) {
+		for (var z = 0; z < nRows; z++) {
+			for (var x = 0; x < nCols; x++) {
 				Vector3 pos = new Vector3(
 					x * (config.size + config.borderSize) + config.size / 2 + config.borderSize - width / 2,
 					0.0001f,
@@ -187,33 +265,15 @@ public class Grid : MonoBehaviour {
 				i ++;
 
 				if (playerTypes[0] == PlayerTypes.VIRTUAL && x == gameTypeConfig.startPosition.col && z == gameTypeConfig.startPosition.row) {
-					players[0] = Instantiate(config.robotPrefabs[0], pos, Quaternion.AngleAxis(GetAngleFromDirection(gameTypeConfig.startPosition.direction), Vector3.up));
-					players[0].name = "Player 1";
-					RobotController rc = players[0].GetComponent<RobotController>();
-					rc.SetRowCol(z, x);
-					rc.SetDirection(gameTypeConfig.startPosition.GetDirection());
-					rc.CurrentQuad = quad;
-					players[0].transform.localScale *= 2.5f * config.size;
-					players[0].transform.parent = this.transform;
-					players[0].GetComponent<PlayerBehaviour>().Index = 0;
-					//robotController = robotPrefabs.GetComponent<RobotController>();
-					quad.GetComponent<QuadBehaviour>().SetState(QuadStates.ACTIVE);
+
+					InitRobot(0, "Player 1", pos, x, z, gameTypeConfig.startPosition.direction, quad, QuadStates.ACTIVE);
 				}
 				if (playersNumber > 1 &&
 					// playerTypes[1] == PlayerTypes.VIRTUAL &&
-					x == config.gridNumberX - 1 && z == config.gridNumberZ - 1
+					x == nCols - 1 && z == nRows - 1
 				) {
-					players[1] = Instantiate(config.robotPrefabs[1], pos, Quaternion.AngleAxis(-90, Vector3.up));
-					players[1].name = "Player 2";
-					RobotController rc = players[1].GetComponent<RobotController>();
-					rc.SetRowCol(z, x);
-					rc.SetDirection(Vector3.left);
-					rc.CurrentQuad = quad;
-					players[1].transform.localScale *= 2.5f * config.size;
-					players[1].transform.parent = this.transform;
-					players[1].GetComponent<PlayerBehaviour>().Index = 1;
-					//robotController = robotPrefabs.GetComponent<RobotController>();
-					quad.GetComponent<QuadBehaviour>().SetState(QuadStates.ON);
+
+					InitRobot(1, "Player 2", pos, x, z, RobyDirection.South, quad, QuadStates.ON);
 
 					// @todo 
 					if (playerTypes[1] == PlayerTypes.REAL) {
@@ -226,9 +286,11 @@ public class Grid : MonoBehaviour {
 			}
 		}
 
+		/*
 		foreach (var pl in players) {
 			pl.GetComponent<RobotController>().AfterInit();
 		}
+		*/
 
 		//CurrentRobotController.CurrentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ACTIVE);
 
@@ -255,6 +317,7 @@ public class Grid : MonoBehaviour {
 		
 		//@tmp
 		transform.parent.localScale *= scaleSize;
+		transform.localScale *= ((float)config.gridNumberX / (float)nCols);
 
 	}
 
@@ -279,9 +342,12 @@ public class Grid : MonoBehaviour {
 		/*
 		GenerateGrid();
 		ClearGrid();
-		config.gridNumberX = 7;
-		config.gridNumberZ = 7;
 		// */
+
+		if (nCols == 0 || nRows == 0) {
+			nCols = config.gridNumberX;
+			nRows = config.gridNumberZ;
+		}
 
 		if (playersNumber > 2) {
 			Debug.LogError("Max 2 players");
@@ -292,9 +358,15 @@ public class Grid : MonoBehaviour {
 		config.gameConfig.Init();
 		GenerateGrid();
 
+		inPause = false;
+
+		if (gameType != GameTypes.TAP && !gameTypeConfig.startPosition.IsSet()) {
+			// Waiting for Roby's position
+			state = state.InitState<StateGridPlayerPosition>();
+		}
+
         actionsQueue = new Queue<CardTypes?>();
 
-		inPause = false;
 	}
 
 	// Use this for initialization
@@ -302,6 +374,11 @@ public class Grid : MonoBehaviour {
 
 		movableBehaviour = GetComponent<GridMovableBehaviour>();
 		switchQuadStateBehaviour = GetComponent<SwitchQuadStateBehaviour>();
+
+		state = GetComponent<StateNull>();
+		if (state == null) {
+			state = gameObject.AddComponent<StateNull>();
+		}
 
 		//gameTypeManager = FindObjectOfType<BaseGridRobyManager>();
 

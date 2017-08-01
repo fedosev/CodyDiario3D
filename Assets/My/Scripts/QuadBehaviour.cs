@@ -205,6 +205,14 @@ public class QuadBehaviour : MonoBehaviour {
 		}
 	}
 
+	public RobyDirection GetDirection() {
+		if (direction == Vector3.forward) return RobyDirection.North;
+		if (direction == Vector3.right) return RobyDirection.East;
+		if (direction == Vector3.back) return RobyDirection.South;
+		if (direction == Vector3.left) return RobyDirection.West;
+		return RobyDirection.Null;
+	}
+
 	
 	private Mesh mesh;
 
