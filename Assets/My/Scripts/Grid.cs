@@ -188,6 +188,7 @@ public class Grid : MonoBehaviour {
 		var quad = Instantiate(config.quadPrefab, pos, Quaternion.AngleAxis(90, Vector3.right));
 		quad.transform.parent = this.transform;
 		quad.tag = "DirectionSelector";
+		quad.GetComponent<Renderer>().material = config.quadInfoMaterial;
 		var quadBh = quad.GetComponent<QuadBehaviour>();
 		quadBh.SetDirection(GetVector3FromDirection(direction));
 		return quadBh;

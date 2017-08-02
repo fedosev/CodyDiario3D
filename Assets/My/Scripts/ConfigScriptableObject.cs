@@ -13,6 +13,7 @@ public class ConfigScriptableObject : ScriptableObject {
 	public Material quadMaterial;
 	public Material quadActiveMaterial;
 	public Material quadOnMaterial;
+	public Material quadInfoMaterial;
 	public Material quadWarningMaterial;
 	public Material quadErrorMaterial;
 	public Material quadPathMaterial;
