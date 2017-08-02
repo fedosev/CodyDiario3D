@@ -25,7 +25,7 @@ public class MainGameManager : MonoBehaviour {
 	CameraDeviceBehaviour cameraDevice;
 	EasyARBehaviour easyARBehaviour;
     ImageTrackerBaseBehaviour imageTracker;
-
+    bool useARchanged = true;
 
     public IEnumerator Init(string gameTypeKey) {
 
@@ -73,6 +73,9 @@ public class MainGameManager : MonoBehaviour {
 
 	public void SetUseAR() {
 
+		if (!useARchanged)
+			return;
+
 		if (useAR) {
 			//easyARBehaviour.gameObject.SetActive(true);
 			aRGameObject.gameObject.SetActive(true);
@@ -84,10 +87,12 @@ public class MainGameManager : MonoBehaviour {
 			//easyARBehaviour.gameObject.SetActive(false);
 			aRGameObject.gameObject.SetActive(false);
 		}
+		useARchanged = false;
 	}
 	
 	public void RestartWithAR(bool useAR) {
 		this.useAR = useAR;
+		useARchanged = true;
 		LoadGameType(gameTypeIndex);
 	}
 

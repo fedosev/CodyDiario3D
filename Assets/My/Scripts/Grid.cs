@@ -180,8 +180,26 @@ public class Grid : MonoBehaviour {
 		InitRobot(index, name, quad.transform.position, col, row, direction, quad, quadState);
 	}
 
-	public void InitRobot1(int col, int row, RobyDirection direction) {
-		InitRobot(0, "Player 1", col, row, direction, QuadStates.ACTIVE);
+	public void InitRobot1(int col, int row, RobyDirection direction, bool animated = false) {
+		if (animated) {
+			StartCoroutine(InitRobotAnimated(0, "Player 1", col, row, direction, QuadStates.ACTIVE));
+		} else {
+			InitRobot(0, "Player 1", col, row, direction, QuadStates.ACTIVE);
+		}
+	}
+
+	public IEnumerator InitRobotAnimated(int index, string name, int col, int row, RobyDirection direction, QuadStates quadState) {
+		var quad = GetQuad(row, col);
+		var part = GameObject.Find("ParticleSystem").GetComponent<ParticleSystem>();
+		part.Stop();
+		part.transform.position = quad.transform.position;
+		part.Play();
+
+		yield return new WaitForSeconds(0.5f);
+
+		InitRobot(index, name, quad.transform.position, col, row, direction, quad, quadState);
+
+		yield return null;
 	}
 
 	public QuadBehaviour InitDirectionalQuad(Vector3 pos, RobyDirection direction) {

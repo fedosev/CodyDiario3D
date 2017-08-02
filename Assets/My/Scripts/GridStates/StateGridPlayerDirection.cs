@@ -28,7 +28,7 @@ public class StateGridPlayerDirection : BaseGameObjectState, IPointerClickHandle
 	public void OnPointerClick(PointerEventData eventData) {
 		if (eventData.pointerEnter.tag == "DirectionSelector") {
 			RobyDirection direction = eventData.pointerEnter.GetComponent<QuadBehaviour>().GetDirection();
-			grid.InitRobot1(grid.startPosInGrid.col, grid.startPosInGrid.row, direction);
+			grid.InitRobot1(grid.startPosInGrid.col, grid.startPosInGrid.row, direction, true);
 			NextState();
 		} else if (eventData.pointerEnter.tag == "Quad") {
 			GoToState<StateGridPlayerPosition>();
