@@ -11,9 +11,9 @@ public class GridTapGameType : BaseGridRobyGameType {
         grid.gameType = GameTypes.TAP;
         grid.playersNumber = 0;
 
-		grid.GetComponent<SwitchQuadStateBehaviour>().enabled = true;
-
         grid.Init();
+
+        grid.state = grid.state.InitState<StateSwitchQuad>();
     }
 
 }

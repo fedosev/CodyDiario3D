@@ -19,7 +19,6 @@ public class Grid : MonoBehaviour {
 	public GameObject[] robotPrefabs;
 
 	public GridMovableBehaviour movableBehaviour;
-	public SwitchQuadStateBehaviour switchQuadStateBehaviour;
 
 	public GameTypes gameType;
 
@@ -53,7 +52,7 @@ public class Grid : MonoBehaviour {
 
 	public BaseGameObjectState state;
 
-	public PositionInGrid startPosInGrid;
+	public PositionInGrid startPosInGrid = new PositionInGrid(-1, -1);
 
 	public List<QuadBehaviour> selectDirectionQuads = new List<QuadBehaviour>();
 
@@ -394,7 +393,6 @@ public class Grid : MonoBehaviour {
 	void Awake () {
 
 		movableBehaviour = GetComponent<GridMovableBehaviour>();
-		switchQuadStateBehaviour = GetComponent<SwitchQuadStateBehaviour>();
 
 		state = GetComponent<StateNull>();
 		if (state == null) {

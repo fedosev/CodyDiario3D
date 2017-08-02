@@ -3,24 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SwitchQuadStateBehaviour : MonoBehaviour {
-
+public class StateSwitchQuad : BaseGameObjectState {
 
 	Grid grid;
 
-	// Use this for initialization
-	void Start () {
+	void Awake() {
 		grid = GetComponent<Grid>();
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update() {
 		
-		QuadStates state;
+		QuadStates quadState;
 		if (grid.gameType == GameTypes.PATH) {
-			state = QuadStates.PATH;
+			quadState = QuadStates.PATH;
 		} else if (true || grid.gameType == GameTypes.SNAKE) {
-			state = QuadStates.OBSTACLE;
+			quadState = QuadStates.OBSTACLE;
 		} else
 			return;
 
@@ -44,9 +42,9 @@ public class SwitchQuadStateBehaviour : MonoBehaviour {
 				if (hit.transform.gameObject.tag == "Quad") {
 					QuadBehaviour quad = hit.transform.GetComponent<QuadBehaviour>();
 					if (quad.mainState == QuadStates.DEFAULT) {
-						quad.SetState(state);
+						quad.SetState(quadState);
 					}
-					else if (quad.mainState == state) {
+					else if (quad.mainState == quadState) {
 						quad.SetState(QuadStates.DEFAULT);
 					}
 				}

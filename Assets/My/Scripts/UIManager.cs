@@ -19,7 +19,7 @@ public class UIManager : MonoBehaviour {
     public void OpenConfigMenu() {
 		panelConfig.SetActive(true);
 		panelControlls.SetActive(false);
-		grid.switchQuadStateBehaviour.enabled = true;
+		//grid.switchQuadStateBehaviour.enabled = true;
 		grid.inPause = true;
 	}
 
@@ -28,7 +28,7 @@ public class UIManager : MonoBehaviour {
 		panelControlls.SetActive(true);
 		grid.movableBehaviour.isActive = false;
 		moveGrid.isOn = false;
-		grid.switchQuadStateBehaviour.enabled = false;
+		//grid.switchQuadStateBehaviour.enabled = false;
 		grid.inPause = false;
 	}
 
@@ -79,7 +79,7 @@ public class UIManager : MonoBehaviour {
 
 	public void SwitchMoveGrid() {
 		grid.movableBehaviour.isActive = moveGrid.isOn;
-		grid.switchQuadStateBehaviour.enabled = !moveGrid.isOn;
+		//grid.switchQuadStateBehaviour.enabled = !moveGrid.isOn;
 	}
 
     public void SwitchCamera() {

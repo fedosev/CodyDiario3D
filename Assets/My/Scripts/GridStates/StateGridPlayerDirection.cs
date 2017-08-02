@@ -7,6 +7,15 @@ public class StateGridPlayerDirection : BaseGameObjectState, IPointerClickHandle
 
 	Grid grid;
 
+	public override BaseGameObjectState NextState() {
+
+		if (grid.gameType == GameTypes.PATH) { //@tmp
+			return GoToState<StateSwitchQuad>();
+		}
+
+		return GoToState<StateNull>();
+	}
+
 	public override void OnEnter() {
 		grid.InitDirectionalQuads();
 	}
