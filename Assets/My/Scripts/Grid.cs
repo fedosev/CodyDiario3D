@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public enum GameTypes { FREE, TAP, SNAKE, PATH };
 
@@ -193,12 +194,32 @@ public class Grid : MonoBehaviour {
 		return quadBh;
 	}
 
+
+	 // @tmp {
+	[SerializeField]
+	Ease e = Ease.OutElastic;
+	[SerializeField]
+	float t = 0.5f;
+	[SerializeField]
+	float v1 = 0.8f;
+	[SerializeField]
+	float v2 = 0f;
+	// }
+
 	public void InitDirectionalQuads() {
-		var yOffset = new Vector3(0f, 0.01f, 0f);
+		ClearDirectionalQuads(); //@tmp
+		//var yOffset = new Vector3(0f, 0.01f, 0f);
+		var yOffset = new Vector3(0f, 0.5f, 0f);
 		selectDirectionQuads.Add(InitDirectionalQuad(GetQuadPosition(startPosInGrid.row + 1, startPosInGrid.col) + yOffset, RobyDirection.North));
 		selectDirectionQuads.Add(InitDirectionalQuad(GetQuadPosition(startPosInGrid.row, startPosInGrid.col + 1) + yOffset, RobyDirection.East));
 		selectDirectionQuads.Add(InitDirectionalQuad(GetQuadPosition(startPosInGrid.row - 1, startPosInGrid.col) + yOffset, RobyDirection.South));
 		selectDirectionQuads.Add(InitDirectionalQuad(GetQuadPosition(startPosInGrid.row, startPosInGrid.col - 1) + yOffset, RobyDirection.West));
+
+		// Animation
+		var i = 0;
+		foreach (var quad in selectDirectionQuads) {
+			quad.transform.DOMoveY(0.01f, t).SetEase(e, v1, v1).SetDelay(i++ * 0.1f);
+		}
 	}
 
 	public void ClearDirectionalQuads() {

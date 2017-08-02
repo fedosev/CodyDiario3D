@@ -22,8 +22,8 @@ public class StateGridPlayerPosition : BaseGameObjectState, IPointerClickHandler
 			grid.startPosInGrid = grid.GetQuadPositionInGrid(quad.gameObject);
 			//grid.InitRobot1(grid.startPosInGrid.col, grid.startPosInGrid.row, RobyDirection.North);
 			quad.SetState(QuadStates.ACTIVE);
+			NextState();
 		}
-		NextState();
 	}
 
 	// Use this for initialization
