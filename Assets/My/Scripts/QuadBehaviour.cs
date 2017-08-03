@@ -161,21 +161,12 @@ public class QuadBehaviour : MonoBehaviour {
 	}
 
 	public bool IsFreeToGoIn() {
-		if (grid.gameType == GameTypes.FREE) {
-			return true;
-		}
+
 		if (otherState == QuadStates.ACTIVE || otherState == QuadStates.ON)
 			return false;
 
-		var isFree = false;
-		if (grid.gameType == GameTypes.SNAKE) {
-			isFree = mainState != QuadStates.OBSTACLE;
-		}
-		else if (grid.gameType == GameTypes.PATH) {
-			isFree = mainState == QuadStates.PATH;
-					 
-		}
-		return isFree;
+
+		return grid.gameTypeConfig.QuadIsFreeToGoIn(this);
 	}
 
 	public void SetDirection(Vector3 direction) {

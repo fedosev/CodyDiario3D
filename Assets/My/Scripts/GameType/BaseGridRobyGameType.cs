@@ -53,6 +53,12 @@ public abstract class BaseGridRobyGameType : BaseGameType {
 
     public virtual void SetupQuad(QuadBehaviour quad, int col, int row) { }
 
+    public virtual void ChangeQuad(RobotController robot, QuadBehaviour prevQuad, QuadBehaviour nextQuad) { }
+
+    public virtual bool QuadIsFreeToGoIn(QuadBehaviour quad) {
+        return false;
+    }
+
     public override string sceneName { get {
         return "GridRoby";
     } }

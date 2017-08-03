@@ -69,37 +69,20 @@ public class RobotController : MonoBehaviour, IDirection {
 	public event Action OnFinishMovementOnce;
 
 	bool isUpdatingCurrentQuad = false;
-    bool isFirstMove = true;
+    public bool isFirstMove = true;
 
-    private void CheckByGameType(GameObject currentQuad, GameObject nextQuad) { // @todo refactorig
+    private void ChangeQuadByGameType(GameObject currentQuad, GameObject nextQuad) { // @todo refactorig
 
 		var quadBh = nextQuad.GetComponent<QuadBehaviour>();
 		var prevQuadBh = currentQuad.GetComponent<QuadBehaviour>();
 
+		grid.gameTypeConfig.ChangeQuad(this, prevQuadBh, quadBh);		
+
 		switch (grid.gameType) {
 			case GameTypes.FREE:
-				if (((FreeModeGameType)(grid.gameTypeConfig)).trace) {
-					if (!isFirstMove)
-						prevQuadBh.SetState(QuadStates.PATH);
-				} else {
-					prevQuadBh.SetState(QuadStates.DEFAULT);
-				}
-				quadBh.SetState(QuadStates.ACTIVE);
 				break;
 			case GameTypes.SNAKE:
 			case GameTypes.PATH:
-				// SNAKE (and PATH?)
-				if (isFirstMove)
-					prevQuadBh.SetOtherState(QuadStates.DEFAULT);
-				else
-					prevQuadBh.SetState(QuadStates.OBSTACLE);
-				if (quadBh.IsFreeToGoIn()) {
-					quadBh.SetState(QuadStates.ACTIVE);
-					//sounds.playSound(sounds.soundStep);
-				} else {
-					quadBh.SetState(QuadStates.ERROR);
-					DoLose();
-				}
 				break;
 		}
 
@@ -112,7 +95,7 @@ public class RobotController : MonoBehaviour, IDirection {
 	}
 
 	private void UpdateCurrentQuadBegin() {
-		CheckByGameType(
+		ChangeQuadByGameType(
 			grid.GetQuad(currentQuadRow, currentQuadCol),
 			grid.GetQuad(currentQuadRow + (int)direction.z, currentQuadCol + (int)direction.x)
 		);
@@ -320,7 +303,7 @@ public class RobotController : MonoBehaviour, IDirection {
 
 		StartCoroutine(WaitAndFixTransform());
 
-		Debug.Log("Stop Move");
+		//Debug.Log("Stop Move");
 	}
 
 	public void SetRowCol(int row, int col) {

@@ -11,10 +11,18 @@ public class CodingGrid : MonoBehaviour {
     Grid grid;
 
     public void AppendCard(CardTypes type) {
+
+        if (cardsNumber >= maxCardsNumber) 
+            return;
+
         cards[cardsNumber] = type;
         cardsNumber++;
     }
     public void AppendCard(char cardLetter) {
+
+        if (cardsNumber >= maxCardsNumber) 
+            return;
+        
         switch (cardLetter) {
             case 'A': cards[cardsNumber] = CardTypes.FORWARD; break;
             case 'S': cards[cardsNumber] = CardTypes.LEFT; break;
@@ -26,6 +34,12 @@ public class CodingGrid : MonoBehaviour {
         }
         cardsNumber++;
     }
+
+    public void SetCards(string cardLetters) {
+        for (var i = 0; i < cardLetters.Length; i++) {
+            AppendCard(cardLetters[i]);
+        }
+    }    
 
     public void RemoveLastCard() {
         cards[cardsNumber] = null;

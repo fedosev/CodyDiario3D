@@ -14,4 +14,26 @@ public class SnakeGameType : BaseGridRobyGameType {
         grid.Init();
     }
 
+    public override void ChangeQuad(RobotController robot, QuadBehaviour prevQuad, QuadBehaviour nextQuad) {
+        
+        if (robot.isFirstMove) {
+            prevQuad.SetOtherState(QuadStates.DEFAULT);
+        } else {
+            prevQuad.SetState(QuadStates.OBSTACLE);
+        }
+
+        if (nextQuad.IsFreeToGoIn()) {
+            nextQuad.SetState(QuadStates.ACTIVE);
+            //robot.sounds.playSound(sounds.soundStep);
+        } else {
+            nextQuad.SetState(QuadStates.ERROR);
+            robot.DoLose();
+        }
+
+    }
+
+    public override bool QuadIsFreeToGoIn(QuadBehaviour quad) {
+        return quad.mainState != QuadStates.OBSTACLE;
+    }
+
 }

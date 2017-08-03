@@ -16,4 +16,19 @@ public class FreeModeGameType : BaseGridRobyGameType {
         grid.Init();
     }
 
+    public override void ChangeQuad(RobotController robot, QuadBehaviour prevQuad, QuadBehaviour nextQuad) {
+
+        if (trace) {
+            if (!robot.isFirstMove)
+                prevQuad.SetState(QuadStates.PATH);
+        } else {
+            prevQuad.SetState(QuadStates.DEFAULT);
+        }
+        nextQuad.SetState(QuadStates.ACTIVE);
+    }
+
+    public override bool QuadIsFreeToGoIn(QuadBehaviour quad) {
+        return true;
+    }
+
 }
