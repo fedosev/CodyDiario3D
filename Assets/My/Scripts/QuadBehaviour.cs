@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using DG.Tweening;
 
 public enum QuadStates { DEFAULT, ON, ACTIVE, CURSOR_ON, CURSOR_ACTIVE, CURSOR_WARNING, WARNING, ERROR, OBSTACLE, PATH };
 
@@ -11,7 +14,9 @@ public class QuadBehaviour : MonoBehaviour {
 
 	public Mesh defaultMesh;
 
-	public Vector3 direction; 
+	public Vector3 direction;
+
+	public char letter = ' ';
 
 	private Grid grid;
 	private ConfigScriptableObject config;
@@ -114,6 +119,7 @@ public class QuadBehaviour : MonoBehaviour {
 			case QuadStates.CURSOR_ACTIVE:
 				rend.material = config.quadActiveMaterial;
 				otherState = quadState;
+				//StartCoroutine(AnimateLetter());
 				break;
 			case QuadStates.ON:
 			case QuadStates.CURSOR_ON:
@@ -287,4 +293,37 @@ public class QuadBehaviour : MonoBehaviour {
 		return go;
 	}
 
+
+	TextMeshPro text;
+
+	public TextMeshPro GetText() {
+		if (text == null) {
+			text = Instantiate(grid.config.quadLetterPrefab).GetComponent<TextMeshPro>();
+			text.transform.position = transform.position + new Vector3(0f, 0.0001f, 0f);
+			text.transform.parent = transform;
+		}
+		return text;
+	}
+
+    public void SetLetter(char c) {
+		letter = c;
+        GetText().text = c.ToString();
+    }
+
+	public IEnumerator AnimateLetter() {
+		var animTime = 0.75f;
+		if (grid.gameTypeConfig.withLetters && letter != ' ') {
+			var textObj = GetText().gameObject;
+			var textCloneObj = Instantiate(textObj, text.transform.position, text.transform.rotation, transform);
+			textCloneObj.transform.DOMove(Camera.main.transform.position, animTime).SetEase(Ease.InQuad);
+			//textCloneObj.transform.DOMoveY(0.5f, animTime).SetEase(Ease.InExpo);
+			//textCloneObj.transform.DOScale(textObj.transform.localScale * 2, animTime).SetEase(Ease.InQuad);
+			textCloneObj.transform.DOLookAt(Camera.main.transform.forward, animTime).SetEase(Ease.InQuad);
+			yield return new WaitForSeconds(animTime - 0.1f);
+			grid.gameTypeManager.AppendLetter(letter);
+			yield return new WaitForSeconds(0.1f);
+			Destroy(textCloneObj);
+		}
+		yield return null;
+	}
 }

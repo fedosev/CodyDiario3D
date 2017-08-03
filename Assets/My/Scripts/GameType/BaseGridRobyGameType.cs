@@ -47,6 +47,10 @@ public abstract class BaseGridRobyGameType : BaseGameType {
 
     public RobyStartPosition startPosition;
 
+    public bool withLetters = false;
+
+    public string[] letters;
+
     public override string sceneName { get {
         return "GridRoby";
     } }

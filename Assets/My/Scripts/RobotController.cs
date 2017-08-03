@@ -75,10 +75,13 @@ public class RobotController : MonoBehaviour, IDirection {
 		var quadBh = nextQuad.GetComponent<QuadBehaviour>();
 		var prevQuadBh = currentQuad.GetComponent<QuadBehaviour>();
 
-		// FREE MODE
 		switch (grid.gameType) {
 			case GameTypes.FREE:
-				prevQuadBh.SetState(QuadStates.DEFAULT);
+				if (((FreeModeGameType)(grid.gameTypeConfig)).trace) {
+					prevQuadBh.SetState(QuadStates.PATH);
+				} else {
+					prevQuadBh.SetState(QuadStates.DEFAULT);
+				}
 				quadBh.SetState(QuadStates.ACTIVE);
 				break;
 			case GameTypes.SNAKE:
@@ -93,6 +96,11 @@ public class RobotController : MonoBehaviour, IDirection {
 					DoLose();
 				}
 				break;
+		}
+
+		if (grid.gameTypeConfig.withLetters) {
+			StartCoroutine(quadBh.AnimateLetter());
+			Debug.Log(quadBh.letter);
 		}
 		
 	}

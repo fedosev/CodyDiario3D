@@ -97,6 +97,9 @@ public class Grid : MonoBehaviour {
 		var index = row * nCols + col;
 		return quadTransforms[index].gameObject;
 	}
+	public QuadBehaviour GetQuadBh(int row, int col) {
+		return GetQuad(row, col).GetComponent<QuadBehaviour>();
+	}
 
 	public PositionInGrid GetQuadPositionInGrid(GameObject quad) {
 		int i = 0;
@@ -190,10 +193,11 @@ public class Grid : MonoBehaviour {
 
 	public IEnumerator InitRobotAnimated(int index, string name, int col, int row, RobyDirection direction, QuadStates quadState) {
 		var quad = GetQuad(row, col);
-		var part = GameObject.Find("ParticleSystem").GetComponent<ParticleSystem>();
-		part.Stop();
-		part.transform.position = quad.transform.position;
-		part.Play();
+		if (particleSystemShowRoby == null)
+			particleSystemShowRoby = Instantiate(config.particleSystemShowRobyPrefab).GetComponent<ParticleSystem>();
+		particleSystemShowRoby.Stop();
+		particleSystemShowRoby.transform.position = quad.transform.position;
+		particleSystemShowRoby.Play();
 
 		yield return new WaitForSeconds(0.5f);
 
@@ -213,18 +217,20 @@ public class Grid : MonoBehaviour {
 	}
 
 
-	 // @tmp {
-	[SerializeField]
-	Ease e = Ease.OutElastic;
-	[SerializeField]
-	float t = 0.5f;
-	[SerializeField]
-	float v1 = 0.8f;
-	[SerializeField]
-	float v2 = 0f;
-	// }
+    ParticleSystem particleSystemShowRoby;
 
-	public void InitDirectionalQuads() {
+	 // @tmp ANIMATION VALUES {
+	//[SerializeField]
+	Ease e = Ease.OutElastic;
+	//[SerializeField]
+	float t = 0.5f;
+	//[SerializeField]
+	float v1 = 0.8f;
+	//[SerializeField]
+	float v2 = 0f;
+    // }
+
+    public void InitDirectionalQuads() {
 		ClearDirectionalQuads(); //@tmp
 		//var yOffset = new Vector3(0f, 0.01f, 0f);
 		var yOffset = new Vector3(0f, 0.5f, 0f);
@@ -254,16 +260,19 @@ public class Grid : MonoBehaviour {
 		var width = nCols * (config.size + config.borderSize) + config.borderSize;
 		var height = nRows * (config.size + config.borderSize) + config.borderSize;
 
-		baseScale = new Vector3(width, height,1f);
+		var maxScale = Mathf.Max(width, height);
+		baseScale = new Vector3(maxScale, maxScale, maxScale);
 		this.transform.localScale = baseScale;
 
 		config.quadPrefab.transform.localScale = new Vector3(
 			config.size,
 			config.size,
-			1f
+			config.size
 		);
 
 		players = new GameObject[playersNumber];
+
+		// BORDERS
 
 		for (var x = 0; x <= nCols; x++) {
 			Vector3 pos = new Vector3(
@@ -281,6 +290,8 @@ public class Grid : MonoBehaviour {
 			) + transform.position;
 			CreateBorder(pos, width, 0);
 		}
+
+		// QUADS
 
 		var quadLength = nCols * nRows;
 		quadTransforms = new Transform[quadLength];
@@ -302,6 +313,10 @@ public class Grid : MonoBehaviour {
 				//quadPositions[i] = new Vector3(pos.x, pos.y, pos.z);
 				quadTransforms[i] = quad.transform;
 				i ++;
+
+				if (gameTypeConfig.withLetters) {
+					quad.GetComponent<QuadBehaviour>().SetLetter(gameTypeConfig.letters[z][x]);
+				}
 
 				if (playerTypes[0] == PlayerTypes.VIRTUAL && x == gameTypeConfig.startPosition.col && z == gameTypeConfig.startPosition.row) {
 
@@ -465,12 +480,14 @@ public class Grid : MonoBehaviour {
 		CurrentRobotController.CurrentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ACTIVE);
 
 		// @todo {
+		/*
 		if (playerTypes[playerTurn] == PlayerTypes.VIRTUAL) {
 			UIControlls.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0);
 		}
 		else if (playerTypes[playerTurn] == PlayerTypes.REAL) {
 			UIControlls.GetComponent<RectTransform>().offsetMin = new Vector2(1000, 1000);
 		}
+		*/
 		// }
 	}
 
