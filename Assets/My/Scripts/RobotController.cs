@@ -68,9 +68,10 @@ public class RobotController : MonoBehaviour, IDirection {
 	public event DirectionChangeAction OnDirectionChange;
 	public event Action OnFinishMovementOnce;
 
-	private bool isUpdatingCurrentQuad = false;
+	bool isUpdatingCurrentQuad = false;
+    bool isFirstMove = true;
 
-	private void CheckByGameType(GameObject currentQuad, GameObject nextQuad) { // @todo refactorig
+    private void CheckByGameType(GameObject currentQuad, GameObject nextQuad) { // @todo refactorig
 
 		var quadBh = nextQuad.GetComponent<QuadBehaviour>();
 		var prevQuadBh = currentQuad.GetComponent<QuadBehaviour>();
@@ -78,7 +79,8 @@ public class RobotController : MonoBehaviour, IDirection {
 		switch (grid.gameType) {
 			case GameTypes.FREE:
 				if (((FreeModeGameType)(grid.gameTypeConfig)).trace) {
-					prevQuadBh.SetState(QuadStates.PATH);
+					if (!isFirstMove)
+						prevQuadBh.SetState(QuadStates.PATH);
 				} else {
 					prevQuadBh.SetState(QuadStates.DEFAULT);
 				}
@@ -87,7 +89,10 @@ public class RobotController : MonoBehaviour, IDirection {
 			case GameTypes.SNAKE:
 			case GameTypes.PATH:
 				// SNAKE (and PATH?)
-				prevQuadBh.SetState(QuadStates.OBSTACLE);
+				if (isFirstMove)
+					prevQuadBh.SetOtherState(QuadStates.DEFAULT);
+				else
+					prevQuadBh.SetState(QuadStates.OBSTACLE);
 				if (quadBh.IsFreeToGoIn()) {
 					quadBh.SetState(QuadStates.ACTIVE);
 					//sounds.playSound(sounds.soundStep);
@@ -103,6 +108,7 @@ public class RobotController : MonoBehaviour, IDirection {
 			Debug.Log(quadBh.letter);
 		}
 		
+		isFirstMove = false;
 	}
 
 	private void UpdateCurrentQuadBegin() {

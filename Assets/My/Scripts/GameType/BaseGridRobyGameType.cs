@@ -51,6 +51,8 @@ public abstract class BaseGridRobyGameType : BaseGameType {
 
     public string[] letters;
 
+    public virtual void SetupQuad(QuadBehaviour quad, int col, int row) { }
+
     public override string sceneName { get {
         return "GridRoby";
     } }

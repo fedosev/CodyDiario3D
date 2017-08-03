@@ -9,7 +9,7 @@ public class StateGridPlayerDirection : BaseGameObjectState, IPointerClickHandle
 
 	public override BaseGameObjectState NextState() {
 
-		if (grid.gameType == GameTypes.PATH) { //@tmp
+		if (grid.gameType == GameTypes.PATH && ((PathGameType)(grid.gameTypeConfig)).path.Length == 0) {
 			return GoToState<StateSwitchQuad>();
 		}
 

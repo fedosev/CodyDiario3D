@@ -315,8 +315,9 @@ public class Grid : MonoBehaviour {
 				i ++;
 
 				if (gameTypeConfig.withLetters) {
-					quad.GetComponent<QuadBehaviour>().SetLetter(gameTypeConfig.letters[z][x]);
+					quad.GetComponent<QuadBehaviour>().SetLetter(gameTypeConfig.letters[nRows - 1 - z][x]);
 				}
+				gameTypeConfig.SetupQuad(quad.GetComponent<QuadBehaviour>(), x, z);
 
 				if (playerTypes[0] == PlayerTypes.VIRTUAL && x == gameTypeConfig.startPosition.col && z == gameTypeConfig.startPosition.row) {
 

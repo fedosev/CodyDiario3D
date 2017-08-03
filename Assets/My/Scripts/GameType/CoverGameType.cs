@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu]
-public class CoverGameType : BaseGridRobyGameType {
+public class CoverGameType : FreeModeGameType {
 
     public override void InitBody() {
 

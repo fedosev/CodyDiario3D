@@ -20,9 +20,11 @@ public class GridRobyManager : BaseGameTypeManager {
 		grid.gameTypeManager = this;
 		grid.gameTypeConfig = (BaseGridRobyGameType)gameType;
 
-		panelLetters.SetActive(grid.gameTypeConfig.withLetters);
-		lettersText = panelLetters.GetComponentInChildren<Text>();
-		lettersText.text = "";
+		if (panelLetters != null) {
+			panelLetters.SetActive(grid.gameTypeConfig.withLetters);
+			lettersText = panelLetters.GetComponentInChildren<Text>();
+			lettersText.text = "";
+		}
 	}
 
 	public void AppendLetter(char letter) {

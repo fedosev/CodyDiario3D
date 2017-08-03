@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class StateNull : BaseGameObjectState {
 
+	public override bool IsNull() {
+		return true;
+	}
+
 	// Use this for initialization
 	void Start () {
 		

@@ -34,8 +34,13 @@ public class StateSwitchQuad : BaseGameObjectState {
 				var raycastResults = new List<RaycastResult>();
 				EventSystem.current.RaycastAll(pointerData, raycastResults);
 				//Debug.Log(raycastResults.Count);
-				if (raycastResults.Count > 2)
-					return;
+				if (raycastResults.Count > 1) {
+					foreach (var res in raycastResults) {
+						if (res.gameObject.layer == 5) { // UI
+							return;
+						}
+					}
+				}
 				/*
 				*/
 

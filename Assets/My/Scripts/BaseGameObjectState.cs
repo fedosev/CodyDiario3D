@@ -7,6 +7,10 @@ public abstract class BaseGameObjectState : MonoBehaviour {
 	public virtual void OnEnter() {}
 	public virtual void OnExit() {}
 
+	public virtual bool IsNull() {
+		return false;
+	}
+
 	public T GetState<T>() where T : BaseGameObjectState {
 
 		T state = GetComponent<T>();

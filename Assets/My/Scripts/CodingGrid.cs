@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CodingGrid : MonoBehaviour {
 
-    int maxCardsNumber = 10;
+    int maxCardsNumber = 26;
     int cardsNumber = 0;
     CardTypes?[] cards;
 
@@ -12,6 +12,18 @@ public class CodingGrid : MonoBehaviour {
 
     public void AppendCard(CardTypes type) {
         cards[cardsNumber] = type;
+        cardsNumber++;
+    }
+    public void AppendCard(char cardLetter) {
+        switch (cardLetter) {
+            case 'A': cards[cardsNumber] = CardTypes.FORWARD; break;
+            case 'S': cards[cardsNumber] = CardTypes.LEFT; break;
+            case 'D': cards[cardsNumber] = CardTypes.RIGHT; break;
+            default:
+                Debug.LogError(cardLetter);
+                Debug.LogError("Should be A, S or D");
+                return;
+        }
         cardsNumber++;
     }
 
