@@ -24,8 +24,13 @@ public class AllGameTypesEditor : Editor
                 //allGameTypes.items.Add(asset.name, asset);
                 allGameTypes.items.Add(asset);
 			    Debug.Log("Load " + asset.ToString() + " - " + asset.name);
-                AssetDatabase.SaveAssets();
+                //AssetDatabase.SaveAssets();
             }
         }
+        if(GUILayout.Button("Save")) {
+            EditorUtility.SetDirty(allGameTypes);
+            AssetDatabase.SaveAssets();
+            //allGameTypes.Save();
+        }        
     }
 }

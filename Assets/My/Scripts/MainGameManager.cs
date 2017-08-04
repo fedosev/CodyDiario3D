@@ -7,6 +7,13 @@ using EasyAR;
 
 public class MainGameManager : MonoBehaviour {
 
+	private static MainGameManager instance;
+	public static MainGameManager Instance { get {
+		if (instance == null)
+			instance = GameObject.FindObjectOfType<MainGameManager>();
+		return instance;
+	} }
+
 	public AllGameTypes allGameTypes;
 
 	public MainMenu mainMenu;

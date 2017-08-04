@@ -22,6 +22,8 @@ public class GridRobyManager : BaseGameTypeManager {
 
     public CodingGrid codingGrid;
 
+	public GameObject[] objectsToHideOnDevBoard;
+
 	public EasyImageTargetBehaviour imageTargetDevBoard;
 
 	Text lettersText;
@@ -65,6 +67,9 @@ public class GridRobyManager : BaseGameTypeManager {
 		} else {
 			gameManager.imageTracker.UnloadImageTargetBehaviour(imageTargetDevBoard);
 			//imageTargetDevBoard.gameObject.SetActive(false);
+		}
+		foreach (var obj in objectsToHideOnDevBoard) {
+			obj.SetActive(!activate);
 		}
 		gameManager.imageTracker.StartTrack();
 	}

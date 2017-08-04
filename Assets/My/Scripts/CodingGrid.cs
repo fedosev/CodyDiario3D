@@ -10,6 +10,27 @@ public class CodingGrid : MonoBehaviour {
 
     Grid grid;
 
+    public char GetLetterFromType(CardTypes cardType) {
+        switch (cardType) {
+            case CardTypes.FORWARD: return 'A';
+            case CardTypes.LEFT: return 'S';
+            case CardTypes.RIGHT: return 'D';
+        }
+        return 'X';
+    }
+
+    public CardTypes GetTypeFromLetter(char cardLetter) {
+        switch (cardLetter) {
+            case 'A': return CardTypes.FORWARD;
+            case 'S': return CardTypes.LEFT;
+            case 'D': return CardTypes.RIGHT;
+            default:
+                Debug.LogError(cardLetter);
+                Debug.LogError("Should be A, S or D");
+                return CardTypes.FORWARD;
+        }
+    }
+
     public void AppendCard(CardTypes type) {
 
         if (cardsNumber >= maxCardsNumber) 
@@ -17,21 +38,15 @@ public class CodingGrid : MonoBehaviour {
 
         cards[cardsNumber] = type;
         cardsNumber++;
+
+        GridRobyManager.Instance.AppendLetter(GetLetterFromType(type));
     }
     public void AppendCard(char cardLetter) {
 
         if (cardsNumber >= maxCardsNumber) 
             return;
-        
-        switch (cardLetter) {
-            case 'A': cards[cardsNumber] = CardTypes.FORWARD; break;
-            case 'S': cards[cardsNumber] = CardTypes.LEFT; break;
-            case 'D': cards[cardsNumber] = CardTypes.RIGHT; break;
-            default:
-                Debug.LogError(cardLetter);
-                Debug.LogError("Should be A, S or D");
-                return;
-        }
+
+        cards[cardsNumber] = GetTypeFromLetter(cardLetter);
         cardsNumber++;
 
         GridRobyManager.Instance.AppendLetter(cardLetter);

@@ -131,7 +131,7 @@ public class DevBoardFormElement : ARFormElement {
 				break;
 			}
 		}
-		return sb.ToString();		
+		return sb.ToString();
 	}
 
 	public void SendToCodingGrid() {

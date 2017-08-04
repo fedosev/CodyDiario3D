@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu]
-public class Snake2PGameType : BaseGridRobyGameType {
+public class Snake2PGameType : SnakeGameType {
 
     public override void InitBody() {
 

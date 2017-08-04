@@ -21,6 +21,9 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		foreach (var rend in gameObj.GetComponentsInChildren<Renderer>()) {
 			rend.enabled = show;
 		}
+		foreach (var canvas in gameObj.GetComponentsInChildren<Canvas>()) {
+			canvas.enabled = show;
+		}		
 	}
 
 	public virtual void InitConfig() {

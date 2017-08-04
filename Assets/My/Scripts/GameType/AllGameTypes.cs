@@ -19,21 +19,28 @@ public class AllGameTypes : ScriptableObject {
         return false;
     }
 
-	public void OnDisable() {
+    public void Save() {
+        Debug.Log("AllGameTypes - Save");
+        PlayerPrefs.SetString("AllGameTypes", JsonUtility.ToJson(this));
+        //Debug.Log(JsonUtility.ToJson(this));
+    }
 
-		Debug.Log("AllGameTypes - Save");
-		PlayerPrefs.SetString("AllGameTypes", JsonUtility.ToJson(this));
-
-	}
-
-	public void OnEnable() {
-
+    public void Load() {
 		var jsonStr = PlayerPrefs.GetString("AllGameTypes");
 		if (jsonStr.Length > 0) {
 			JsonUtility.FromJsonOverwrite(jsonStr, this);
 		}
-
 		Debug.Log("AllGameTypes - Load");
+    }
+
+	public void OnDisable() {
+
+        //Save();
+	}
+
+	public void OnEnable() {
+
+        //Load();
 		
 	}    
 
