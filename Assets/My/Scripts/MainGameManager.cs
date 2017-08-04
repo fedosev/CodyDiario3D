@@ -24,7 +24,8 @@ public class MainGameManager : MonoBehaviour {
 
 	CameraDeviceBehaviour cameraDevice;
 	EasyARBehaviour easyARBehaviour;
-    ImageTrackerBaseBehaviour imageTracker;
+    public ImageTrackerBaseBehaviour imageTracker;
+
     bool useARchanged = true;
 
     public IEnumerator Init(string gameTypeKey) {
@@ -104,8 +105,10 @@ public class MainGameManager : MonoBehaviour {
 	void Awake() {
 
 		easyARBehaviour = FindObjectOfType<EasyARBehaviour>();
-		imageTracker = FindObjectOfType<ImageTrackerBaseBehaviour>();
 		cameraDevice = FindObjectOfType<CameraDeviceBehaviour>();
+		if (imageTracker == null) {
+			imageTracker = FindObjectOfType<ImageTrackerBaseBehaviour>();
+		}
 	}
 
 	void Start () {

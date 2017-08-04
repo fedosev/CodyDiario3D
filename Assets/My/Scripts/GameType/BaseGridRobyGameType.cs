@@ -51,12 +51,30 @@ public abstract class BaseGridRobyGameType : BaseGameType {
 
     public string[] letters;
 
+    public bool useDevBoard = false;
+
+    protected GridRobyManager gridRobyManager;
+
     public virtual void SetupQuad(QuadBehaviour quad, int col, int row) { }
 
     public virtual void ChangeQuad(RobotController robot, QuadBehaviour prevQuad, QuadBehaviour nextQuad) { }
 
     public virtual bool QuadIsFreeToGoIn(QuadBehaviour quad) {
         return false;
+    }
+
+    public override void BeforeInit() {
+        base.BeforeInit();
+        gridRobyManager = GameObject.FindObjectOfType<GridRobyManager>();
+    }
+
+    public override void AfterInit() {
+        base.AfterInit();
+        
+        if (useDevBoard && GameObject.FindObjectOfType<MainGameManager>().useAR) {
+            // @todo activate dev board
+            Debug.Log("Activate dev board..."); 
+        }
     }
 
     public override string sceneName { get {

@@ -366,9 +366,11 @@ public class Grid : MonoBehaviour {
 		}
 		// }
 
+		/*
 		foreach (Transform child in this.transform) {
 			child.gameObject.layer = 9;
 		}
+		*/
 		
 		//@tmp
 		transform.parent.localScale *= scaleSize;

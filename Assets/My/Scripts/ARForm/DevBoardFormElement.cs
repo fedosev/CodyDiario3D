@@ -34,6 +34,8 @@ public class DevBoardFormElement : ARFormElement {
 	public Text uiPreviewValues;
 	public Text uiSavedValues;
 
+	public CodingGrid codingGrid;
+
 	float bestColorIntensity;
 
 	CardType bestCard;
@@ -116,7 +118,31 @@ public class DevBoardFormElement : ARFormElement {
 		}
 		uiSavedValues.text = sb.ToString();
 
-	}	
+	}
+
+	public string GetCardLetters() {
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < boadLength; i++) {
+			CardType card;
+			if (cardsValues[i].TryGetValue(out card) && card != CardType.Null) {
+				sb.Append(GetCardChar(card));
+			} else {
+				break;
+			}
+		}
+		return sb.ToString();		
+	}
+
+	public void SendToCodingGrid() {
+
+		var code = GetCardLetters();
+		if (code != "") {
+			Debug.Log(code);
+			codingGrid.SetCards(code);
+			GridRobyManager.Instance.SetDevBoardActive(false);
+		}
+	}
 
 }
 

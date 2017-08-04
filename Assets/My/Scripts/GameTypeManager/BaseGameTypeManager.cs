@@ -11,6 +11,8 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 	public bool useAR = true;
 
+	protected MainGameManager gameManager;
+
 	public void ShowGame(bool show) {
 
 		if (!useAR)
@@ -41,9 +43,12 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		yield return null;
 	}
 
+	void Awake() {
+		gameManager = FindObjectOfType<MainGameManager>();
+	}
 	void Start() {
 
-		StartCoroutine(Init());		
+		StartCoroutine(Init());
 	}
 
 }

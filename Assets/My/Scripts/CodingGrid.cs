@@ -33,6 +33,8 @@ public class CodingGrid : MonoBehaviour {
                 return;
         }
         cardsNumber++;
+
+        GridRobyManager.Instance.AppendLetter(cardLetter);
     }
 
     public void SetCards(string cardLetters) {

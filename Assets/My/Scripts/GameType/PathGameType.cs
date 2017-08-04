@@ -17,12 +17,8 @@ public class PathGameType : BaseGridRobyGameType {
 
 		grid.Init();
 
-
-		if (code.Length > 0) {
-			var codingGrid = GameObject.FindObjectOfType<CodingGrid>();
-			if (codingGrid != null) {
-				codingGrid.SetCards(code);
-			}
+		if (code.Length > 0 && gridRobyManager.codingGrid != null) {
+			gridRobyManager.codingGrid.SetCards(code);
 		}
 
 		if (path.Length == 0 && grid.state.IsNull()) {
