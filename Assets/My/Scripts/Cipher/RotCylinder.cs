@@ -181,6 +181,19 @@ public class RotCylinder : MonoBehaviour {
 		
 	}
 
+	public IEnumerator RotateQuaternionAnimation(Quaternion to, float duration) {
+		float t0 = Time.time;
+		var from = transform.rotation;
+		float t;
+		do {
+			t = (Time.time - t0) / duration;
+			transform.rotation = Quaternion.Slerp(from, to, t * (2 - t));
+			yield return 0;
+		} while(t < 1);
+
+		yield return null;
+	}
+
 	public void SetRotNumber(int rotNumber, bool animate = false) {
 
 		foreach (var rotCylRB in rotCylindersRB) {
@@ -188,11 +201,22 @@ public class RotCylinder : MonoBehaviour {
 		}
 		var mainRotAngX = mainRotCylinder.transform.localRotation.eulerAngles.x;
 		if (mainRotCylinder.transform.forward.z < 0) {
-			mainRotAngX = 180f - mainRotAngX; 
+			mainRotAngX = 180f - mainRotAngX;
 		}
-		var rotV3 = new Vector3(mainRotAngX + 360f * rotNumber / nChars, 0f, 90f);
+		var angleDiff = 360f * rotNumber / nChars;
+		var rotV3 = new Vector3(mainRotAngX + angleDiff, 0f, 90f);
 		if (animate) {
-			transform.DORotateQuaternion(Quaternion.Euler(rotV3), 0.4f).SetDelay(0.1f);
+			Debug.Log(transform.rotation.eulerAngles);
+			Debug.Log(rotV3);
+			/*
+			if (Mathf.Abs(rotV3.x - transform.eulerAngles.x) > 180f) {
+				rotV3.x -= (360f * 4);
+			}
+			Debug.Log(rotV3);
+			// */
+			//transform.DORotateQuaternion(Quaternion.Euler(rotV3), 0.4f);
+			//transform.DORotate(rotV3, 0.4f);
+			StartCoroutine(RotateQuaternionAnimation(Quaternion.Euler(rotV3), 0.4f));
 		} else {
 			transform.localRotation = Quaternion.Euler(rotV3);
 		}
