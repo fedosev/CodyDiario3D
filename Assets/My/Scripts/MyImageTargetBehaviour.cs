@@ -31,7 +31,7 @@ namespace EasyARSample
         void OnTargetFound(TargetAbstractBehaviour behaviour) {
 
             //gameObj.SetActive(true);
-            Debug.Log("TargetFound");
+            Debug.Log("TargetFound " + this.Name);
             gameManager.ShowGame(true);
         }
 

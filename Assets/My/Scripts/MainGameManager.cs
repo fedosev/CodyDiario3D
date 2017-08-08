@@ -24,6 +24,8 @@ public class MainGameManager : MonoBehaviour {
 
 	public GameObject aRGameObject;
 
+	public Canvas targetsCanvas;
+
 	BaseGameTypeManager gameTypeManager;
 	BaseGameType gameType;
 
@@ -105,7 +107,7 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	public void ShowGame(bool show) {
-
+		targetsCanvas.gameObject.SetActive(!show);
 		gameTypeManager.ShowGame(show);
 	}
 
