@@ -127,7 +127,8 @@ public class MainGameManager : MonoBehaviour {
 	
 	public void LoadGameType(int index) {
 		gameTypeIndex = index;
-		StartCoroutine(Init(allGameTypes.items[index].name));
+		if (index >= 0 && index < allGameTypes.items.Capacity)
+			StartCoroutine(Init(allGameTypes.items[index].name));
 	}
 
 	void LoadNextGameType() {

@@ -178,7 +178,7 @@ public class QuadBehaviour : MonoBehaviour {
 			// /*
 			var rotAng = new Vector3(90, 0, 0);
 			// */
-			var rot = new Quaternion();
+			//var rot = new Quaternion();
 			if (direction == Vector3.right) {
 				rotAng.z = 0;
 				//rot.SetLookRotation(Vector3.right, Vector3.forward);
