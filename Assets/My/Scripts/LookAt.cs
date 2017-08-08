@@ -8,8 +8,11 @@ public class LookAt : MonoBehaviour {
 	public Vector3 rotationOffset;
 	private Grid grid;
 	private Transform Target { get {
-		if (!target && GetGrid && GetGrid.CurrentRobotController)
-			target = grid.CurrentRobotController.transform;
+		if (!target && GetGrid && GetGrid.CurrentRobotController) {
+			//target = grid.CurrentRobotController.transform;
+			target = grid.GetQuad(2, 2).transform;
+
+		}
 		return target;
 	} }
 	private Grid GetGrid { get {
