@@ -29,4 +29,6 @@ public abstract class BaseGameType : ScriptableObject {
         */
     }
 
+    public virtual void Pause(bool pause) { }
+
 }

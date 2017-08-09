@@ -2,21 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 //using TMPro;
 
 public class MainMenu : MonoBehaviour {
 
 	public bool isHidden = false;
 	public Dropdown gameTypeSelector;
+	public GameObject mainPanel;
+	public Button menuButton;
 
+	// @tmp
+	public InputField InputFieldiOS;
+	
 	MainGameManager gameManager;
-
+	bool isVisible = false;
 
 	void Awake() {
 		gameManager = MainGameManager.Instance;
 	}
 
-	public void SetupGameTyoeSelector() {
+	public void SetupGameTypeSelector() {
+
 		List<Dropdown.OptionData> options = new List<Dropdown.OptionData>();
 		Dropdown.OptionData optData;
 		foreach (var item in gameManager.allGameTypes.items) {
@@ -33,24 +40,44 @@ public class MainMenu : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		SetupGameTyoeSelector();
+		SetupGameTypeSelector();
 
-		var inputField = GameObject.Find("InputFieldiOS").GetComponent<InputField>();
+		//var InputFieldiOS = GameObject.Find("InputFieldiOS").GetComponent<InputField>();
 		#if UNITY_IOS
 			gameTypeSelector.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 150f);
-			inputField.onEndEdit.AddListener((string val) => {
+			InputFieldiOS.onEndEdit.AddListener((string val) => {
 				int index;
 				if (System.Int32.TryParse(val, out index)) {
 					gameManager.LoadGameType(index);
 				}
 			});
 		#else
-			inputField.gameObject.SetActive(false);
+			InputFieldiOS.gameObject.SetActive(false);
 		#endif
+
+		menuButton.onClick.AddListener(ToggleMenu);
 	}
-	
+
+	public void ToggleMenu() {
+		Show(!isVisible);
+	}
+
+	public void Show(bool show) {
+		gameManager.PauseAR(show);
+		gameManager.PauseGame(show);
+		mainPanel.SetActive(show);
+		menuButton.gameObject.SetActive(!show);
+		isVisible = show;
+	}
+
 	// Update is called once per frame
 	void Update () {
-		
+		if (Input.GetKeyDown(KeyCode.Escape)) {
+			if (isVisible) {
+				gameManager.Quit();
+			} else {
+				ToggleMenu();
+			}
+		}
 	}
 }

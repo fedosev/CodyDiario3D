@@ -36,6 +36,9 @@ public class MainGameManager : MonoBehaviour {
     public ImageTrackerBaseBehaviour imageTracker;
 
     bool useARchanged = true;
+    private bool isGameVisible;
+    private bool isARPaused;
+    private IEnumerator coroutine;
 
     public IEnumerator Init(string gameTypeKey) {
 
@@ -106,9 +109,43 @@ public class MainGameManager : MonoBehaviour {
 		LoadGameType(gameTypeIndex);
 	}
 
+	public void ShowTargetCanvas(bool show) {
+		targetsCanvas.gameObject.SetActive(show);
+	}
+
+	IEnumerator ShowTargetCanvasDelayed(bool show) {
+		print("ShowTargetCanvasDelayed");
+		if (show) {
+			yield return new WaitForSeconds(1f);
+			if (!isGameVisible && !isARPaused) {
+				targetsCanvas.gameObject.SetActive(true);
+			}
+		} else {
+			targetsCanvas.gameObject.SetActive(false);
+		}
+		yield return null;
+	}
+
+	public void PauseAR(bool pause) {
+		if (pause) {
+			EasyAR.Engine.Pause();
+		} else {
+			EasyAR.Engine.Resume();
+		}
+		isARPaused = pause;
+		ShowTargetCanvas(!pause);
+	}
+	public void PauseGame(bool pause) {
+		gameType.Pause(pause);
+	}
+
 	public void ShowGame(bool show) {
-		targetsCanvas.gameObject.SetActive(!show);
+		if (coroutine != null)
+			StopCoroutine(coroutine);
+		coroutine = ShowTargetCanvasDelayed(!show);
+		StartCoroutine(coroutine);
 		gameTypeManager.ShowGame(show);
+		isGameVisible = show;
 	}
 
 	void Awake() {
@@ -131,6 +168,11 @@ public class MainGameManager : MonoBehaviour {
 		gameTypeIndex = index;
 		if (index >= 0 && index < allGameTypes.items.Capacity)
 			StartCoroutine(Init(allGameTypes.items[index].name));
+	}
+
+	public void Quit() {
+		Debug.Log("Application Quit");
+		Application.Quit();
 	}
 
 	void LoadNextGameType() {
