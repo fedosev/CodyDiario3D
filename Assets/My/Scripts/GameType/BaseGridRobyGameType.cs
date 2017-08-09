@@ -78,8 +78,10 @@ public abstract class BaseGridRobyGameType : BaseGameType {
     }
 
     public override void Pause(bool pause) {
-        grid.inPause = pause;
-        grid.UIControlls.SetActive(!pause);
+        if (grid != null) {
+            grid.inPause = pause;
+            grid.UIControlls.SetActive(!pause);
+        }
     }
 
     public override string sceneName { get {

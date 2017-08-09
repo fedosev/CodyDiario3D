@@ -21,6 +21,8 @@ public class FreeModeGameType : BaseGridRobyGameType {
         if (trace) {
             if (!robot.isFirstMove)
                 prevQuad.SetState(QuadStates.PATH);
+            else
+                prevQuad.SetState(QuadStates.DEFAULT);
         } else {
             prevQuad.SetState(QuadStates.DEFAULT);
         }
