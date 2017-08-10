@@ -56,6 +56,10 @@ public class GridRobyManager : BaseGameTypeManager {
 		lettersText.text += letter.ToString();
 	}
 
+	public void RemoveLastLetter() {
+		lettersText.text = lettersText.text.Substring(0, lettersText.text.Length - 1);
+	}
+
 	public void SetDevBoardActive(bool activate) {
 
 		gameManager.imageTracker.StopTrack();

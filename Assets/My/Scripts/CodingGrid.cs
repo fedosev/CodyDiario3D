@@ -1,10 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CodingGrid : MonoBehaviour {
 
-    int maxCardsNumber = 26;
+    public GameObject controlsUI;
+
+    //bool isControlsUIVisible = false;
+
+    int maxCardsNumber = 25;
     int cardsNumber = 0;
     CardTypes?[] cards;
 
@@ -59,8 +64,11 @@ public class CodingGrid : MonoBehaviour {
     }    
 
     public void RemoveLastCard() {
-        cards[cardsNumber] = null;
-        cardsNumber--;
+        if (cardsNumber > 0) {
+            cards[cardsNumber - 1] = null;
+            cardsNumber--;
+            GridRobyManager.Instance.RemoveLastLetter();
+        }
     }
 
     public void Execute() {
@@ -82,8 +90,16 @@ public class CodingGrid : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (cardsNumber > 0 && !controlsUI.activeSelf) {
+            controlsUI.SetActive(true);
+        } else if (cardsNumber == 0 && controlsUI.activeSelf) {
+            controlsUI.SetActive(false);
+        }
+        /* 
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			Execute();
 		}
+        // */
 	}
 }
