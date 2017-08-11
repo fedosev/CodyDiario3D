@@ -24,6 +24,10 @@ public class CipherRotGameType : BaseGameType {
         return "CipherRot";
     } }
 
+    public override string sceneNameNoAR { get {
+        return "CipherRotNoAR";
+    } }
+
 	public override void InitBody() {
 
 		rotObj = FindObjectOfType<RotCode>();

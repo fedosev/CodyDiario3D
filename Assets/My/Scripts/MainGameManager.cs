@@ -57,8 +57,8 @@ public class MainGameManager : MonoBehaviour {
 
 			var sceneName = gameType.sceneName;
 
-			if (!useAR) {
-				sceneName += "NoAR";
+			if (!useAR && sceneName != gameType.sceneNameNoAR) {
+				sceneName = gameType.sceneNameNoAR;
 			}
 
 			SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
@@ -71,7 +71,7 @@ public class MainGameManager : MonoBehaviour {
 			});
 
 			gameTypeManager.gameType = gameType;
-			gameTypeManager.useAR = useAR;
+			gameTypeManager.SetUseAR(useAR);
 
 			if (useAR) {
 				imageTracker.StartTrack();
@@ -107,6 +107,23 @@ public class MainGameManager : MonoBehaviour {
 		this.useAR = useAR;
 		useARchanged = true;
 		LoadGameType(gameTypeIndex);
+	}
+
+	public void ChangeWithAR(bool useAR) {
+		if (gameType.sceneName != gameType.sceneNameNoAR) {
+			RestartWithAR(useAR);
+		} else {
+			this.useAR = useAR;
+			useARchanged = true;
+			SetUseAR();
+			gameTypeManager.SetUseAR(useAR);
+			/*
+			if (!useAR) {
+				ShowGame(true);
+			}
+			*/
+			ShowGame(!useAR);
+		}
 	}
 
 	public void ShowTargetCanvas(bool show) {

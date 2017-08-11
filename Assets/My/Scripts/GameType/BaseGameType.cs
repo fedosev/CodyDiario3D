@@ -6,6 +6,9 @@ using UnityEngine;
 public abstract class BaseGameType : ScriptableObject {
 
     public abstract string sceneName { get; }
+    public virtual string sceneNameNoAR { get {
+        return sceneName;
+    } }
 
     public virtual void Init() {
 
