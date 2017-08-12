@@ -81,6 +81,7 @@ public class GridRobyManager : BaseGameTypeManager {
 			}
 			*/
 			isDevBoardMode = true;
+			gameCanBeShown = false;
 			imageTargetDevBoard.gameObject.SetActive(true);
 
 			if (!imageTargetDevBoard.ActiveTargetOnStart) {
@@ -96,10 +97,13 @@ public class GridRobyManager : BaseGameTypeManager {
 			}
 			imageTargetDevBoard.Bind(gameManager.imageTracker);
 			//gameManager.imageTracker.LoadImageTargetBehaviour(imageTargetDevBoard);
+			ShowGame(false);
+			imageTargetDevBoard.gameObject.SetActive(false);
 		}
 		else { // Deactivate
 			if (imageTargetDevBoard) {
 				isDevBoardMode = false;
+				gameCanBeShown = true;
 				gameManager.imageTracker.UnloadImageTargetBehaviour(imageTargetDevBoard);
 				devBoardTargetCanvas.gameObject.SetActive(false);
 				//Destroy(imageTargetDevBoard);

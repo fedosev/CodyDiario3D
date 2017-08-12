@@ -17,12 +17,17 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 	protected MainGameManager gameManager;
 
+	protected bool gameCanBeShown = true;
+
 
     public void ShowGame(bool show) {
 
 		if (!useAR && !show)
 			return;
 
+		if (!gameCanBeShown && show)
+			return;
+			
 		foreach (var rend in gameObj.GetComponentsInChildren<Renderer>()) {
 			rend.enabled = show;
 		}
@@ -51,7 +56,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 			SetUseAR(false);
 		}
 
-		if (!gameManager.wasTargetFound) {
+		if (!gameManager.wasTargetFound || !gameCanBeShown) {
 			ShowGame(false);
 		}
 
