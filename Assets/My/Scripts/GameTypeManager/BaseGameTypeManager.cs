@@ -13,6 +13,8 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 	public bool useAR = true;
 
+	public bool isGameInit = false;
+
 	protected MainGameManager gameManager;
 
 
@@ -26,7 +28,8 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		}
 		foreach (var canvas in gameObj.GetComponentsInChildren<Canvas>()) {
 			canvas.enabled = show;
-		}		
+		}
+		Debug.Log(show);
 	}
 
 	public virtual void InitConfig() {
@@ -48,7 +51,11 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 			SetUseAR(false);
 		}
 
-		ShowGame(false);
+		if (!gameManager.wasTargetFound) {
+			ShowGame(false);
+		}
+
+		isGameInit = true;
 
 		yield return null;
 	}
@@ -65,7 +72,9 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 	}
 	void Start() {
 
-		StartCoroutine(Init());
+		if (gameManager == null) {
+			StartCoroutine(Init());
+		}
 	}
 
 }

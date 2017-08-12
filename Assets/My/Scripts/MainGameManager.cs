@@ -26,6 +26,13 @@ public class MainGameManager : MonoBehaviour {
 
 	public Canvas targetsCanvas;
 
+    public ImageTrackerBaseBehaviour imageTracker;
+	public MyImageTargetBehaviour[] mainImageTargets;
+
+	public bool wasTargetFound = false;
+
+	bool isMainImageTargetsActive = true;
+
 	BaseGameTypeManager gameTypeManager;
 	BaseGameType gameType;
 
@@ -33,12 +40,19 @@ public class MainGameManager : MonoBehaviour {
 
 	CameraDeviceBehaviour cameraDevice;
 	EasyARBehaviour easyARBehaviour;
-    public ImageTrackerBaseBehaviour imageTracker;
 
     bool useARchanged = true;
-    private bool isGameVisible;
-    private bool isARPaused;
-    private IEnumerator coroutine;
+
+    bool isGameVisible;
+    bool isARPaused;
+    IEnumerator coroutine;
+
+	public bool IsGameInit() {
+		if (gameTypeManager != null && gameTypeManager.isGameInit)
+			return true;
+
+		return false;
+	}
 
     public IEnumerator Init(string gameTypeKey) {
 
@@ -73,13 +87,37 @@ public class MainGameManager : MonoBehaviour {
 			gameTypeManager.gameType = gameType;
 			gameTypeManager.SetUseAR(useAR);
 
+			StartCoroutine(gameTypeManager.Init());
+
+			yield return new WaitUntil(() => gameTypeManager.isGameInit);
+
 			if (useAR) {
+				//imageTracker.StopTrack();
 				imageTracker.StartTrack();
 			}
 
 			//gameTypeManager.ShowGame(false);
 
 			//gameTypeManager.Init();
+		}
+
+	}
+
+	public void SetMainImgTargetsActive(bool activate) {
+
+		if (activate && !isMainImageTargetsActive) {
+			targetsCanvas.gameObject.SetActive(true);
+			foreach (var target in mainImageTargets) {
+				imageTracker.LoadImageTargetBehaviour(target);
+			}
+			isMainImageTargetsActive = true;
+		}
+		else if (!activate && isMainImageTargetsActive) {
+			targetsCanvas.gameObject.SetActive(false);
+			foreach (var target in mainImageTargets) {
+				imageTracker.UnloadImageTargetBehaviour(target);
+			}
+			isMainImageTargetsActive = false;
 		}
 
 	}
@@ -131,10 +169,10 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	IEnumerator ShowTargetCanvasDelayed(bool show) {
-		print("ShowTargetCanvasDelayed");
+		
 		if (show) {
 			yield return new WaitForSeconds(1f);
-			if (!isGameVisible && !isARPaused) {
+			if (!isGameVisible && !isARPaused && isMainImageTargetsActive) {
 				targetsCanvas.gameObject.SetActive(true);
 			}
 		} else {

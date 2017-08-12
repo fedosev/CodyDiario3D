@@ -7,7 +7,7 @@
 using UnityEngine;
 using EasyAR;
 
-namespace EasyARSample
+namespace EasyAR
 {
     public class MyImageTargetBehaviour : ImageTargetBehaviour
     {
@@ -32,6 +32,7 @@ namespace EasyARSample
 
             //gameObj.SetActive(true);
             Debug.Log("TargetFound " + this.Name);
+            gameManager.wasTargetFound = true;
             gameManager.ShowGame(true);
         }
 

@@ -24,13 +24,20 @@ public class GridRobyManager : BaseGameTypeManager {
 
 	public GameObject[] objectsToHideOnDevBoard;
 
-	public EasyImageTargetBehaviour imageTargetDevBoard;
+	public ImageTargetBehaviour imageTargetDevBoard;
+	public Canvas devBoardTargetCanvas;
+
+	public BaseGridRobyGameType GetGameType() {
+		return (BaseGridRobyGameType)gameType;
+	}
 
 	Text lettersText;
 
+	bool isDevBoardMode = false;
+
 	public override void InitConfig() {
 
-		((BaseGridRobyGameType)gameType).grid = grid;
+		GetGameType().grid = grid;
 		grid.gameTypeManager = this;
 		grid.gameTypeConfig = (BaseGridRobyGameType)gameType;
 
@@ -44,7 +51,7 @@ public class GridRobyManager : BaseGameTypeManager {
 			codingGrid = GameObject.FindObjectOfType<CodingGrid>();
 		}
 
-		if (((BaseGridRobyGameType)gameType).useDevBoard && useAR && imageTargetDevBoard != null) {
+		if (GetGameType().useDevBoard && useAR) {
 			SetDevBoardActive(true);
 		}		
 	}
@@ -62,20 +69,53 @@ public class GridRobyManager : BaseGameTypeManager {
 
 	public void SetDevBoardActive(bool activate) {
 
-		gameManager.imageTracker.StopTrack();
+		//gameManager.imageTracker.StopTrack();
+
+		devBoardTargetCanvas.gameObject.SetActive(activate);
+		gameManager.SetMainImgTargetsActive(!activate);
+
 		if (activate) {
-			//imageTargetDevBoard.gameObject.SetActive(true);
-			imageTargetDevBoard.ActiveTargetOnStart = true;
+			/*
+			if (imageTargetDevBoard == null) {
+				imageTargetDevBoard = Instantiate(imageTargetDevBoardPrefab, Vector3.back, Quaternion.identity).GetComponent<ImageTargetBehaviour>();
+			}
+			*/
+			isDevBoardMode = true;
+			imageTargetDevBoard.gameObject.SetActive(true);
+
+			if (!imageTargetDevBoard.ActiveTargetOnStart) {
+				imageTargetDevBoard.SetupWithImage(imageTargetDevBoard.Path, imageTargetDevBoard.Storage, imageTargetDevBoard.Name, imageTargetDevBoard.Size);
+				imageTargetDevBoard.TargetFound += (TargetAbstractBehaviour behaviour) => {
+					devBoardTargetCanvas.gameObject.SetActive(false);
+				};
+				imageTargetDevBoard.TargetLost += (TargetAbstractBehaviour behaviour) => {
+					if (isDevBoardMode)
+						devBoardTargetCanvas.gameObject.SetActive(true);
+				};
+				imageTargetDevBoard.ActiveTargetOnStart = true;
+			}
 			imageTargetDevBoard.Bind(gameManager.imageTracker);
-			gameManager.imageTracker.LoadImageTargetBehaviour(imageTargetDevBoard);
-		} else {
-			gameManager.imageTracker.UnloadImageTargetBehaviour(imageTargetDevBoard);
+			//gameManager.imageTracker.LoadImageTargetBehaviour(imageTargetDevBoard);
+		}
+		else { // Deactivate
+			if (imageTargetDevBoard) {
+				isDevBoardMode = false;
+				gameManager.imageTracker.UnloadImageTargetBehaviour(imageTargetDevBoard);
+				devBoardTargetCanvas.gameObject.SetActive(false);
+				//Destroy(imageTargetDevBoard);
+			}
 			//imageTargetDevBoard.gameObject.SetActive(false);
 		}
+
 		foreach (var obj in objectsToHideOnDevBoard) {
 			obj.SetActive(!activate);
 		}
-		gameManager.imageTracker.StartTrack();
+
+		//gameManager.imageTracker.StartTrack();
+	}
+
+	void OnDestroy() {
+		gameManager.SetMainImgTargetsActive(true);
 	}
 	
 }
