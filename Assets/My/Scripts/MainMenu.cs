@@ -9,7 +9,7 @@ public class MainMenu : MonoBehaviour {
 
 	public bool isHidden = false;
 	public Dropdown gameTypeSelector;
-	public GameObject mainPanel;
+	public GameObject mainMenuPanel;
 	public Button menuButton;
 
 	// @tmp
@@ -26,7 +26,7 @@ public class MainMenu : MonoBehaviour {
 
 		List<Dropdown.OptionData> options = new List<Dropdown.OptionData>();
 		Dropdown.OptionData optData;
-		foreach (var item in gameManager.allGameTypes.items) {
+		foreach (var item in gameManager.allGameTypes.testItems) {
 			optData = new Dropdown.OptionData(item.name);
 			options.Add(optData);
 		}
@@ -40,9 +40,10 @@ public class MainMenu : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		SetupGameTypeSelector();
+		//SetupGameTypeSelector();
 
 		//var InputFieldiOS = GameObject.Find("InputFieldiOS").GetComponent<InputField>();
+		/*
 		#if UNITY_IOS
 			gameTypeSelector.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 150f);
 			InputFieldiOS.onEndEdit.AddListener((string val) => {
@@ -54,7 +55,8 @@ public class MainMenu : MonoBehaviour {
 		#else
 			InputFieldiOS.gameObject.SetActive(false);
 		#endif
-
+		*/
+		
 		menuButton.onClick.AddListener(ToggleMenu);
 	}
 
@@ -65,7 +67,7 @@ public class MainMenu : MonoBehaviour {
 	public void Show(bool show) {
 		gameManager.PauseAR(show);
 		gameManager.PauseGame(show);
-		mainPanel.SetActive(show);
+		mainMenuPanel.SetActive(show);
 		menuButton.gameObject.SetActive(!show);
 		isVisible = show;
 	}

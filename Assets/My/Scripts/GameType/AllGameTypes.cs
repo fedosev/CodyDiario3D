@@ -6,11 +6,31 @@ using UnityEngine;
 [CreateAssetMenu]
 public class AllGameTypes : ScriptableObject {
 
-    public List<BaseGameType> items = new List<BaseGameType>();
+    [System.Serializable]
+    public class Month {
+        public string name;
+        public bool active = false;
+        public List<BaseGameType> days = new List<BaseGameType>();
+
+    }
+
+    public List<Month> months = new List<Month>();
+    public List<BaseGameType> testItems = new List<BaseGameType>();
 
     public bool TryGetValue(string key, out BaseGameType value) {
-        foreach (var item in items) {
+        foreach (var item in testItems) {
             if (item.name == key) {
+                value = item;
+                return true;
+            }
+        }
+        value = null;
+        return false;
+    }
+
+    public bool TryGetMonth(string monthName, out Month value) {
+        foreach (var item in months) {
+            if (item.name == monthName) {
                 value = item;
                 return true;
             }

@@ -37,9 +37,10 @@ public class GridRobyManager : BaseGameTypeManager {
 
 	public override void InitConfig() {
 
+		//GetGameType().grid = FindObjectOfType<Grid>();
 		GetGameType().grid = grid;
 		grid.gameTypeManager = this;
-		grid.gameTypeConfig = (BaseGridRobyGameType)gameType;
+		grid.gameTypeConfig = GetGameType();
 
 		if (panelLetters != null) {
 			panelLetters.SetActive(grid.gameTypeConfig.withLetters);
@@ -120,6 +121,7 @@ public class GridRobyManager : BaseGameTypeManager {
 
 	void OnDestroy() {
 		gameManager.SetMainImgTargetsActive(true);
+		instance = null;
 	}
 	
 }

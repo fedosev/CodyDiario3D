@@ -42,7 +42,8 @@ public class PathGameType : BaseGridRobyGameType {
         if (robot.isFirstMove) {
             prevQuad.SetOtherState(QuadStates.DEFAULT);
         } else {
-            prevQuad.SetState(QuadStates.OBSTACLE);
+            //prevQuad.SetState(QuadStates.OBSTACLE);
+            prevQuad.SetState(QuadStates.PATH);
         }
         
         if (nextQuad.IsFreeToGoIn()) {

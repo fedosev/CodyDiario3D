@@ -18,6 +18,10 @@ public class MainGameManager : MonoBehaviour {
 
 	public MainMenu mainMenu;
 
+	public static MainMenu Menu { get {
+		return MainGameManager.Instance.mainMenu;
+	}}
+
 	public Text gameTitle; //@todo
 
 	public bool useAR = true;
@@ -54,8 +58,20 @@ public class MainGameManager : MonoBehaviour {
 		return false;
 	}
 
-    public IEnumerator Init(string gameTypeKey) {
+	public IEnumerator Init(string gameTypeKey) {
+		if (allGameTypes.TryGetValue(gameTypeKey, out gameType)) {
+			StartCoroutine(Init(gameType));
+		}
+		yield return null;
+	}
 
+	public void LoadGameType(BaseGameType gameType) {
+		StartCoroutine(Init(gameType));
+	}
+
+    public IEnumerator Init(BaseGameType gameType) {
+
+		this.gameType = gameType;
 
 		if (SceneManager.sceneCount > 1) {
 			imageTracker.StopTrack();
@@ -67,39 +83,36 @@ public class MainGameManager : MonoBehaviour {
 
 		// Scene unloaded here
 
-		if (allGameTypes.TryGetValue(gameTypeKey, out gameType)) {
+		var sceneName = gameType.sceneName;
 
-			var sceneName = gameType.sceneName;
-
-			if (!useAR && sceneName != gameType.sceneNameNoAR) {
-				sceneName = gameType.sceneNameNoAR;
-			}
-
-			SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
-
-			yield return new WaitUntil(() => {
-				//gameTypeManager = GameObject.FindObjectOfType<GridRobyManager>();
-				gameTypeManager = GameObject.FindObjectOfType<BaseGameTypeManager>();
-
-				return gameTypeManager != null;
-			});
-
-			gameTypeManager.gameType = gameType;
-			gameTypeManager.SetUseAR(useAR);
-
-			StartCoroutine(gameTypeManager.Init());
-
-			yield return new WaitUntil(() => gameTypeManager.isGameInit);
-
-			if (useAR) {
-				//imageTracker.StopTrack();
-				imageTracker.StartTrack();
-			}
-
-			//gameTypeManager.ShowGame(false);
-
-			//gameTypeManager.Init();
+		if (!useAR && sceneName != gameType.sceneNameNoAR) {
+			sceneName = gameType.sceneNameNoAR;
 		}
+
+		SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+
+		yield return new WaitUntil(() => {
+			//gameTypeManager = GameObject.FindObjectOfType<GridRobyManager>();
+			gameTypeManager = GameObject.FindObjectOfType<BaseGameTypeManager>();
+
+			return gameTypeManager != null;
+		});
+
+		gameTypeManager.gameType = gameType;
+		gameTypeManager.SetUseAR(useAR);
+
+		StartCoroutine(gameTypeManager.Init());
+
+		yield return new WaitUntil(() => gameTypeManager.isGameInit);
+
+		if (useAR) {
+			//imageTracker.StopTrack();
+			imageTracker.StartTrack();
+		}
+
+		//gameTypeManager.ShowGame(false);
+
+		//gameTypeManager.Init();
 
 	}
 
@@ -221,8 +234,8 @@ public class MainGameManager : MonoBehaviour {
 	
 	public void LoadGameType(int index) {
 		gameTypeIndex = index;
-		if (index >= 0 && index < allGameTypes.items.Capacity)
-			StartCoroutine(Init(allGameTypes.items[index].name));
+		if (index >= 0 && index < allGameTypes.testItems.Capacity)
+			StartCoroutine(Init(allGameTypes.testItems[index].name));
 	}
 
 	public void Quit() {
@@ -232,7 +245,7 @@ public class MainGameManager : MonoBehaviour {
 
 	void LoadNextGameType() {
 		// @tmp
-		StartCoroutine(Init(allGameTypes.items[(++gameTypeIndex) % allGameTypes.items.Count].name));
+		StartCoroutine(Init(allGameTypes.testItems[(++gameTypeIndex) % allGameTypes.testItems.Count].name));
 	}
 
 	void Update () {

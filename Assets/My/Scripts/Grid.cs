@@ -30,7 +30,7 @@ public class Grid : MonoBehaviour {
 
 	public float scaleSize = 4f;
 
-	public GameObject UIControlls;
+	public GameObject UIControls;
 
 	public int nCols = 0;
 	public int nRows = 0;
@@ -63,7 +63,7 @@ public class Grid : MonoBehaviour {
 	} }
 
 	public RobotController CurrentRobotController { get {
-		if (playerTurn >= 0 && players[playerTurn] != null)
+		if (playerTurn >= 0 && players.Length > 0 && players[playerTurn] != null)
 			return players[playerTurn].GetComponent<RobotController>();
 
 		return null;
@@ -436,6 +436,9 @@ public class Grid : MonoBehaviour {
 			state = gameObject.AddComponent<StateNull>();
 		}
 
+		if (UIControls == null) {
+			UIControls = GameObject.Find("PanelCards");
+		}
 		//gameTypeManager = FindObjectOfType<BaseGridRobyManager>();
 
 		/*
