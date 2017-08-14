@@ -10,12 +10,17 @@ public class PathGameType : BaseGridRobyGameType {
 	
 	public string code; //@todo maybe not needed
 
+	[HideInInspector] public CodingGrid codingGrid;
+
 	public override void InitBody() {
 
 		grid.gameType = GameTypes.PATH;
 		grid.playersNumber = 1;
 
 		grid.Init();
+
+		gridRobyManager.codingGrid.gameObject.SetActive(true);
+		gridRobyManager.codingGrid.Clear();
 
 		if (code.Length > 0 && gridRobyManager.codingGrid != null) {
 			gridRobyManager.codingGrid.SetCards(code);

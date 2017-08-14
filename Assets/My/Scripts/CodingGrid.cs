@@ -9,11 +9,13 @@ public class CodingGrid : MonoBehaviour {
 
     //bool isControlsUIVisible = false;
 
-    int maxCardsNumber = 25;
+    const int maxCardsNumber = 25;
     int cardsNumber = 0;
     CardTypes?[] cards;
 
     Grid grid;
+
+    public Text text;
 
     public char GetLetterFromType(CardTypes cardType) {
         switch (cardType) {
@@ -22,6 +24,15 @@ public class CodingGrid : MonoBehaviour {
             case CardTypes.RIGHT: return 'D';
         }
         return 'X';
+    }
+
+    public string WrapWithColor(char cardLetter) {
+        switch (cardLetter) {
+            case 'A': return "<color=#00ff00ff>A</color>";
+            case 'S': return "<color=#ffff00ff>S</color>";
+            case 'D': return "<color=#ff0000ff>D</color>";
+        }
+        return cardLetter.ToString();
     }
 
     public CardTypes GetTypeFromLetter(char cardLetter) {
@@ -36,6 +47,11 @@ public class CodingGrid : MonoBehaviour {
         }
     }
 
+    public void Clear () {
+        cards = new CardTypes?[maxCardsNumber];
+        text.text = "";
+    }
+
     public void AppendCard(CardTypes type) {
 
         if (cardsNumber >= maxCardsNumber) 
@@ -44,7 +60,7 @@ public class CodingGrid : MonoBehaviour {
         cards[cardsNumber] = type;
         cardsNumber++;
 
-        GridRobyManager.Instance.AppendLetter(GetLetterFromType(type));
+        text.text += (WrapWithColor(GetLetterFromType(type)));
     }
     public void AppendCard(char cardLetter) {
 
@@ -54,7 +70,7 @@ public class CodingGrid : MonoBehaviour {
         cards[cardsNumber] = GetTypeFromLetter(cardLetter);
         cardsNumber++;
 
-        GridRobyManager.Instance.AppendLetter(cardLetter);
+        text.text += (WrapWithColor(cardLetter));
     }
 
     public void SetCards(string cardLetters) {
@@ -67,7 +83,7 @@ public class CodingGrid : MonoBehaviour {
         if (cardsNumber > 0) {
             cards[cardsNumber - 1] = null;
             cardsNumber--;
-            GridRobyManager.Instance.RemoveLastLetter();
+            text.text = text.text.Substring(0, text.text.Length - 26);
         }
     }
 
@@ -85,17 +101,18 @@ public class CodingGrid : MonoBehaviour {
     // Use this for initialization
     void Start () {
         grid = GameObject.Find("Grid").GetComponent<Grid>();
-        cards = new CardTypes?[maxCardsNumber];
     }
 	
 	// Update is called once per frame
 	void Update () {
 
+        // /*
         if (cardsNumber > 0 && !controlsUI.activeSelf) {
             controlsUI.SetActive(true);
         } else if (cardsNumber == 0 && controlsUI.activeSelf) {
             controlsUI.SetActive(false);
         }
+        // */
         /* 
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			Execute();

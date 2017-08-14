@@ -15,8 +15,8 @@ public class Card : MonoBehaviour, IPointerClickHandler
 
     void Awake() {
 
-        grid = GameObject.Find("Grid").GetComponent<Grid>();
-        codingGrid = GameObject.Find("CodingGrid").GetComponent<CodingGrid>();
+        grid = GameObject.FindObjectOfType<Grid>();
+        codingGrid = GameObject.FindObjectOfType<CodingGrid>();
     }
 
     public void OnPointerClick(PointerEventData eventData) {
