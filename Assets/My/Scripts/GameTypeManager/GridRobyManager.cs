@@ -22,10 +22,11 @@ public class GridRobyManager : BaseGameTypeManager {
 
     public CodingGrid codingGrid;
 
-	public GameObject[] objectsToHideOnDevBoard;
+	public GameObject[] toHideOnDevBoard;
+	public GameObject[] toHideOnMenu;
 
 	public ImageTargetBehaviour imageTargetDevBoard;
-	public Canvas devBoardTargetCanvas;
+	public GameObject devBoardTargetCanvas;
 
 	public BaseGridRobyGameType GetGameType() {
 		return (BaseGridRobyGameType)gameType;
@@ -72,8 +73,8 @@ public class GridRobyManager : BaseGameTypeManager {
 
 		//gameManager.imageTracker.StopTrack();
 
-		devBoardTargetCanvas.gameObject.SetActive(activate);
-		gameManager.SetMainImgTargetsActive(!activate);
+		devBoardTargetCanvas.SetActive(activate);
+		gameManager.SetMainImgTargetsActive(!activate, true);
 
 		if (activate) {
 			/*
@@ -88,11 +89,11 @@ public class GridRobyManager : BaseGameTypeManager {
 			if (!imageTargetDevBoard.ActiveTargetOnStart) {
 				imageTargetDevBoard.SetupWithImage(imageTargetDevBoard.Path, imageTargetDevBoard.Storage, imageTargetDevBoard.Name, imageTargetDevBoard.Size);
 				imageTargetDevBoard.TargetFound += (TargetAbstractBehaviour behaviour) => {
-					devBoardTargetCanvas.gameObject.SetActive(false);
+					devBoardTargetCanvas.SetActive(false);
 				};
 				imageTargetDevBoard.TargetLost += (TargetAbstractBehaviour behaviour) => {
 					if (isDevBoardMode)
-						devBoardTargetCanvas.gameObject.SetActive(true);
+						devBoardTargetCanvas.SetActive(true);
 				};
 				imageTargetDevBoard.ActiveTargetOnStart = true;
 			}
@@ -106,13 +107,13 @@ public class GridRobyManager : BaseGameTypeManager {
 				isDevBoardMode = false;
 				gameCanBeShown = true;
 				gameManager.imageTracker.UnloadImageTargetBehaviour(imageTargetDevBoard);
-				devBoardTargetCanvas.gameObject.SetActive(false);
+				devBoardTargetCanvas.SetActive(false);
 				//Destroy(imageTargetDevBoard);
 			}
 			//imageTargetDevBoard.gameObject.SetActive(false);
 		}
 
-		foreach (var obj in objectsToHideOnDevBoard) {
+		foreach (var obj in toHideOnDevBoard) {
 			obj.SetActive(!activate);
 		}
 
@@ -120,7 +121,8 @@ public class GridRobyManager : BaseGameTypeManager {
 	}
 
 	void OnDestroy() {
-		gameManager.SetMainImgTargetsActive(true);
+		if (gameManager != null)
+			gameManager.SetMainImgTargetsActive(true);
 		instance = null;
 	}
 	

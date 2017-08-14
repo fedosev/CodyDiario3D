@@ -7,7 +7,6 @@ using DG.Tweening;
 
 public class MainMenu : MonoBehaviour {
 
-	public bool isHidden = false;
 	public Dropdown gameTypeSelector;
 	public GameObject mainMenuPanel;
 	public Button menuButton;
@@ -64,12 +63,29 @@ public class MainMenu : MonoBehaviour {
 		Show(!isVisible);
 	}
 
+	public void Show(bool show, bool animated) {
+		StartCoroutine(ShowAnimated(show, animated));
+	}
+
 	public void Show(bool show) {
+		StartCoroutine(ShowAnimated(show));
+	}
+
+	public IEnumerator ShowAnimated(bool show, bool animated = true) {
+		print("FadeIn");
 		gameManager.PauseAR(show);
 		gameManager.PauseGame(show);
+		if (animated)
+			yield return StartCoroutine(gameManager.FadeOverlay(true, 0.3f));
+		gameManager.ShowAllGame(!show);
 		mainMenuPanel.SetActive(show);
 		menuButton.gameObject.SetActive(!show);
 		isVisible = show;
+		print("FadeOut");
+		if (animated)
+			yield return StartCoroutine(gameManager.FadeOverlay(false, 0.6f));
+		
+		yield return null;
 	}
 
 	// Update is called once per frame

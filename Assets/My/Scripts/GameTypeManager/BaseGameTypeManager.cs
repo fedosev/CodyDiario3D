@@ -7,6 +7,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 	//[System.NonSerialized]
 	public BaseGameType gameType;
 
+	public GameObject gameObjAll;
 	public GameObject gameObj;
 
     public GameObject NoARObj;
@@ -19,22 +20,33 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 	protected bool gameCanBeShown = true;
 
+	public bool wasShowBeforeMenu = false;
 
-    public void ShowGame(bool show) {
+
+    public void ShowGame(bool show, bool all = false) {
 
 		if (!useAR && !show)
 			return;
 
 		if (!gameCanBeShown && show)
 			return;
-			
-		foreach (var rend in gameObj.GetComponentsInChildren<Renderer>()) {
+
+		if (useAR && (show && !wasShowBeforeMenu))
+			return;
+		
+		var obj = all ? gameObjAll : gameObj;
+
+		foreach (var rend in  obj.GetComponentsInChildren<Renderer>()) {
 			rend.enabled = show;
 		}
-		foreach (var canvas in gameObj.GetComponentsInChildren<Canvas>()) {
+		foreach (var canvas in obj.GetComponentsInChildren<Canvas>()) {
 			canvas.enabled = show;
 		}
 		Debug.Log(show);
+	}
+
+	public void ShowAllGame(bool show) {
+		ShowGame(show, true);
 	}
 
 	public virtual void InitConfig() {
@@ -51,6 +63,8 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 		InitConfig();
 		gameType.Init();
+
+		wasShowBeforeMenu = false;
 
 		if (gameManager == null) {
 			SetUseAR(false);
@@ -79,6 +93,13 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 		if (gameManager == null) {
 			StartCoroutine(Init());
+		}
+	}
+
+	void OnDestroy() {
+		
+		if (gameManager == null) {
+			gameManager.wasTargetFound = false;
 		}
 	}
 

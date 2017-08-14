@@ -16,7 +16,7 @@ public class DayButton : MonoBehaviour, IPointerClickHandler {
 	public void OnPointerClick(PointerEventData eventData) {
 		MainGameManager.Instance.LoadGameType(gameType);
 		//DaySelector.Instance.Hide();
-		MainGameManager.Menu.ToggleMenu();
+		//MainGameManager.Menu.ToggleMenu();
 	}
 
 }

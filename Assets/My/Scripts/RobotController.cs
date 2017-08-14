@@ -178,8 +178,10 @@ public class RobotController : MonoBehaviour, IDirection {
 			OnFinishMovementOnce = null;
 		}
 
-		if (!grid.inPause)
-			grid.NextAction();
+		if (grid.inPause) {
+			yield return new WaitUntil(() => !grid.inPause);
+		}
+		grid.NextAction();
 	}
 
 	private void MoveArroundUpdate() {

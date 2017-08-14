@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using EasyAR;
+using System;
 
 public class MainGameManager : MonoBehaviour {
 
@@ -28,16 +29,18 @@ public class MainGameManager : MonoBehaviour {
 
 	public GameObject aRGameObject;
 
-	public Canvas targetsCanvas;
+	public GameObject targetsCanvas;
 
     public ImageTrackerBaseBehaviour imageTracker;
 	public MyImageTargetBehaviour[] mainImageTargets;
 
 	public bool wasTargetFound = false;
 
+	public UnityEngine.UI.Image fadeOverlay;
+
 	bool isMainImageTargetsActive = true;
 
-	BaseGameTypeManager gameTypeManager;
+	public BaseGameTypeManager gameTypeManager;
 	BaseGameType gameType;
 
 	int gameTypeIndex = 0;
@@ -73,10 +76,15 @@ public class MainGameManager : MonoBehaviour {
 
 		this.gameType = gameType;
 
+		var t = Time.time;
+
 		if (SceneManager.sceneCount > 1) {
 			imageTracker.StopTrack();
 			var asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
+			StartCoroutine(FadeOverlay(true, 0.5f));
 			yield return new WaitUntil(() => asyncOp.isDone);
+		} else {
+			yield return StartCoroutine(FadeOverlay(true, 0.01f));
 		}
 
 		SetUseAR();
@@ -104,6 +112,12 @@ public class MainGameManager : MonoBehaviour {
 		StartCoroutine(gameTypeManager.Init());
 
 		yield return new WaitUntil(() => gameTypeManager.isGameInit);
+		
+		yield return new WaitUntil(() => (Time.time - t) > 0.5f);
+
+		Menu.Show(false, false);
+
+		StartCoroutine(FadeOverlay(false, 0.5f));
 
 		if (useAR) {
 			//imageTracker.StopTrack();
@@ -116,24 +130,64 @@ public class MainGameManager : MonoBehaviour {
 
 	}
 
-	public void SetMainImgTargetsActive(bool activate) {
+	public IEnumerator FadeOverlay(bool fadeIn, float duration) {
+		var t = Time.time;
+		var dt = 0f;
+		if (fadeIn) {
+			fadeOverlay.gameObject.SetActive(true);
+			fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 0f);
+		}
+		while (dt < duration) {
+			var val = (dt / duration);
+			val = val * (2 - val); // EaseOutQuad
+			if (!fadeIn)
+				val = 1f - val;
+			fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, val);
+			dt = Time.time - t;
+			yield return null;
+		}
+		if (!fadeIn) {
+			fadeOverlay.gameObject.SetActive(false);
+			fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 1f);
+		}
+		
+		//yield return null;
+	}
 
-		if (activate && !isMainImageTargetsActive) {
-			targetsCanvas.gameObject.SetActive(true);
+    public void SetMainImgTargetsActive(bool activate, bool force = false) {
+
+		if (activate && (force || !isMainImageTargetsActive)) {
+			if (targetsCanvas)
+				targetsCanvas.SetActive(true);
 			foreach (var target in mainImageTargets) {
 				imageTracker.LoadImageTargetBehaviour(target);
 			}
 			isMainImageTargetsActive = true;
 		}
-		else if (!activate && isMainImageTargetsActive) {
-			targetsCanvas.gameObject.SetActive(false);
+		else if (!activate && (force || isMainImageTargetsActive)) {
+			if (targetsCanvas)
+				targetsCanvas.SetActive(false);
 			foreach (var target in mainImageTargets) {
 				imageTracker.UnloadImageTargetBehaviour(target);
 			}
 			isMainImageTargetsActive = false;
 		}
 
+		if (force) { // @tmp
+			StartCoroutine(ForceTargetsCanvasActive(activate, 1f));
+		}
 	}
+
+	// @tmp
+	public IEnumerator ForceTargetsCanvasActive(bool active, float duration) {
+		var t = Time.time;
+		while (Time.time < t + duration) {
+			if (targetsCanvas)
+				targetsCanvas.SetActive(active);
+			yield return null;
+		}
+	}
+
 
 	public void SetUseAR() {
 
@@ -178,7 +232,7 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	public void ShowTargetCanvas(bool show) {
-		targetsCanvas.gameObject.SetActive(show);
+		targetsCanvas.SetActive(show);
 	}
 
 	IEnumerator ShowTargetCanvasDelayed(bool show) {
@@ -186,10 +240,10 @@ public class MainGameManager : MonoBehaviour {
 		if (show) {
 			yield return new WaitForSeconds(1f);
 			if (!isGameVisible && !isARPaused && isMainImageTargetsActive) {
-				targetsCanvas.gameObject.SetActive(true);
+				targetsCanvas.SetActive(true);
 			}
 		} else {
-			targetsCanvas.gameObject.SetActive(false);
+			targetsCanvas.SetActive(false);
 		}
 		yield return null;
 	}
@@ -214,6 +268,10 @@ public class MainGameManager : MonoBehaviour {
 		StartCoroutine(coroutine);
 		gameTypeManager.ShowGame(show);
 		isGameVisible = show;
+	}
+
+	public void ShowAllGame(bool show) {
+		gameTypeManager.ShowAllGame(show);
 	}
 
 	void Awake() {

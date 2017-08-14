@@ -205,7 +205,7 @@ public class RotCylinder : MonoBehaviour {
 		}
 		var angleDiff = 360f * rotNumber / nChars;
 		var rotV3 = new Vector3(mainRotAngX + angleDiff, 0f, 90f);
-		if (animate) {
+		if (animate && this.gameObject.activeInHierarchy) {
 			Debug.Log(transform.rotation.eulerAngles);
 			Debug.Log(rotV3);
 			/*

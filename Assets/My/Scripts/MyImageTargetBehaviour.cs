@@ -33,6 +33,7 @@ namespace EasyAR
             //gameObj.SetActive(true);
             Debug.Log("TargetFound " + this.Name);
             gameManager.wasTargetFound = true;
+            gameManager.gameTypeManager.wasShowBeforeMenu = true;
             gameManager.ShowGame(true);
         }
 
@@ -40,6 +41,7 @@ namespace EasyAR
 
             //gameObj.SetActive(false);
             Debug.Log("TargetLost");
+            gameManager.gameTypeManager.wasShowBeforeMenu = false;
             gameManager.ShowGame(false);
         }
     }
