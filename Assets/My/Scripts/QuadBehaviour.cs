@@ -79,7 +79,7 @@ public class QuadBehaviour : MonoBehaviour {
 	}
 
 	void Awake() {
-		grid = GameObject.Find("Grid").GetComponent<Grid>();
+		grid = GridRobyManager.Instance.grid;
 		config = grid.config;
 		
 		mainState = QuadStates.DEFAULT;
@@ -92,7 +92,7 @@ public class QuadBehaviour : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		grid = GameObject.Find("Grid").GetComponent<Grid>();
+		//grid = GameObject.Find("Grid").GetComponent<Grid>();
 		config = grid.config;
 		
 		RecordUndo();

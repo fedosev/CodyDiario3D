@@ -22,15 +22,27 @@ public class GridRobyManager : BaseGameTypeManager {
 
     public CodingGrid codingGrid;
 
-	public GameObject[] toHideOnDevBoard;
-	public GameObject[] toHideOnMenu;
-
 	public ImageTargetBehaviour imageTargetDevBoard;
 	public GameObject devBoardTargetCanvas;
 
 	public BaseGridRobyGameType GetGameType() {
 		return (BaseGridRobyGameType)gameType;
 	}
+
+
+	public GameObject gameObjDevBoard;
+	public GameObject gameUIDevBoard;
+
+	public override GameObject GameObj { get {
+		return isDevBoardMode ? gameObjDevBoard : gameObj;
+	} }
+	public override GameObject GameUI { get {
+		return isDevBoardMode ? gameUIDevBoard : gameUI;
+	} }
+	public override GameObject TargetCanvas { get {
+		return isDevBoardMode ? devBoardTargetCanvas : targetCanvas;
+	} }
+
 
 	Text lettersText;
 
@@ -69,11 +81,17 @@ public class GridRobyManager : BaseGameTypeManager {
 		lettersText.text = lettersText.text.Substring(0, lettersText.text.Length - 1);
 	}
 
+	public void EnableAllGameObjects(bool enable) {
+		TargetCanvas.SetActive(enable);
+		GameObj.SetActive(enable);
+		GameUI.SetActive(enable);
+	}
+
 	public void SetDevBoardActive(bool activate) {
 
 		//gameManager.imageTracker.StopTrack();
 
-		devBoardTargetCanvas.SetActive(activate);
+		//devBoardTargetCanvas.SetActive(activate);
 		gameManager.SetMainImgTargetsActive(!activate, true);
 
 		if (activate) {
@@ -82,9 +100,11 @@ public class GridRobyManager : BaseGameTypeManager {
 				imageTargetDevBoard = Instantiate(imageTargetDevBoardPrefab, Vector3.back, Quaternion.identity).GetComponent<ImageTargetBehaviour>();
 			}
 			*/
+			EnableAllGameObjects(false);
 			isDevBoardMode = true;
+			EnableAllGameObjects(true);
 			gameCanBeShown = false;
-			imageTargetDevBoard.gameObject.SetActive(true);
+			//imageTargetDevBoard.gameObject.SetActive(true);
 
 			if (!imageTargetDevBoard.ActiveTargetOnStart) {
 				imageTargetDevBoard.SetupWithImage(imageTargetDevBoard.Path, imageTargetDevBoard.Storage, imageTargetDevBoard.Name, imageTargetDevBoard.Size);
@@ -99,12 +119,13 @@ public class GridRobyManager : BaseGameTypeManager {
 			}
 			imageTargetDevBoard.Bind(gameManager.imageTracker);
 			//gameManager.imageTracker.LoadImageTargetBehaviour(imageTargetDevBoard);
-			ShowGame(false);
 			imageTargetDevBoard.gameObject.SetActive(false);
 		}
 		else { // Deactivate
 			if (imageTargetDevBoard) {
-				isDevBoardMode = false;
+			EnableAllGameObjects(false);
+			isDevBoardMode = false;
+			EnableAllGameObjects(true);
 				gameCanBeShown = true;
 				gameManager.imageTracker.UnloadImageTargetBehaviour(imageTargetDevBoard);
 				devBoardTargetCanvas.SetActive(false);
@@ -112,10 +133,7 @@ public class GridRobyManager : BaseGameTypeManager {
 			}
 			//imageTargetDevBoard.gameObject.SetActive(false);
 		}
-
-		foreach (var obj in toHideOnDevBoard) {
-			obj.SetActive(!activate);
-		}
+		UpdateVisibility();
 
 		//gameManager.imageTracker.StartTrack();
 	}

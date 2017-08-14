@@ -34,7 +34,8 @@ namespace EasyAR
             Debug.Log("TargetFound " + this.Name);
             gameManager.wasTargetFound = true;
             gameManager.gameTypeManager.wasShowBeforeMenu = true;
-            gameManager.ShowGame(true);
+            //gameManager.isARTracked = true;
+            gameManager.UpdateVisibility();
         }
 
         void OnTargetLost(TargetAbstractBehaviour behaviour) {
@@ -42,7 +43,8 @@ namespace EasyAR
             //gameObj.SetActive(false);
             Debug.Log("TargetLost");
             gameManager.gameTypeManager.wasShowBeforeMenu = false;
-            gameManager.ShowGame(false);
+            //gameManager.isARTracked = false;
+            gameManager.UpdateVisibility();
         }
     }
 }

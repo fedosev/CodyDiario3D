@@ -15,7 +15,7 @@ public class MainMenu : MonoBehaviour {
 	public InputField InputFieldiOS;
 	
 	MainGameManager gameManager;
-	bool isVisible = false;
+	public bool isVisible = false;
 
 	void Awake() {
 		gameManager = MainGameManager.Instance;
@@ -77,10 +77,10 @@ public class MainMenu : MonoBehaviour {
 		gameManager.PauseGame(show);
 		if (animated)
 			yield return StartCoroutine(gameManager.FadeOverlay(true, 0.3f));
-		gameManager.ShowAllGame(!show);
+		isVisible = show;
+		gameManager.UpdateVisibility();
 		mainMenuPanel.SetActive(show);
 		menuButton.gameObject.SetActive(!show);
-		isVisible = show;
 		print("FadeOut");
 		if (animated)
 			yield return StartCoroutine(gameManager.FadeOverlay(false, 0.6f));

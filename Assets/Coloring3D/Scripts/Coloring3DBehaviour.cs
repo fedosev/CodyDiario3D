@@ -14,7 +14,7 @@ namespace EasyARSample
         Camera cam;
         RenderTexture renderTexture;
         ImageTargetBaseBehaviour targetBehaviour;
-        Transform parentTransform;
+        public Transform parentTransform;
 
         void Start()
         {
@@ -49,7 +49,8 @@ namespace EasyARSample
             if (!targetBehaviour || targetBehaviour.Target == null)
                 return;
             Vector2 halfSize = targetBehaviour.Target.Size * 0.5f;
-            parentTransform = GetComponentInParent<EasyImageTargetBehaviour>().transform;
+            if (parentTransform == null)
+                parentTransform = GetComponentInParent<EasyImageTargetBehaviour>().transform;
             Vector3 targetAnglePoint1 = parentTransform.TransformPoint(new Vector3(-halfSize.x, 0, halfSize.y));
             Vector3 targetAnglePoint2 = parentTransform.TransformPoint(new Vector3(-halfSize.x, 0, -halfSize.y));
             Vector3 targetAnglePoint3 = parentTransform.TransformPoint(new Vector3(halfSize.x, 0, halfSize.y));

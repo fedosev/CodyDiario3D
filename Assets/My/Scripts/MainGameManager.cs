@@ -23,7 +23,9 @@ public class MainGameManager : MonoBehaviour {
 		return MainGameManager.Instance.mainMenu;
 	}}
 
-	public Text gameTitle; //@todo
+    public ARCameraBaseBehaviour aRCamera;
+
+    public Text gameTitle; //@todo
 
 	public bool useAR = true;
 
@@ -41,6 +43,8 @@ public class MainGameManager : MonoBehaviour {
 	bool isMainImageTargetsActive = true;
 
 	public BaseGameTypeManager gameTypeManager;
+
+
 	BaseGameType gameType;
 
 	int gameTypeIndex = 0;
@@ -49,12 +53,20 @@ public class MainGameManager : MonoBehaviour {
 	EasyARBehaviour easyARBehaviour;
 
     bool useARchanged = true;
-
     bool isGameVisible;
-    bool isARPaused;
-    IEnumerator coroutine;
+    public bool IsARTracked { get {
+		if (currentARTarget != null && currentARTarget.Status == TargetInstance.TrackStatus.Tracked) {
+			return true;
+		}
+		return false;
+	} }
 
-	public bool IsGameInit() {
+    public bool isARPaused;
+
+    IEnumerator coroutine;
+    private TargetInstance currentARTarget;
+
+    public bool IsGameInit() {
 		if (gameTypeManager != null && gameTypeManager.isGameInit)
 			return true;
 
@@ -68,7 +80,14 @@ public class MainGameManager : MonoBehaviour {
 		yield return null;
 	}
 
-	public void LoadGameType(BaseGameType gameType) {
+    public void UpdateVisibility() {
+
+		// @todo
+
+        gameTypeManager.UpdateVisibility();
+    }
+
+    public void LoadGameType(BaseGameType gameType) {
 		StartCoroutine(Init(gameType));
 	}
 
@@ -108,6 +127,8 @@ public class MainGameManager : MonoBehaviour {
 
 		gameTypeManager.gameType = gameType;
 		gameTypeManager.SetUseAR(useAR);
+
+		gameTypeManager.targetCanvas = targetsCanvas;
 
 		StartCoroutine(gameTypeManager.Init());
 
@@ -227,7 +248,7 @@ public class MainGameManager : MonoBehaviour {
 				ShowGame(true);
 			}
 			*/
-			ShowGame(!useAR);
+			UpdateVisibility();
 		}
 	}
 
@@ -266,12 +287,9 @@ public class MainGameManager : MonoBehaviour {
 			StopCoroutine(coroutine);
 		coroutine = ShowTargetCanvasDelayed(!show);
 		StartCoroutine(coroutine);
-		gameTypeManager.ShowGame(show);
+		//...
+		gameTypeManager.UpdateVisibility();
 		isGameVisible = show;
-	}
-
-	public void ShowAllGame(bool show) {
-		gameTypeManager.ShowAllGame(show);
 	}
 
 	void Awake() {
@@ -281,6 +299,14 @@ public class MainGameManager : MonoBehaviour {
 		if (imageTracker == null) {
 			imageTracker = FindObjectOfType<ImageTrackerBaseBehaviour>();
 		}
+		aRCamera = FindObjectOfType<ARCameraBaseBehaviour>();
+		aRCamera.FrameUpdate += (ARCameraBaseBehaviour aRCam, Frame frame) => {
+			if (frame.Targets.Count > 0) {
+				currentARTarget = frame.Targets[0];
+			} else {
+				currentARTarget = null;
+			}
+		};
 	}
 
 	void Start () {
