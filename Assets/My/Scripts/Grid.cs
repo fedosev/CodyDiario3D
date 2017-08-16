@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using System;
 
 public enum GameTypes { FREE, TAP, SNAKE, PATH };
 
@@ -57,6 +58,8 @@ public class Grid : MonoBehaviour {
 	public List<QuadBehaviour> selectDirectionQuads = new List<QuadBehaviour>();
 
 	public BaseGridRobyGameType gameTypeConfig;
+
+    public event Action onNextTurn;
 
 	public float QuadSize { get {
 		return quadTransforms[0].lossyScale.x;
@@ -119,7 +122,7 @@ public class Grid : MonoBehaviour {
 		//this.transform.parent = null;
 		foreach (Transform child in this.transform) {
 			#if UNITY_EDITOR
-				Object.DestroyImmediate(child.gameObject, true);
+				DestroyImmediate(child.gameObject, true);
 			#else
 				Destroy(child.gameObject);
 			#endif
@@ -484,6 +487,10 @@ public class Grid : MonoBehaviour {
 		CurrentRobotController.CurrentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ON);
 		playerTurn = (playerTurn + 1) % playersNumber;
 		CurrentRobotController.CurrentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ACTIVE);
+
+		if (onNextTurn != null) {
+			onNextTurn();
+		}
 
 		// @todo {
 		/*

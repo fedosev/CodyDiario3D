@@ -66,6 +66,9 @@ public abstract class BaseGridRobyGameType : BaseGameType {
     public override void BeforeInit() {
         base.BeforeInit();
         gridRobyManager = GameObject.FindObjectOfType<GridRobyManager>();
+        if (gridRobyManager.codingGrid != null) {
+            gridRobyManager.codingGrid.gameObject.SetActive(false);
+        }
     }
 
     public override void AfterInit() {
@@ -80,7 +83,7 @@ public abstract class BaseGridRobyGameType : BaseGameType {
     public override void Pause(bool pause) {
         if (grid != null) {
             grid.inPause = pause;
-            grid.UIControls.SetActive(!pause);
+            //grid.UIControls.SetActive(!pause);
         }
     }
 

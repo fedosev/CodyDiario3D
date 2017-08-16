@@ -20,10 +20,11 @@ public class PathGameType : BaseGridRobyGameType {
 		grid.Init();
 
 		gridRobyManager.codingGrid.gameObject.SetActive(true);
-		gridRobyManager.codingGrid.Clear();
-
-		if (code.Length > 0 && gridRobyManager.codingGrid != null) {
+		
+		
+		if (code.Length > 0) {
 			gridRobyManager.codingGrid.SetCards(code);
+			gridRobyManager.codingGrid.DisableEdit();
 		}
 
 		if (path.Length == 0 && grid.state.IsNull()) {

@@ -41,45 +41,6 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
     public void UpdateVisibility() {
 
-		/*
-		bool showGame;
-		bool showUI;
-
-		if (gameManager) {
-			if (gameManager.mainMenu.isVisible) {
-				showGame = true;
-				showUI = false;
-			} else { // Menu is NOT visible
-
-				if (useAR) {
-					if (!gameManager.isARPaused && gameManager.IsARTracked) {
-						showGame = true;
-						showUI = true;
-					} else {
-						showGame = false;
-						showUI = true;						
-					}
-				} else { // NO AR mode
-					showGame = true;
-					showUI = true;
-				}
-			}
-		} else { // Without GameManager (always without AR)
-			showGame = true;
-			showUI = true;
-		}
-
-		if (showGame != isGameVisible) {
-			SetVisible(gameObj, showGame);
-			isGameVisible = showGame;
-		}
-
-		if (showUI != isGameUIVisible) {
-			SetVisible(gameUI, showUI);
-			isGameUIVisible = showUI;
-		}
-		*/
-
 		UpdateGameVisibility();
 		UpdateUIVisibility();
 		UpdateTargetCanvasVisibility();
@@ -92,6 +53,15 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		if (gameManager && useAR && (gameManager.isARPaused || !gameManager.IsARTracked)) {
 			showGame = false;
 		}
+		if (gameManager && gameManager.mainMenu.isVisible) {
+			showGame = true;
+		}
+		/*
+		if (gameManager && gameManager.isLoading) {
+			showGame = false;
+		}
+		*/
+
 		if (showGame != isGameVisible) {
 			SetVisible(GameObj, showGame);
 			isGameVisible = showGame;
@@ -105,6 +75,12 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		if (gameManager && gameManager.mainMenu.isVisible) {
 			showUI = false;
 		}
+		/*
+		if (gameManager && gameManager.isLoading) {
+			showUI = false;
+		}
+		*/
+
 		if (showUI != isGameUIVisible) {
 			SetVisible(GameUI, showUI);
 			isGameUIVisible = showUI;
@@ -114,13 +90,23 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 	void UpdateTargetCanvasVisibility() {
 
 		bool show = false;
+
 		if (gameManager && useAR && !gameManager.isARPaused && !gameManager.IsARTracked) {
 			show = true;
 		}
+		/*
+		if (gameManager && gameManager.isLoading) {
+			show = false;
+		}
+		*/
+
 		TargetCanvas.SetActive(show);
 	}
 
 	public void SetVisible(GameObject obj, bool visible) {
+
+		if (obj == null)
+			return;
 
 		foreach (var rend in  obj.GetComponentsInChildren<Renderer>()) {
 			rend.enabled = visible;
@@ -155,7 +141,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 		isGameInit = true;
 
-		yield return null;
+		//yield return null;
 	}
 
 	public void SetUseAR(bool useAR) {

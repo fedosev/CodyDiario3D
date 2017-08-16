@@ -17,6 +17,9 @@ public class CodingGrid : MonoBehaviour {
 
     public Text text;
 
+    public GameObject removeButton;
+    public GameObject panelCards;
+
     public char GetLetterFromType(CardTypes cardType) {
         switch (cardType) {
             case CardTypes.FORWARD: return 'A';
@@ -47,7 +50,7 @@ public class CodingGrid : MonoBehaviour {
         }
     }
 
-    public void Clear () {
+    public void Clear() {
         cards = new CardTypes?[maxCardsNumber];
         text.text = "";
     }
@@ -98,9 +101,15 @@ public class CodingGrid : MonoBehaviour {
         grid.NextAction();
     }
 
+    public void DisableEdit(bool disable = true) {
+        removeButton.SetActive(!disable);
+        panelCards.SetActive(!disable);
+    }
+
     // Use this for initialization
     void Start () {
         grid = GameObject.Find("Grid").GetComponent<Grid>();
+        Clear();
     }
 	
 	// Update is called once per frame

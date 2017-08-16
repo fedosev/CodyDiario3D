@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_IOS
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEditor;
@@ -6,7 +7,6 @@ using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
 public class iOSBuildPostProcessor : MonoBehaviour {
 
-	#if UNITY_IOS
 		[PostProcessBuild]
 		static void OnPostprocessBuild(BuildTarget buildTarget, string path)
 		{
@@ -19,5 +19,5 @@ public class iOSBuildPostProcessor : MonoBehaviour {
 	
 			File.WriteAllText(plistPath, plist.WriteToString());
 		}
-	#endif
 }
+#endif

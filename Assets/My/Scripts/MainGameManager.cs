@@ -36,13 +36,20 @@ public class MainGameManager : MonoBehaviour {
     public ImageTrackerBaseBehaviour imageTracker;
 	public MyImageTargetBehaviour[] mainImageTargets;
 
-	public bool wasTargetFound = false;
+	[HideInInspector] public bool wasTargetFound = false;
 
 	public UnityEngine.UI.Image fadeOverlay;
+	public float fadeDuration = 0.5f;
+
+	IEnumerator fadeOverlayCoroutine;
 
 	bool isMainImageTargetsActive = true;
 
 	public BaseGameTypeManager gameTypeManager;
+
+	public Camera noARCamera;
+
+	[HideInInspector] public bool isLoading;
 
 
 	BaseGameType gameType;
@@ -61,7 +68,7 @@ public class MainGameManager : MonoBehaviour {
 		return false;
 	} }
 
-    public bool isARPaused;
+    [HideInInspector] public bool isARPaused;
 
     IEnumerator coroutine;
     private TargetInstance currentARTarget;
@@ -93,20 +100,22 @@ public class MainGameManager : MonoBehaviour {
 
     public IEnumerator Init(BaseGameType gameType) {
 
+		AsyncOperation asyncOp;
 		this.gameType = gameType;
-
 		var t = Time.time;
+		isLoading = true;
 
 		if (SceneManager.sceneCount > 1) {
 			imageTracker.StopTrack();
-			var asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
-			StartCoroutine(FadeOverlay(true, 0.5f));
-			yield return new WaitUntil(() => asyncOp.isDone);
-		} else {
-			yield return StartCoroutine(FadeOverlay(true, 0.01f));
+			yield return StartCoroutine(FadeOverlay(true, fadeDuration));
+			asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
+			if (!useAR) {
+				noARCamera.gameObject.SetActive(true);
+			}
+			yield return new WaitUntil(() => asyncOp.isDone && (Time.time - t) > fadeDuration);
 		}
-
 		SetUseAR();
+
 
 		// Scene unloaded here
 
@@ -116,14 +125,18 @@ public class MainGameManager : MonoBehaviour {
 			sceneName = gameType.sceneNameNoAR;
 		}
 
-		SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+		asyncOp = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
 		yield return new WaitUntil(() => {
-			//gameTypeManager = GameObject.FindObjectOfType<GridRobyManager>();
+			if (!asyncOp.isDone)
+				return false;
 			gameTypeManager = GameObject.FindObjectOfType<BaseGameTypeManager>();
-
 			return gameTypeManager != null;
 		});
+
+		if (!useAR) {
+			noARCamera.gameObject.SetActive(false);
+		}
 
 		gameTypeManager.gameType = gameType;
 		gameTypeManager.SetUseAR(useAR);
@@ -132,13 +145,14 @@ public class MainGameManager : MonoBehaviour {
 
 		StartCoroutine(gameTypeManager.Init());
 
-		yield return new WaitUntil(() => gameTypeManager.isGameInit);
-		
-		yield return new WaitUntil(() => (Time.time - t) > 0.5f);
+		yield return new WaitUntil(() => gameTypeManager.isGameInit && (Time.time - t) > fadeDuration);
+
+		isLoading = false;
+		//UpdateVisibility();
 
 		Menu.Show(false, false);
 
-		StartCoroutine(FadeOverlay(false, 0.5f));
+		StartCoroutine(FadeOverlay(false, fadeDuration * 3));
 
 		if (useAR) {
 			//imageTracker.StopTrack();
@@ -152,24 +166,37 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	public IEnumerator FadeOverlay(bool fadeIn, float duration) {
+		if (fadeOverlayCoroutine != null)
+			StopCoroutine(fadeOverlayCoroutine);
+		fadeOverlayCoroutine = FadeOverlayAnimation(fadeIn, duration);
+		yield return StartCoroutine(fadeOverlayCoroutine);
+		//return fadeOverlayCoroutine;
+	}
+
+	IEnumerator FadeOverlayAnimation(bool fadeIn, float duration) {
+
 		var t = Time.time;
 		var dt = 0f;
 		if (fadeIn) {
 			fadeOverlay.gameObject.SetActive(true);
-			fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 0f);
+			//fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 0f);
 		}
 		while (dt < duration) {
 			var val = (dt / duration);
-			val = val * (2 - val); // EaseOutQuad
-			if (!fadeIn)
+			if (!fadeIn) {
+				val = val * (2 - val); // EaseOutQuad
 				val = 1f - val;
+			} else {
+				val *= val; // EaseInQuad
+			}
 			fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, val);
+			fadeOverlay.raycastTarget = val < 0.5f ? false : true;
 			dt = Time.time - t;
 			yield return null;
 		}
 		if (!fadeIn) {
 			fadeOverlay.gameObject.SetActive(false);
-			fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 1f);
+			//fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 1f);
 		}
 		
 		//yield return null;
@@ -218,6 +245,7 @@ public class MainGameManager : MonoBehaviour {
 		if (useAR) {
 			//easyARBehaviour.gameObject.SetActive(true);
 			aRGameObject.gameObject.SetActive(true);
+			aRCamera.enabled = true;
 			EasyAR.Engine.Resume();
 			cameraDevice.OpenAndStart();
 		} else {
@@ -232,7 +260,7 @@ public class MainGameManager : MonoBehaviour {
 	public void RestartWithAR(bool useAR) {
 		this.useAR = useAR;
 		useARchanged = true;
-		LoadGameType(gameTypeIndex);
+		LoadGameType(gameType);
 	}
 
 	public void ChangeWithAR(bool useAR) {
@@ -270,18 +298,28 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	public void PauseAR(bool pause) {
+		if (!useAR)
+			return;
+
 		if (pause) {
-			EasyAR.Engine.Pause();
+			//EasyAR.Engine.Pause();
+			aRCamera.enabled = false;
+			imageTracker.StopTrack();
+
 		} else {
-			EasyAR.Engine.Resume();
+			//EasyAR.Engine.Resume();
+			aRCamera.enabled = true;
+			imageTracker.StartTrack();
 		}
 		isARPaused = pause;
-		ShowTargetCanvas(!pause);
+		//ShowTargetCanvas(!pause);
 	}
+
 	public void PauseGame(bool pause) {
 		gameType.Pause(pause);
 	}
 
+	/*
 	public void ShowGame(bool show) {
 		if (coroutine != null)
 			StopCoroutine(coroutine);
@@ -291,6 +329,7 @@ public class MainGameManager : MonoBehaviour {
 		gameTypeManager.UpdateVisibility();
 		isGameVisible = show;
 	}
+	*/
 
 	void Awake() {
 
@@ -313,6 +352,10 @@ public class MainGameManager : MonoBehaviour {
 
 		//StartCoroutine(Init("FreeMode01"));
 		//StartCoroutine(Init("Cover"));
+
+		fadeOverlay.gameObject.SetActive(true);
+		fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 1f);
+
 		LoadGameType(0);
 	}
 	

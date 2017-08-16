@@ -73,17 +73,17 @@ public class MainMenu : MonoBehaviour {
 
 	public IEnumerator ShowAnimated(bool show, bool animated = true) {
 		print("FadeIn");
-		gameManager.PauseAR(show);
 		gameManager.PauseGame(show);
 		if (animated)
-			yield return StartCoroutine(gameManager.FadeOverlay(true, 0.3f));
+			yield return StartCoroutine(gameManager.FadeOverlay(true, 0.2f));
+		gameManager.PauseAR(show);
 		isVisible = show;
 		gameManager.UpdateVisibility();
 		mainMenuPanel.SetActive(show);
 		menuButton.gameObject.SetActive(!show);
 		print("FadeOut");
 		if (animated)
-			yield return StartCoroutine(gameManager.FadeOverlay(false, 0.6f));
+			yield return StartCoroutine(gameManager.FadeOverlay(false, 0.5f));
 		
 		yield return null;
 	}

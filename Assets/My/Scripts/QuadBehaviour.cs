@@ -290,7 +290,7 @@ public class QuadBehaviour : MonoBehaviour {
 	public TextMeshPro GetText() {
 		if (text == null) {
 			text = Instantiate(grid.config.quadLetterPrefab).GetComponent<TextMeshPro>();
-			text.transform.position = transform.position + new Vector3(0f, 0.0001f, 0f);
+			text.transform.position = transform.position + new Vector3(0f, 0.0009f, 0f);
 			text.transform.parent = transform;
 		}
 		return text;
@@ -306,6 +306,9 @@ public class QuadBehaviour : MonoBehaviour {
 		if (grid.gameTypeConfig.withLetters && letter != ' ') {
 			var textObj = GetText().gameObject;
 			var textCloneObj = Instantiate(textObj, text.transform.position, text.transform.rotation, transform);
+			if (textCloneObj.transform.childCount == 1) {
+				Destroy(textCloneObj.transform.GetChild(0).gameObject);
+			}
 			textCloneObj.transform.DOMove(Camera.main.transform.position, animTime).SetEase(Ease.InQuad);
 			//textCloneObj.transform.DOMoveY(0.5f, animTime).SetEase(Ease.InExpo);
 			//textCloneObj.transform.DOScale(textObj.transform.localScale * 2, animTime).SetEase(Ease.InQuad);
