@@ -181,8 +181,10 @@ public class MainGameManager : MonoBehaviour {
 			fadeOverlay.gameObject.SetActive(true);
 			//fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 0f);
 		}
-		while (dt < duration) {
-			var val = (dt / duration);
+		float val = 0f;
+		while (dt < duration + Time.deltaTime) {
+			val = (dt / duration);
+			val = Mathf.Clamp01(val);
 			if (!fadeIn) {
 				val = val * (2 - val); // EaseOutQuad
 				val = 1f - val;
@@ -194,6 +196,7 @@ public class MainGameManager : MonoBehaviour {
 			dt = Time.time - t;
 			yield return null;
 		}
+		print(val);
 		if (!fadeIn) {
 			fadeOverlay.gameObject.SetActive(false);
 			//fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 1f);

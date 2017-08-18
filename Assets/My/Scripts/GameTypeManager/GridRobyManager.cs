@@ -123,17 +123,17 @@ public class GridRobyManager : BaseGameTypeManager {
 		}
 		else { // Deactivate
 			if (imageTargetDevBoard) {
-			EnableAllGameObjects(false);
-			isDevBoardMode = false;
-			EnableAllGameObjects(true);
+				EnableAllGameObjects(false);
+				isDevBoardMode = false;
+				EnableAllGameObjects(true);
 				gameCanBeShown = true;
 				gameManager.imageTracker.UnloadImageTargetBehaviour(imageTargetDevBoard);
 				devBoardTargetCanvas.SetActive(false);
-				//Destroy(imageTargetDevBoard);
+			//Destroy(imageTargetDevBoard);
 			}
 			//imageTargetDevBoard.gameObject.SetActive(false);
 		}
-		UpdateVisibility();
+		UpdateVisibility(true);
 
 		//gameManager.imageTracker.StartTrack();
 	}

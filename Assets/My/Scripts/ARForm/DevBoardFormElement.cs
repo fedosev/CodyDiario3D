@@ -117,7 +117,6 @@ public class DevBoardFormElement : ARFormElement {
 			}
 		}
 		uiSavedValues.text = sb.ToString();
-
 	}
 
 	public string GetCardLetters() {
@@ -145,6 +144,5 @@ public class DevBoardFormElement : ARFormElement {
 	}
 
 }
-
 
 }

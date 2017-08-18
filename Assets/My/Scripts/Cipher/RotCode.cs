@@ -25,7 +25,7 @@ public class RotCode : MonoBehaviour {
 			for (var i = code.Length; i < rotCylinders.Length; i++) {
 				rotCylinders[i].gameObject.SetActive(false);
 			}
-			if (code.Length == 1) {
+			if (code.Length == 1 && MainGameManager.Instance != null && MainGameManager.Instance.useAR) {
 				transform.position = new Vector3(0f, transform.position.y, transform.position.z);
 			}
 		}
