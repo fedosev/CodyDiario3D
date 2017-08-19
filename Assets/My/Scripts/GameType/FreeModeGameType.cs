@@ -6,6 +6,15 @@ using UnityEngine;
 [CreateAssetMenu]
 public class FreeModeGameType : BaseGridRobyGameType {
 
+	public override string title { get {
+		return "Modalità libera";
+	} }
+
+	public override string generalInfo { get {
+		return "Puoi far muovere il robot sulla scacchiera in modalità libera usando la carte";
+	} }
+    
+
     public bool trace = false;
 
     public override void InitBody() {

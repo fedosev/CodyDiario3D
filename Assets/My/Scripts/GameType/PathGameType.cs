@@ -6,9 +6,40 @@ using UnityEngine;
 [CreateAssetMenu]
 public class PathGameType : BaseGridRobyGameType {
 
+	public override string title { get {
+		return "Percorso";
+	} }
+
+	public override string generalInfo { get {
+		var str = "";
+		var strSelPos = "Seleziona la posizione di partenza facendo il tap sulla casella desiderata e poi sulla direzione.\n";
+		if (code.Length > 0 && path.Length == 0) {
+			str = "La sequenza di istruzioni è nota. Devi trovare il percorso.\n";
+			if (!startPosition.IsSet())
+				str += strSelPos;
+			str += "Seleziona le caselle della scacchiera che faranno parte del percorso e premi su \"Esegui\".\n";
+		} else if (code.Length == 0 && path.Length > 0) {
+			str = "Il percorso è noto. Devi trovare trovare la sequenza di istruzioni.\n";
+			if (useDevBoard && MainGameManager.Instance && MainGameManager.Instance.useAR) {
+				str += "Annerisci bene le caselle opportune del programmatore sulla pagina del diario. ";
+				str += "Assicurati di trovarti in un posto ben illuminato. Stendi bene la pagina con la mano senza coprire il programmatore. ";
+				str += "Con l'altra mano inquadra il programmatore. Quando compariranno i valori premi su \"Usa la sequenza\". ";
+				str += "Se i valori sono stati presi male potrai correggerli nella fare successiva.\n";
+			} else {
+				str += "Premi sulle carte per aggiungerle alla sequenza di istruzioni e premi su \"Esegui\".\n";
+			}
+		} else if (code.Length == 0 && path.Length == 0) {
+			if (!startPosition.IsSet())
+				str += strSelPos;
+			str += "Devi trovare sia il percorso che la sequenza di istruzioni.";
+		}
+
+		return str;
+	} }
+
 	public string[] path;
 	
-	public string code; //@todo maybe not needed
+	public string code;
 
 	[HideInInspector] public CodingGrid codingGrid;
 

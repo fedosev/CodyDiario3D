@@ -89,9 +89,8 @@ public class MainGameManager : MonoBehaviour {
 
     public void UpdateVisibility() {
 
-		// @todo
-
-        gameTypeManager.UpdateVisibility();
+		if (gameTypeManager)
+        	gameTypeManager.UpdateVisibility();
     }
 
     public void LoadGameType(BaseGameType gameType) {
@@ -115,7 +114,6 @@ public class MainGameManager : MonoBehaviour {
 			yield return new WaitUntil(() => asyncOp.isDone && (Time.time - t) > fadeDuration);
 		}
 		SetUseAR();
-
 
 		// Scene unloaded here
 
@@ -148,11 +146,19 @@ public class MainGameManager : MonoBehaviour {
 		yield return new WaitUntil(() => gameTypeManager.isGameInit && (Time.time - t) > fadeDuration);
 
 		isLoading = false;
-		//UpdateVisibility();
 
-		Menu.Show(false, false);
+		Menu.InfoPanel.Setup(gameType.title, gameType.GetInfo());
 
-		StartCoroutine(FadeOverlay(false, fadeDuration * 3));
+		Menu.coverButton.SetActive(false);
+		Menu.resumeButton.SetActive(true);
+		Menu.helpButton.SetActive(true);
+
+		if (gameType.showInfoOnStart) {
+			Menu.ShowInfoOnStart();
+		} else {
+			Menu.Hide(false);
+			StartCoroutine(FadeOverlay(false, fadeDuration * 3));
+		}
 
 		if (useAR) {
 			//imageTracker.StopTrack();
@@ -162,7 +168,33 @@ public class MainGameManager : MonoBehaviour {
 		//gameTypeManager.ShowGame(false);
 
 		//gameTypeManager.Init();
+	}
 
+	public IEnumerator InitBackground() {
+
+		AsyncOperation asyncOp;
+
+		isLoading = true;
+
+		useAR = false;
+		useARchanged = true;
+		SetUseAR();
+
+		noARCamera.gameObject.SetActive(true);
+
+		if (SceneManager.sceneCount > 1) {
+			//yield return StartCoroutine(FadeOverlay(true, fadeDuration));
+			asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
+			yield return new WaitUntil(() => asyncOp.isDone);
+		}
+
+		SceneManager.LoadScene("Background", LoadSceneMode.Additive);
+		noARCamera.gameObject.SetActive(false);
+
+		Menu.ShowMain();
+
+		useAR = true;
+		useARchanged = true;
 	}
 
 	public IEnumerator FadeOverlay(bool fadeIn, float duration) {
@@ -319,7 +351,8 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	public void PauseGame(bool pause) {
-		gameType.Pause(pause);
+		if (gameType)
+			gameType.Pause(pause);
 	}
 
 	/*
@@ -359,13 +392,17 @@ public class MainGameManager : MonoBehaviour {
 		fadeOverlay.gameObject.SetActive(true);
 		fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 1f);
 
-		LoadGameType(0);
+		StartCoroutine(InitBackground());
 	}
 	
 	public void LoadGameType(int index) {
 		gameTypeIndex = index;
 		if (index >= 0 && index < allGameTypes.testItems.Capacity)
 			StartCoroutine(Init(allGameTypes.testItems[index].name));
+	}
+
+	public void LoadCover() {
+		StartCoroutine(Init("Cover"));
 	}
 
 	public void Quit() {

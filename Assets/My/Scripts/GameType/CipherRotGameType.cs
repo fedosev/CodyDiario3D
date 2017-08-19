@@ -6,6 +6,22 @@ using UnityEngine;
 [CreateAssetMenu]
 public class CipherRotGameType : BaseGameType {
 
+	public override string title { get {
+		return "Cifrario";
+	} }
+	public override string generalInfo { get {
+		return "Il primo rotore è fisso. Puoi ruotarlo per vedere altre lettere e confontarle."
+			+ (!isRotFixed ?
+				"\nI rotori a destra del primo possono essere ruotati per cambiare il codice ROT" : "")
+			+ (!isRotFixed && rotCode.Length == 1 ?
+				"\nIn questo cifrario c'è un solo rotore a destra" : "")
+			+ (!isDecodedTextFixed  ?
+				"\nPuoi scrivere e modificare il testo da cifrare facendo il tap sulla casella \"Testo in chiaro\"" : "")
+			+ (!isEncodedTextFixed  ?
+				"\nPuoi scrivere e modificare il testo da decifrare facendo il tap sulla casella \"Testo cifrato\"" : "")
+		;
+	} }
+
 	public enum EncodingMode { StartEncoding, StartDecoding }
 
 	public EncodingMode encodingMode = EncodingMode.StartEncoding;

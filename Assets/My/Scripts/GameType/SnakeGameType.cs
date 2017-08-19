@@ -6,6 +6,10 @@ using UnityEngine;
 [CreateAssetMenu]
 public class SnakeGameType : BaseGridRobyGameType {
 
+	public override string title { get {
+		return "Serpente";
+	} }
+
     public override void InitBody() {
 
         grid.gameType = GameTypes.SNAKE;

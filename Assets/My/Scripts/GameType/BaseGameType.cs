@@ -10,6 +10,18 @@ public abstract class BaseGameType : ScriptableObject {
         return sceneName;
     } }
 
+    public abstract string title { get; }
+    public virtual string generalInfo { get; }
+
+    public bool showInfoOnStart = true;
+    [TextArea(10, 10)] public string info = "";
+
+    public string GetInfo() {
+        if (info != "")
+            return info;
+        return generalInfo;
+    }
+    
     public virtual void Init() {
 
         BeforeInit();

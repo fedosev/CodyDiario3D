@@ -8,16 +8,37 @@ using DG.Tweening;
 public class MainMenu : MonoBehaviour {
 
 	public Dropdown gameTypeSelector;
-	public GameObject mainMenuPanel;
+	public GameObject[] panels;
 	public Button menuButton;
+
+	public int mainPanelIndex = 0;
+	public int infoPanelIndex = 1;
 
 	// @tmp
 	public InputField InputFieldiOS;
+	public bool isVisible = false;
+	
+	public GameObject coverButton;
+	public GameObject resumeButton;
+	public GameObject helpButton;
+
+	InfoPanel infoPanel;
+
+	public InfoPanel InfoPanel { get {
+		if (infoPanel == null)
+			infoPanel = panels[infoPanelIndex].GetComponent<InfoPanel>();
+
+		return infoPanel;
+	} }
 	
 	MainGameManager gameManager;
-	public bool isVisible = false;
 
-	void Awake() {
+	int panelIndex = -1;
+	int prevPanelIndex = -1;
+    bool disableFadeIn = false;
+
+
+    void Awake() {
 		gameManager = MainGameManager.Instance;
 	}
 
@@ -56,45 +77,81 @@ public class MainMenu : MonoBehaviour {
 		#endif
 		*/
 		
-		menuButton.onClick.AddListener(ToggleMenu);
+		resumeButton.SetActive(false);
+		helpButton.SetActive(false);
+
+		menuButton.onClick.AddListener(ShowMain);
+		InfoPanel.onClose += Hide;
 	}
 
-	public void ToggleMenu() {
-		Show(!isVisible);
+	public void ShowMain() {
+		prevPanelIndex = -1;
+		panelIndex = mainPanelIndex;
+		StartCoroutine(ShowAnimated(true, true, mainPanelIndex));
 	}
 
-	public void Show(bool show, bool animated) {
-		StartCoroutine(ShowAnimated(show, animated));
+	public void ShowPanel(int panelIndex) {
+		prevPanelIndex = panelIndex == mainPanelIndex ? -1 : mainPanelIndex;
+		this.panelIndex = panelIndex;
+		StartCoroutine(ShowAnimated(true, true, panelIndex));
 	}
 
-	public void Show(bool show) {
-		StartCoroutine(ShowAnimated(show));
+	public void ShowInfo() {
+		ShowPanel(infoPanelIndex);
 	}
 
-	public IEnumerator ShowAnimated(bool show, bool animated = true) {
-		print("FadeIn");
+	public void ShowInfoOnStart() {
+		disableFadeIn = true;
+		ShowPanel(infoPanelIndex);
+	}
+
+	public void Hide() {
+		prevPanelIndex = -1;
+		panelIndex = -1;		
+		StartCoroutine(ShowAnimated(false, true));
+	}
+
+	public void Hide(bool animated) {
+		StartCoroutine(ShowAnimated(false, animated));
+	}
+
+	public void Back() {
+		if (prevPanelIndex != -1)
+			ShowPanel(prevPanelIndex);
+		else
+			Hide();
+	}
+
+	public IEnumerator ShowAnimated(bool show, bool animated, int panelIndex = -1) {
+
 		gameManager.PauseGame(show);
-		if (animated)
+		if (animated && !disableFadeIn)
 			yield return StartCoroutine(gameManager.FadeOverlay(true, 0.2f));
 		gameManager.PauseAR(show);
 		isVisible = show;
 		gameManager.UpdateVisibility();
-		mainMenuPanel.SetActive(show);
+		foreach (var panel in panels) {
+			panel.SetActive(false);
+		}
+		if (panelIndex != -1)
+			panels[panelIndex].SetActive(show);
 		menuButton.gameObject.SetActive(!show);
-		print("FadeOut");
 		if (animated)
 			yield return StartCoroutine(gameManager.FadeOverlay(false, 0.5f));
-		
+
+		disableFadeIn = false;
 		yield return null;
 	}
 
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.Escape)) {
-			if (isVisible) {
+			if (isVisible && panelIndex == mainPanelIndex) {
 				gameManager.Quit();
+			} else if (!isVisible) {
+				ShowMain();
 			} else {
-				ToggleMenu();
+				Back();
 			}
 		}
 	}

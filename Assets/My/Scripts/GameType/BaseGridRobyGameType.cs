@@ -65,18 +65,9 @@ public abstract class BaseGridRobyGameType : BaseGameType {
 
     public override void BeforeInit() {
         base.BeforeInit();
-        gridRobyManager = GameObject.FindObjectOfType<GridRobyManager>();
+        gridRobyManager = GridRobyManager.Instance;
         if (gridRobyManager.codingGrid != null) {
             gridRobyManager.codingGrid.gameObject.SetActive(false);
-        }
-    }
-
-    public override void AfterInit() {
-        base.AfterInit();
-        
-        if (useDevBoard && GameObject.FindObjectOfType<MainGameManager>().useAR) {
-            // @todo activate dev board
-            Debug.Log("Activate dev board..."); 
         }
     }
 
