@@ -50,6 +50,7 @@ public class MainGameManager : MonoBehaviour {
 	public Camera noARCamera;
 
 	[HideInInspector] public bool isLoading;
+	[HideInInspector] public bool isBackground;
 
 
 	BaseGameType gameType;
@@ -103,6 +104,7 @@ public class MainGameManager : MonoBehaviour {
 		this.gameType = gameType;
 		var t = Time.time;
 		isLoading = true;
+		isBackground = false;
 
 		if (SceneManager.sceneCount > 1) {
 			imageTracker.StopTrack();
@@ -175,9 +177,15 @@ public class MainGameManager : MonoBehaviour {
 		AsyncOperation asyncOp;
 
 		isLoading = true;
+		isBackground = true;
 
 		useAR = false;
 		useARchanged = true;
+
+		Menu.Hide(false);
+		fadeOverlay.gameObject.SetActive(true);
+		fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 1f);
+
 		SetUseAR();
 
 		noARCamera.gameObject.SetActive(true);
@@ -191,7 +199,7 @@ public class MainGameManager : MonoBehaviour {
 		SceneManager.LoadScene("Background", LoadSceneMode.Additive);
 		noARCamera.gameObject.SetActive(false);
 
-		Menu.ShowMain();
+		Menu.ShowMainOnStart();
 
 		useAR = true;
 		useARchanged = true;
@@ -218,6 +226,7 @@ public class MainGameManager : MonoBehaviour {
 			val = (dt / duration);
 			val = Mathf.Clamp01(val);
 			if (!fadeIn) {
+				//val = val < 0.5f ? 2 * val * val : -1 + (4 - 2 * val) * val; // easeInOutQuad
 				val = val * (2 - val); // EaseOutQuad
 				val = 1f - val;
 			} else {

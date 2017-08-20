@@ -40,6 +40,8 @@ public class MainMenu : MonoBehaviour {
 
     void Awake() {
 		gameManager = MainGameManager.Instance;
+		if (isVisible)
+			panelIndex = mainPanelIndex;
 	}
 
 	public void SetupGameTypeSelector() {
@@ -90,6 +92,12 @@ public class MainMenu : MonoBehaviour {
 		StartCoroutine(ShowAnimated(true, true, mainPanelIndex));
 	}
 
+	public void ShowMainOnStart() {
+		disableFadeIn = true;
+		ShowMain();
+	}
+	
+
 	public void ShowPanel(int panelIndex) {
 		prevPanelIndex = panelIndex == mainPanelIndex ? -1 : mainPanelIndex;
 		this.panelIndex = panelIndex;
@@ -137,7 +145,7 @@ public class MainMenu : MonoBehaviour {
 			panels[panelIndex].SetActive(show);
 		menuButton.gameObject.SetActive(!show);
 		if (animated)
-			yield return StartCoroutine(gameManager.FadeOverlay(false, 0.5f));
+			yield return StartCoroutine(gameManager.FadeOverlay(false, disableFadeIn ? 2f : 0.5f));
 
 		disableFadeIn = false;
 		yield return null;
@@ -147,7 +155,9 @@ public class MainMenu : MonoBehaviour {
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			if (isVisible && panelIndex == mainPanelIndex) {
-				gameManager.Quit();
+				//gameManager.Quit();
+				if (!gameManager.isBackground)
+					Hide();
 			} else if (!isVisible) {
 				ShowMain();
 			} else {

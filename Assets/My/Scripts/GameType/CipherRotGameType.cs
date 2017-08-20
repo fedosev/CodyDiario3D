@@ -78,4 +78,10 @@ public class CipherRotGameType : BaseGameType {
 		//rotObj.SetCode(rotObj.code);
 	}
 
+    public override void Pause(bool pause) {
+        if (rotObj != null) {
+            rotObj.Pause(pause);
+        }
+    }
+
 }

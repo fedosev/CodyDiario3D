@@ -16,6 +16,16 @@ public class RotCode : MonoBehaviour {
 	public int[] code;
 
 	public UnityEvent onCodeChange;
+
+	bool isPaused = false;
+
+	public void Pause(bool pause) {
+		isPaused = pause;
+		for (var i = 0; i < code.Length; i++) {
+			rotCylinders[i].isPaused = pause;
+		}
+		fixedRotCylinder.isPaused = pause;
+	}
 	
 
 	public void Init() {

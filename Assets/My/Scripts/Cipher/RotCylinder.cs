@@ -57,6 +57,8 @@ public class RotCylinder : MonoBehaviour {
 
 	public float minAngularSpeed = 0.03f;
 
+	[HideInInspector] public bool isPaused = false;
+
 	int nChars { get {
 		return 26 + (withSpace ? 1 : 0);
 	}}
@@ -151,7 +153,10 @@ public class RotCylinder : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		if (isPaused)
+			return;
 		// @tmp
+		/*
 		if (mainRotCylinder != null) {
 			if (Input.GetKey(KeyCode.Alpha1)) {
 				SetRotNumber(1);
@@ -163,6 +168,7 @@ public class RotCylinder : MonoBehaviour {
 				SetRotNumber(3);
 			}
 		}
+		*/
 
 		if (!isFixed && mainRotCylinder != null && (isTouching || rb.angularVelocity != Vector3.zero)) {
 			var rotNum = GetRotNumber();
@@ -256,6 +262,9 @@ public class RotCylinder : MonoBehaviour {
 	}
 
     void FixedUpdate() {
+		
+		if (isPaused)
+			return;
 
 		if (Input.GetMouseButton(0)) {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
