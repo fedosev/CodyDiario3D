@@ -96,7 +96,6 @@ public class MainMenu : MonoBehaviour {
 		disableFadeIn = true;
 		ShowMain();
 	}
-	
 
 	public void ShowPanel(int panelIndex) {
 		prevPanelIndex = panelIndex == mainPanelIndex ? -1 : mainPanelIndex;
@@ -132,9 +131,12 @@ public class MainMenu : MonoBehaviour {
 
 	public IEnumerator ShowAnimated(bool show, bool animated, int panelIndex = -1) {
 
+		var slowFade = disableFadeIn;
 		gameManager.PauseGame(show);
-		if (animated && !disableFadeIn)
+		if (animated && !disableFadeIn) {
 			yield return StartCoroutine(gameManager.FadeOverlay(true, 0.2f));
+		}
+		disableFadeIn = false;
 		gameManager.PauseAR(show);
 		isVisible = show;
 		gameManager.UpdateVisibility();
@@ -145,9 +147,8 @@ public class MainMenu : MonoBehaviour {
 			panels[panelIndex].SetActive(show);
 		menuButton.gameObject.SetActive(!show);
 		if (animated)
-			yield return StartCoroutine(gameManager.FadeOverlay(false, disableFadeIn ? 2f : 0.5f));
+			yield return StartCoroutine(gameManager.FadeOverlay(false, slowFade ? 2f : 0.5f));
 
-		disableFadeIn = false;
 		yield return null;
 	}
 

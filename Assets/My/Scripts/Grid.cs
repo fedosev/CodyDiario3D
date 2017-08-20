@@ -178,7 +178,10 @@ public class Grid : MonoBehaviour {
 		players[index].transform.parent = this.transform;
 		players[index].GetComponent<PlayerBehaviour>().Index = index;
 		//robotController = robotPrefabs.GetComponent<RobotController>();
-		quad.GetComponent<QuadBehaviour>().SetState(quadState);
+		var quadBh = quad.GetComponent<QuadBehaviour>();
+		quadBh.SetState(quadState);
+
+		gameTypeConfig.OnInitRobot(rc, quadBh);
 	}
 
 	public void InitRobot(int index, string name, int col, int row, RobyDirection direction, QuadStates quadState) {

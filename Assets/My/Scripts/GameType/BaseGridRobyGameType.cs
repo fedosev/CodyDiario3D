@@ -47,9 +47,11 @@ public abstract class BaseGridRobyGameType : BaseGameType {
 
     public RobyStartPosition startPosition;
 
+    public bool useFirstQuad = false;
     public bool withLetters = false;
 
     public string[] letters;
+
 
     public bool useDevBoard = false;
 
@@ -58,6 +60,12 @@ public abstract class BaseGridRobyGameType : BaseGameType {
     public virtual void SetupQuad(QuadBehaviour quad, int col, int row) { }
 
     public virtual void ChangeQuad(RobotController robot, QuadBehaviour prevQuad, QuadBehaviour nextQuad) { }
+
+    public virtual void OnInitRobot(RobotController robot, QuadBehaviour quad) {
+        if (useFirstQuad && withLetters) {
+            quad.UseLetter();
+        }
+    }
 
     public virtual bool QuadIsFreeToGoIn(QuadBehaviour quad) {
         return false;

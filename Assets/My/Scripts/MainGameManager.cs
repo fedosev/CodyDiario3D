@@ -92,6 +92,9 @@ public class MainGameManager : MonoBehaviour {
 
 		if (gameTypeManager)
         	gameTypeManager.UpdateVisibility();
+		else if (isBackground) {
+			targetsCanvas.SetActive(false);
+		}
     }
 
     public void LoadGameType(BaseGameType gameType) {
@@ -155,16 +158,19 @@ public class MainGameManager : MonoBehaviour {
 		Menu.resumeButton.SetActive(true);
 		Menu.helpButton.SetActive(true);
 
+		if (useAR) {
+			//imageTracker.StopTrack();
+			//imageTracker.StartTrack();
+			PauseAR(false);
+			yield return new WaitForSeconds(0.2f);
+			PauseAR(true);
+		}
+		
 		if (gameType.showInfoOnStart) {
 			Menu.ShowInfoOnStart();
 		} else {
 			Menu.Hide(false);
 			StartCoroutine(FadeOverlay(false, fadeDuration * 3));
-		}
-
-		if (useAR) {
-			//imageTracker.StopTrack();
-			imageTracker.StartTrack();
 		}
 
 		//gameTypeManager.ShowGame(false);
@@ -308,13 +314,18 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	public void ChangeWithAR(bool useAR) {
-		if (gameType.sceneName != gameType.sceneNameNoAR) {
+		if (gameType && (gameType.sceneName != gameType.sceneNameNoAR)) {
 			RestartWithAR(useAR);
 		} else {
 			this.useAR = useAR;
 			useARchanged = true;
 			SetUseAR();
-			gameTypeManager.SetUseAR(useAR);
+			if (gameTypeManager)
+				gameTypeManager.SetUseAR(useAR);
+			if (mainMenu.isVisible && useAR) {
+				isARPaused = false;
+				PauseAR(true);
+			}
 			/*
 			if (!useAR) {
 				ShowGame(true);
@@ -345,12 +356,14 @@ public class MainGameManager : MonoBehaviour {
 		if (!useAR)
 			return;
 
-		if (pause) {
+		if (pause && !isARPaused) {
 			//EasyAR.Engine.Pause();
 			aRCamera.enabled = false;
+			if (gameTypeManager)
+				gameTypeManager.wasShowBeforeMenu = IsARTracked;
 			imageTracker.StopTrack();
 
-		} else {
+		} else if (!pause && isARPaused) {
 			//EasyAR.Engine.Resume();
 			aRCamera.enabled = true;
 			imageTracker.StartTrack();

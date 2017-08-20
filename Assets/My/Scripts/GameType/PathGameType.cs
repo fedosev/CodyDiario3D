@@ -41,6 +41,8 @@ public class PathGameType : BaseGridRobyGameType {
 	
 	public string code;
 
+	public bool ignoreCheckPath = false;
+
 	[HideInInspector] public CodingGrid codingGrid;
 
 	public override void InitBody() {
@@ -74,9 +76,12 @@ public class PathGameType : BaseGridRobyGameType {
 		}
 	}
 
+	public override void OnInitRobot(RobotController robot, QuadBehaviour quad) {
+		base.OnInitRobot(robot, quad);
+	}
     public override void ChangeQuad(RobotController robot, QuadBehaviour prevQuad, QuadBehaviour nextQuad) {
         
-        if (robot.isFirstMove) {
+        if (robot.isFirstMove && !useFirstQuad) {
             prevQuad.SetOtherState(QuadStates.DEFAULT);
         } else {
             //prevQuad.SetState(QuadStates.OBSTACLE);
@@ -93,7 +98,7 @@ public class PathGameType : BaseGridRobyGameType {
     }
 
     public override bool QuadIsFreeToGoIn(QuadBehaviour quad) {
-        return quad.mainState == QuadStates.PATH;;
-    }	
+        return ignoreCheckPath || quad.mainState == QuadStates.PATH;
+    }
 
 }

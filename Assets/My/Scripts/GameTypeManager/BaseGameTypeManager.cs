@@ -53,7 +53,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		if (gameManager && useAR && (gameManager.isARPaused || !gameManager.IsARTracked)) {
 			showGame = false;
 		}
-		if (gameManager && gameManager.mainMenu.isVisible) {
+		if (gameManager && gameManager.mainMenu.isVisible && wasShowBeforeMenu) {
 			showGame = true;
 		}
 		/*
@@ -131,7 +131,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		InitConfig();
 		gameType.Init();
 
-		wasShowBeforeMenu = false;
+		//wasShowBeforeMenu = false;
 
 		if (gameManager == null) {
 			SetUseAR(false);

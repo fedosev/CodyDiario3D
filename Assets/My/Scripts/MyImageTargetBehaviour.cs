@@ -28,12 +28,22 @@ namespace EasyAR
             
         }
 
+        public System.Collections.IEnumerator ShowInfo() {
+            yield return new WaitForSeconds(0.2f);
+            gameManager.mainMenu.ShowInfoOnStart();
+        }
+
         void OnTargetFound(TargetAbstractBehaviour behaviour) {
 
             //gameObj.SetActive(true);
             Debug.Log("TargetFound " + this.Name);
+            /*
+            if (!gameManager.wasTargetFound) {
+                StartCoroutine(ShowInfo());
+            }
+            */
             gameManager.wasTargetFound = true;
-            gameManager.gameTypeManager.wasShowBeforeMenu = true;
+            //gameManager.gameTypeManager.wasShowBeforeMenu = true;
             //gameManager.isARTracked = true;
             gameManager.UpdateVisibility();
         }
@@ -42,7 +52,7 @@ namespace EasyAR
 
             //gameObj.SetActive(false);
             Debug.Log("TargetLost");
-            gameManager.gameTypeManager.wasShowBeforeMenu = false;
+            //gameManager.gameTypeManager.wasShowBeforeMenu = false;
             //gameManager.isARTracked = false;
             gameManager.UpdateVisibility();
         }

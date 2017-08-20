@@ -78,6 +78,7 @@ public class RobotController : MonoBehaviour, IDirection {
 
 		grid.gameTypeConfig.ChangeQuad(this, prevQuadBh, quadBh);		
 
+		/*
 		switch (grid.gameType) {
 			case GameTypes.FREE:
 				break;
@@ -85,7 +86,7 @@ public class RobotController : MonoBehaviour, IDirection {
 			case GameTypes.PATH:
 				break;
 		}
-
+		*/
 		if (grid.gameTypeConfig.withLetters) {
 			StartCoroutine(quadBh.AnimateLetter());
 			Debug.Log(quadBh.letter);

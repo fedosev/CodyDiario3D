@@ -165,7 +165,6 @@ public class QuadBehaviour : MonoBehaviour {
 		if (otherState == QuadStates.ACTIVE || otherState == QuadStates.ON)
 			return false;
 
-
 		return grid.gameTypeConfig.QuadIsFreeToGoIn(this);
 	}
 
@@ -300,6 +299,10 @@ public class QuadBehaviour : MonoBehaviour {
 		letter = c;
         GetText().text = c.ToString();
     }
+
+	public void UseLetter() {
+		StartCoroutine(AnimateLetter());
+	}
 
 	public IEnumerator AnimateLetter() {
 		var animTime = 0.75f;
