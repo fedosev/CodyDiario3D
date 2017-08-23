@@ -49,6 +49,8 @@ public class MainGameManager : MonoBehaviour {
 
 	public Camera noARCamera;
 
+	public GameConfig gameConfig;
+
 	[HideInInspector] public bool isLoading;
 	[HideInInspector] public bool isBackground;
 
@@ -419,8 +421,12 @@ public class MainGameManager : MonoBehaviour {
 	
 	public void LoadGameType(int index) {
 		gameTypeIndex = index;
-		if (index >= 0 && index < allGameTypes.testItems.Capacity)
-			StartCoroutine(Init(allGameTypes.testItems[index].name));
+		if (index >= 0 && index < allGameTypes.items.Capacity)
+			StartCoroutine(Init(allGameTypes.items[index].name));
+	}
+
+	public void LoadScanOptions() {
+		StartCoroutine(Init("ScanOptions"));
 	}
 
 	public void LoadCover() {
@@ -434,7 +440,7 @@ public class MainGameManager : MonoBehaviour {
 
 	void LoadNextGameType() {
 		// @tmp
-		StartCoroutine(Init(allGameTypes.testItems[(++gameTypeIndex) % allGameTypes.testItems.Count].name));
+		StartCoroutine(Init(allGameTypes.items[(++gameTypeIndex) % allGameTypes.items.Count].name));
 	}
 
 	void Update () {

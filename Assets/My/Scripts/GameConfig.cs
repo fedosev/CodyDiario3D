@@ -34,7 +34,6 @@ public class GameConfig : ScriptableObject {
 
 		Debug.Log("GameConfig - Save");
 		PlayerPrefs.SetString("GameConfig", JsonUtility.ToJson(this));
-
 	}
 
 	public void Load() {

@@ -130,9 +130,10 @@ public class Grid : MonoBehaviour {
 		}
 	}
 
-	private void CreateBorder(Vector3 pos, float width, float height) {
+	private void CreateBorder(Vector3 pos, float width, float height, Material mat) {
 
-		var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+		//var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+		var quad = Instantiate(config.borderPrefab);
 		quad.transform.rotation = Quaternion.AngleAxis(90, Vector3.right);
 		quad.transform.position = pos;
 		if (width > 0)
@@ -140,10 +141,13 @@ public class Grid : MonoBehaviour {
 		else
 			quad.transform.localScale = new Vector3(config.borderSize, height, 1f);
 		quad.transform.parent = this.transform;
-		quad.tag = "Border";
+		//quad.tag = "Border";
 		var rend = quad.GetComponent<Renderer>();
-		rend.material = config.borderMaterial;
-		rend.material.color = config.gameConfig.GetBorderColor();
+
+		rend.material = mat;
+		mat.color = config.gameConfig.GetBorderColor();
+		/*
+		*/
 	}
 
 	private float GetAngleFromDirection(RobyDirection direction) {
@@ -259,6 +263,16 @@ public class Grid : MonoBehaviour {
 		selectDirectionQuads.Clear();
 	}
 
+	public void UpdateColors() {
+		/*
+		for (var i = 0; i < quadTransforms.Length; i++) {
+			quadTransforms[i].
+		}
+		*/
+		QuadBehaviour.GetMaterialForModifying(config.quadMaterial).color = config.gameConfig.GetQuadColor();
+		QuadBehaviour.GetMaterialForModifying(config.borderMaterial).color = config.gameConfig.GetBorderColor();
+	}
+
 	public void GenerateGrid() {
 
 		Debug.Log("Generate grid");
@@ -280,13 +294,16 @@ public class Grid : MonoBehaviour {
 
 		// BORDERS
 
+		var borderMat = QuadBehaviour.GetMaterialForModifying(config.borderMaterial);
+		borderMat.color = config.gameConfig.GetBorderColor();
+
 		for (var x = 0; x <= nCols; x++) {
 			Vector3 pos = new Vector3(
 				x * (config.size + config.borderSize) + config.borderSize / 2 - width / 2,
 				0.0001f,
 				0
 			) + transform.position;
-			CreateBorder(pos, 0, height);
+			CreateBorder(pos, 0, height, borderMat);
 		}
 		for (var z = 0; z <= nRows; z++) {
 			Vector3 pos = new Vector3(
@@ -294,7 +311,7 @@ public class Grid : MonoBehaviour {
 				0.0001f,
 				z * (config.size + config.borderSize) + config.borderSize / 2 - height / 2
 			) + transform.position;
-			CreateBorder(pos, width, 0);
+			CreateBorder(pos, width, 0, borderMat);
 		}
 
 		// QUADS

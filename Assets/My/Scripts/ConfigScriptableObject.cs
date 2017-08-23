@@ -20,6 +20,7 @@ public class ConfigScriptableObject : ScriptableObject {
 	public Material obstacleMaterial;
     public Material transparentMaterial;
     public GameObject quadPrefab;
+    public GameObject borderPrefab;
     public GameObject quadLetterPrefab;
     public GameObject particleSystemShowRobyPrefab;
 	public GameObject[] robotPrefabs;

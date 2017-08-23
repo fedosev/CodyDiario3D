@@ -69,6 +69,7 @@ public class GridTransparenciesFormElement : ARFormElement {
 			gameConfig.quadColorAlpha = quadAlpha;
 			gameConfig.borderColorAlpha = borderAlpha;
         }
+        gameConfig.Save();
 		
 	}	
 

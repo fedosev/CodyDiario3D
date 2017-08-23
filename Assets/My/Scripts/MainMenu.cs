@@ -48,7 +48,7 @@ public class MainMenu : MonoBehaviour {
 
 		List<Dropdown.OptionData> options = new List<Dropdown.OptionData>();
 		Dropdown.OptionData optData;
-		foreach (var item in gameManager.allGameTypes.testItems) {
+		foreach (var item in gameManager.allGameTypes.items) {
 			optData = new Dropdown.OptionData(item.name);
 			options.Add(optData);
 		}
