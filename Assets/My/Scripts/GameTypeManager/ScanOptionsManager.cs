@@ -16,6 +16,11 @@ public class ScanOptionsManager : BaseGameTypeManager {
 	public ImageTargetBehaviour imageTargetOptions;
 	public GameObject optionsTargetCanvas;
 
+	public override GameObject TargetCanvas { get {
+		return optionsTargetCanvas;
+	} }
+
+
 	public override void InitConfig() {
 
 		SetOptionsActive(true);
@@ -23,6 +28,7 @@ public class ScanOptionsManager : BaseGameTypeManager {
 
 	public void UpdateOptions() {
 		gameManager.mainMenu.InitOptions();
+		gameManager.mainMenu.ShowOptions();
 	}
 
 	public void SetOptionsActive(bool activate) {
@@ -30,7 +36,6 @@ public class ScanOptionsManager : BaseGameTypeManager {
 		gameManager.SetMainImgTargetsActive(!activate, true);
 
 		if (activate) {
-
 			if (!imageTargetOptions.ActiveTargetOnStart) {
 				imageTargetOptions.SetupWithImage(imageTargetOptions.Path, imageTargetOptions.Storage, imageTargetOptions.Name, imageTargetOptions.Size);
 				imageTargetOptions.TargetFound += (TargetAbstractBehaviour behaviour) => {

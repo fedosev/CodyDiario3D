@@ -156,7 +156,8 @@ public class MainGameManager : MonoBehaviour {
 
 		Menu.InfoPanelObj.Setup(gameType.title, gameType.GetInfo());
 
-		Menu.AfterFirstGameLoad();
+		if (gameType.name != "ScanOptions")
+			Menu.AfterFirstGameLoad();
 
 		if (useAR) {
 			//imageTracker.StopTrack();

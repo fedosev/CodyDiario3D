@@ -7,7 +7,7 @@ using UnityEngine;
 public class CoverGameType : FreeModeGameType {
 
 	public override string title { get {
-		return "Cover";
+		return "Copertina";
 	} }
 
     public override void InitBody() {

@@ -13,7 +13,7 @@ public class GridEditor : Editor
 			for (var i = 0; i < 9; i++)
 				grid.ClearGrid();
 
-            grid.gameTypeConfig = (BaseGridRobyGameType)(grid.gameTypeManager).gameType;
+            //grid.gameTypeConfig = (BaseGridRobyGameType)(grid.gameTypeManager).gameType;
             grid.gameTypeConfig.grid = grid;
                 
 			grid.GenerateGrid();

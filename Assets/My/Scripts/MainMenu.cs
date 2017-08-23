@@ -130,6 +130,10 @@ public class MainMenu : MonoBehaviour {
 		ShowPanel(infoPanelIndex);
 	}
 
+	public void ShowOptions() {
+		ShowPanel(optionsPanelIndex);
+	}
+
 	public void ShowInfoOnStart() {
 		disableFadeIn = true;
 		ShowPanel(infoPanelIndex);
