@@ -21,7 +21,7 @@ public class TransparencyCheck : MonoBehaviour, ISavable {
 		this.val = val;
 	}
 
-	void Start() {
+	public void Init() {
 
 		gameConfig = MainGameManager.Instance.gameConfig;
 		check = GetComponent<CheckDistinct>();
@@ -32,7 +32,12 @@ public class TransparencyCheck : MonoBehaviour, ISavable {
 			check.SetOn(true);
 		} else {
 			check.SetOn(false);
-		}
+		}		
+	}
+
+	void Start() {
+
+		//Init();
 	}
 
 	public void Save() {

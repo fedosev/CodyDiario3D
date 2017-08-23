@@ -13,6 +13,7 @@ public class MainMenu : MonoBehaviour {
 
 	public int mainPanelIndex = 0;
 	public int infoPanelIndex = 1;
+	public int optionsPanelIndex = 3;
 
 	// @tmp
 	public InputField InputFieldiOS;
@@ -23,12 +24,18 @@ public class MainMenu : MonoBehaviour {
 	public GameObject helpButton;
 
 	InfoPanel infoPanel;
+	OptionsPanel optionsPanel;
 
-	public InfoPanel InfoPanel { get {
+	public InfoPanel InfoPanelObj { get {
 		if (infoPanel == null)
 			infoPanel = panels[infoPanelIndex].GetComponent<InfoPanel>();
-
 		return infoPanel;
+	} }
+
+	public OptionsPanel OptionsPanelObj { get {
+		if (optionsPanel == null)
+			optionsPanel = panels[optionsPanelIndex].GetComponent<OptionsPanel>();
+		return optionsPanel;
 	} }
 	
 	MainGameManager gameManager;
@@ -42,6 +49,22 @@ public class MainMenu : MonoBehaviour {
 		gameManager = MainGameManager.Instance;
 		if (isVisible)
 			panelIndex = mainPanelIndex;
+	}
+
+	public void InitOptions() {
+		OptionsPanelObj.Init();
+	}
+
+	public void AfterFirstGameLoad() {
+
+		var optionsPanelImg = panels[optionsPanelIndex].GetComponent<Image>();
+		var optionsPanelColor = optionsPanelImg.color;
+		optionsPanelImg.color = new Color(optionsPanelColor.r, optionsPanelColor.g, optionsPanelColor.b, 0.5f);
+
+		coverButton.SetActive(false);
+		resumeButton.SetActive(true);
+		helpButton.SetActive(true);
+		
 	}
 
 	public void SetupGameTypeSelector() {
@@ -83,7 +106,7 @@ public class MainMenu : MonoBehaviour {
 		helpButton.SetActive(false);
 
 		menuButton.onClick.AddListener(ShowMain);
-		InfoPanel.onClose += Hide;
+		InfoPanelObj.onClose += Hide;
 	}
 
 	public void ShowMain() {

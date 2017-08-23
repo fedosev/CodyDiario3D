@@ -21,6 +21,10 @@ public class ScanOptionsManager : BaseGameTypeManager {
 		SetOptionsActive(true);
 	}
 
+	public void UpdateOptions() {
+		gameManager.mainMenu.InitOptions();
+	}
+
 	public void SetOptionsActive(bool activate) {
 
 		gameManager.SetMainImgTargetsActive(!activate, true);

@@ -27,7 +27,7 @@ public class CheckDistinct : MonoBehaviour {
 		disableOnChange = true;
 		toggle.isOn = isOn;
 		disableOnChange = false;
-		StartCoroutine(EnableOnChange());
+		//StartCoroutine(EnableOnChange());
 	}
 
 	public IEnumerator EnableOnChange() {

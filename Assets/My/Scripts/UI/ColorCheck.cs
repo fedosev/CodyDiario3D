@@ -21,7 +21,7 @@ public class ColorCheck : MonoBehaviour, ISavable {
 		GetComponentInChildren<Image>().color = color;
 	}
 
-	void Start() {
+	public void Init() {
 
 		gameConfig = MainGameManager.Instance.gameConfig;
 		check = GetComponent<CheckDistinct>();
@@ -32,7 +32,12 @@ public class ColorCheck : MonoBehaviour, ISavable {
 			check.SetOn(true);
 		} else {
 			check.SetOn(false);
-		}
+		}		
+	}
+
+	void Start() {
+
+		//Init();
 	}
 
 	public void Save() {
@@ -45,7 +50,7 @@ public class ColorCheck : MonoBehaviour, ISavable {
 			gameConfig.quadColor = val;
 		}
 		gameConfig.Save();
-		
+
 		var grid = FindObjectOfType<Grid>();
 		if (grid != null) {
 			grid.UpdateColors();

@@ -154,11 +154,9 @@ public class MainGameManager : MonoBehaviour {
 
 		isLoading = false;
 
-		Menu.InfoPanel.Setup(gameType.title, gameType.GetInfo());
+		Menu.InfoPanelObj.Setup(gameType.title, gameType.GetInfo());
 
-		Menu.coverButton.SetActive(false);
-		Menu.resumeButton.SetActive(true);
-		Menu.helpButton.SetActive(true);
+		Menu.AfterFirstGameLoad();
 
 		if (useAR) {
 			//imageTracker.StopTrack();
