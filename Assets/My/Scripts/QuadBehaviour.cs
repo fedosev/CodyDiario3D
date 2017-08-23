@@ -109,6 +109,12 @@ public class QuadBehaviour : MonoBehaviour {
 
 		rend = GetComponent<Renderer>();
 
+		#if UNITY_EDITOR
+			if (!UnityEditor.EditorApplication.isPlaying && quadState != QuadStates.DEFAULT) {
+				return;
+			}
+		#endif
+
 		switch (quadState) {
 			case QuadStates.DEFAULT:
 				rend.material = GetMaterial(config.quadMaterial);
@@ -287,6 +293,11 @@ public class QuadBehaviour : MonoBehaviour {
 	TextMeshPro text;
 
 	public TextMeshPro GetText() {
+		#if UNITY_EDITOR
+			if (!UnityEditor.EditorApplication.isPlaying && grid == null) {
+				grid = FindObjectOfType<Grid>();
+			}
+		#endif		
 		if (text == null) {
 			text = Instantiate(grid.config.quadLetterPrefab).GetComponent<TextMeshPro>();
 			text.transform.position = transform.position + new Vector3(0f, 0.0009f, 0f);

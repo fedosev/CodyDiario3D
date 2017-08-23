@@ -294,7 +294,9 @@ public class Grid : MonoBehaviour {
 
 		// BORDERS
 
-		var borderMat = QuadBehaviour.GetMaterialForModifying(config.borderMaterial);
+		var borderMat = config.borderMaterial;
+		
+		borderMat = QuadBehaviour.GetMaterialForModifying(config.borderMaterial);
 		borderMat.color = config.gameConfig.GetBorderColor();
 
 		for (var x = 0; x <= nCols; x++) {
