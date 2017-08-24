@@ -11,7 +11,7 @@ namespace ARFormOptions {
 public class ARForm : MonoBehaviour {
 
 	// @tmp
-	public GameConfig tmpGameConfig;
+	// public GameConfig tmpGameConfig;
 
 	protected ARMarkerFormContainer formContainer;
 	public ARMarkerFormContainer FormContainer { set {
@@ -22,18 +22,26 @@ public class ARForm : MonoBehaviour {
 	} }
 
 	public UnityEvent AfterSubmit;
+	public UnityEvent onAfterCheck;
 
 	private ARFormElement[] formElements;
 
 	void Awake() {
 
 		formElements = GetComponentsInChildren<ARFormElement>();
+
+		if (onAfterCheck == null) {
+			onAfterCheck = new UnityEvent();
+		}
 	}
 
 	public void CheckElements() {
 
 		foreach (var elm in formElements) {
 			elm.CheckValues();
+		}
+		if (onAfterCheck != null) {
+			onAfterCheck.Invoke();
 		}
 	}
 
@@ -44,13 +52,14 @@ public class ARForm : MonoBehaviour {
 		}
 
 		// @tmp {
+			/*
 			var borderSave = GameObject.Find("BorderSave");
 			var quadSave = GameObject.Find("QuadSave");
 			if (borderSave && quadSave) {
 				borderSave.GetComponent<Image>().color = tmpGameConfig.GetBorderColor();
 				quadSave.GetComponent<Image>().color = tmpGameConfig.GetQuadColor();
 			}
-			
+			*/
 		// }
 
 		if (AfterSubmit != null) {

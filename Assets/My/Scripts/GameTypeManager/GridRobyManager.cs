@@ -138,6 +138,16 @@ public class GridRobyManager : BaseGameTypeManager {
 		//gameManager.imageTracker.StartTrack();
 	}
 
+	public override void TurnMusicOn(bool isOn) {
+		base.TurnMusicOn(isOn);
+		//@todo
+	}
+
+	public override void TurnSoundOn(bool isOn) {
+		base.TurnSoundOn(isOn);
+		//@todo
+	}
+
 	void OnDestroy() {
 		if (gameManager != null)
 			gameManager.SetMainImgTargetsActive(true);

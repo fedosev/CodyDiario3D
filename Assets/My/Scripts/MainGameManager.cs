@@ -51,6 +51,10 @@ public class MainGameManager : MonoBehaviour {
 
 	public GameConfig gameConfig;
 
+	public AudioSource music;
+
+	public Text logText;
+
 	[HideInInspector] public bool isLoading;
 	[HideInInspector] public bool isBackground;
 
@@ -74,7 +78,43 @@ public class MainGameManager : MonoBehaviour {
     [HideInInspector] public bool isARPaused;
 
     IEnumerator coroutine;
-    private TargetInstance currentARTarget;
+    TargetInstance currentARTarget;
+
+	public void SetLogText(string str) {
+		logText.text = str;
+	}
+
+	public virtual void TurnMusicOn(bool isOn) {
+		if (!isLoading || isBackground) {
+			gameConfig.isMusicOn = isOn;
+			gameConfig.Save();
+		}
+		TurnMusicOnAction(isOn);
+	}
+
+	public virtual void TurnMusicOnAction(bool isOn) {
+		if (isOn) {
+			music.Play();
+		} else {
+			music.Stop();
+		}
+	}
+
+    public void SetSoundOn(bool isOn) {
+		if (!isLoading || isBackground) {
+			gameConfig.isSoundOn = isOn;
+			gameConfig.Save();
+		}
+    }
+
+	public virtual void TurnSoundOn(bool isOn) {
+		if (gameTypeManager) {
+			gameTypeManager.TurnSoundOn(isOn);
+		} else {
+			SetSoundOn(isOn);
+		}
+	}
+	
 
     public bool IsGameInit() {
 		if (gameTypeManager != null && gameTypeManager.isGameInit)
@@ -151,6 +191,8 @@ public class MainGameManager : MonoBehaviour {
 		StartCoroutine(gameTypeManager.Init());
 
 		yield return new WaitUntil(() => gameTypeManager.isGameInit && (Time.time - t) > fadeDuration);
+
+		TurnSoundOn(gameConfig.isSoundOn);
 
 		isLoading = false;
 
@@ -244,7 +286,7 @@ public class MainGameManager : MonoBehaviour {
 			dt = Time.time - t;
 			yield return null;
 		}
-		print(val);
+		//MyDebug.Log(val);
 		if (!fadeIn) {
 			fadeOverlay.gameObject.SetActive(false);
 			//fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 1f);
@@ -405,6 +447,7 @@ public class MainGameManager : MonoBehaviour {
 				currentARTarget = null;
 			}
 		};
+		TurnMusicOnAction(gameConfig.isMusicOn);
 	}
 
 	void Start () {
@@ -425,6 +468,11 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	public void LoadScanOptions() {
+		if (!useAR) {
+			useAR = true;
+			useARchanged = true;
+			SetUseAR();
+		}
 		StartCoroutine(Init("ScanOptions"));
 	}
 
@@ -433,7 +481,7 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	public void Quit() {
-		Debug.Log("Application Quit");
+		MyDebug.Log("Application Quit");
 		Application.Quit();
 	}
 

@@ -12,6 +12,9 @@ public class GameConfig : ScriptableObject {
 	[Range(0f, 1f)]
 	public float borderColorAlpha = 0.5f;
 
+	public bool isSoundOn = true;
+	public bool isMusicOn = true;
+
 	private Color ColorWithAlpha(Color color, float alpha) {
 		color.a = alpha;
 		return color;
@@ -32,7 +35,7 @@ public class GameConfig : ScriptableObject {
 
 	public void Save() {
 
-		Debug.Log("GameConfig - Save");
+		MyDebug.Log("GameConfig - Save");
 		PlayerPrefs.SetString("GameConfig", JsonUtility.ToJson(this));
 	}
 
@@ -43,7 +46,7 @@ public class GameConfig : ScriptableObject {
 			JsonUtility.FromJsonOverwrite(jsonStr, this);
 		}
 
-		Debug.Log("GameConfig - Load");
+		MyDebug.Log("GameConfig - Load");
 		
 	}
 

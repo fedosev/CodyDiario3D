@@ -1,21 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Events;
 
 namespace ARFormOptions
 {
+
+public class UnityEventFloatBool : UnityEvent<float, bool> { }
+
+public class UnityEvent2Floats : UnityEvent<float, float> { }
+
 
 public class GridTransparenciesFormElement : ARFormElement {
 
 	public GridTransparencies gridTransparencies;
 
-    public Image uiBorder;
-    public Image uiQuad;
-
 	public GameConfig gameConfig;
 
 	public const float defaultValue = 0.5f;
+
+    float minChangeToApply = 0;
+
 
 	GridTransparency bestBorderTransparency = null;
 	GridTransparency bestQuadTransparency = null;
@@ -23,7 +28,25 @@ public class GridTransparenciesFormElement : ARFormElement {
     ARFormElementValue<float> borderAlphaValue = new ARFormElementValue<float>(defaultValue);
     ARFormElementValue<float> quadAlphaValue = new ARFormElementValue<float>(defaultValue);
 
+    public UnityEventFloatBool onBorderPreviewChange;
+    public UnityEventFloatBool onQuadPreviewChange;
+    public UnityEvent2Floats onSubmit;
+
+
+	void Awake() {
+
+		if (onBorderPreviewChange == null)
+			onBorderPreviewChange = new UnityEventFloatBool();
+		if (onQuadPreviewChange == null)
+			onQuadPreviewChange = new UnityEventFloatBool();
+		if (onSubmit == null)
+			onSubmit = new UnityEvent2Floats();
+	}
+
 	public override void CheckValues() {
+
+        if (minChangeToApply == 0f)
+             minChangeToApply = formContainer.minChangeToApply * 2;
 
         float bestBorderColorIntensity = 1f;
         float prevBestBorderColorIntensity = 1f;
@@ -45,18 +68,20 @@ public class GridTransparenciesFormElement : ARFormElement {
             }
         }
 
-        if (bestBorderTransparency != null && formContainer.minChangeToApply <= (prevBestBorderColorIntensity - bestBorderColorIntensity)) {
-            borderAlphaValue.SetValue(bestBorderTransparency.alphaValue);
-			var color = uiBorder.color;
-			color.a = bestBorderTransparency.alphaValue;
-            uiBorder.color = color;
+        if (bestBorderTransparency != null) {
+            var isGood = formContainer.minChangeToApply <= (prevBestBorderColorIntensity - bestBorderColorIntensity);
+            if (isGood)
+                borderAlphaValue.SetValue(bestBorderTransparency.alphaValue);
+
+            onBorderPreviewChange.Invoke(bestBorderTransparency.alphaValue, isGood);
         }
 
-        if (bestQuadTransparency != null && formContainer.minChangeToApply <= (prevBestColorIntensity - bestColorIntensity)) {
-            quadAlphaValue.SetValue(bestQuadTransparency.alphaValue);
-			var color = uiQuad.color;
-			color.a = bestQuadTransparency.alphaValue;
-            uiQuad.color = color;
+        if (bestQuadTransparency != null) {
+            var isGood = formContainer.minChangeToApply <= (prevBestColorIntensity - bestColorIntensity);
+            if (isGood)
+                quadAlphaValue.SetValue(bestQuadTransparency.alphaValue);
+
+			onQuadPreviewChange.Invoke(bestQuadTransparency.alphaValue, isGood);
         }
 
 
@@ -66,11 +91,9 @@ public class GridTransparenciesFormElement : ARFormElement {
 
         float quadAlpha, borderAlpha;
         if (quadAlphaValue.TryGetValue(out quadAlpha) && borderAlphaValue.TryGetValue(out borderAlpha)) {
-			gameConfig.quadColorAlpha = quadAlpha;
-			gameConfig.borderColorAlpha = borderAlpha;
+
+            onSubmit.Invoke(borderAlpha, quadAlpha);
         }
-        gameConfig.Save();
-		
 	}	
 
 }

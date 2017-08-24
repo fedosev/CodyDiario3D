@@ -122,7 +122,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 	public virtual IEnumerator Init() {
 
-		Debug.Log("BaseGameTypeManager - init");
+		MyDebug.Log("BaseGameTypeManager - init");
 
 		yield return new WaitUntil(() => {
 			return gameType != null;
@@ -151,9 +151,27 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		}
 	}
 
+	public virtual void TurnMusicOn(bool isOn) {
+		if (gameManager)
+			gameManager.TurnMusicOn(isOn);
+	}
+
+	public virtual void TurnSoundOn(bool isOn) {
+			
+		var audioSources = FindObjectsOfType<AudioSource>();
+		foreach (var audio in audioSources) {
+			audio.mute = !isOn;
+		}
+		if (gameManager) {
+			gameManager.SetSoundOn(isOn);
+			gameManager.music.mute = false;
+		}
+	}
+
 	void Awake() {
 		gameManager = FindObjectOfType<MainGameManager>();
 	}
+
 	void Start() {
 
 		if (gameManager == null) {

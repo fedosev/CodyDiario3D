@@ -39,6 +39,11 @@ public class ARMarkerFormContainer : MonoBehaviour {
     Vec2 texOffset;
 
 
+    public void SetMinChangeToApply(float val) {
+        minChangeToApply = val;
+        MyDebug.Log(val, true, true);
+    }
+
     // Use this for initialization
     void Start() {
 

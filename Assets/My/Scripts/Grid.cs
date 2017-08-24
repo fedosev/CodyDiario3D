@@ -117,7 +117,7 @@ public class Grid : MonoBehaviour {
 
 	public void ClearGrid() {
 
-		Debug.Log("Clear grid");
+		MyDebug.Log("Clear grid");
 
 		//this.transform.parent = null;
 		foreach (Transform child in this.transform) {
@@ -275,7 +275,7 @@ public class Grid : MonoBehaviour {
 
 	public void GenerateGrid() {
 
-		Debug.Log("Generate grid");
+		MyDebug.Log("Generate grid");
 
 		var width = nCols * (config.size + config.borderSize) + config.borderSize;
 		var height = nRows * (config.size + config.borderSize) + config.borderSize;

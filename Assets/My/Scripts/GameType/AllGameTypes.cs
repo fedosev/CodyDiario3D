@@ -40,7 +40,7 @@ public class AllGameTypes : ScriptableObject {
     }
 
     public void Save() {
-        Debug.Log("AllGameTypes - Save");
+        MyDebug.Log("AllGameTypes - Save");
         PlayerPrefs.SetString("AllGameTypes", JsonUtility.ToJson(this));
         //Debug.Log(JsonUtility.ToJson(this));
     }
@@ -50,7 +50,7 @@ public class AllGameTypes : ScriptableObject {
 		if (jsonStr.Length > 0) {
 			JsonUtility.FromJsonOverwrite(jsonStr, this);
 		}
-		Debug.Log("AllGameTypes - Load");
+		MyDebug.Log("AllGameTypes - Load");
     }
 
 	public void OnDisable() {

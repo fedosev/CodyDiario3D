@@ -45,7 +45,7 @@ public class QuadBehaviour : MonoBehaviour {
 		SetDirection(prevDirection);
 		SetMainState(prevMainState);
 		SetOtherState(prevOtherState);
-		Debug.Log(prevDirection + ", " + prevMainState + ", " + prevOtherState);
+		//MyDebug.Log(prevDirection + ", " + prevMainState + ", " + prevOtherState);
 	}
 
 	// For material instances
@@ -197,7 +197,7 @@ public class QuadBehaviour : MonoBehaviour {
 			} else if (direction == Vector3.back) {
 				rotAng.z = 270;
 			}
-			Debug.Log(rotAng + " " + direction);
+			//MyDebug.Log(rotAng + " " + direction);
 			transform.rotation = Quaternion.Euler(rotAng);
 			//transform.Rotate(new Vector3(-90, 0, 0), Space.World);
 			//transform.rotation = Quaternion.LookRotation(direction, Vector3.back);

@@ -188,7 +188,7 @@ public class PlayerTrackableBehaviour : MonoBehaviour {
 
 	private void CursorPositionChangeAction(PositionInGrid posInGr, PositionInGrid prevPosInGr) {
 
-		Debug.Log("Cursor position changed: " + prevPosInGr + " -> " + posInGr);
+		MyDebug.Log("Cursor position changed: " + prevPosInGr + " -> " + posInGr);
 
 		if (!prevPosInGr.IsNull())
 			GetQuad(prevPosInGr).Undo();
@@ -208,19 +208,19 @@ public class PlayerTrackableBehaviour : MonoBehaviour {
 			timeStart = Time.time;
 			nextAction = ActionType.MoveForward;
 			quad.SetState(QuadStates.CURSOR_ON);
-			Debug.Log("You are going to move forward");
+			MyDebug.Log("You are going to move forward");
 		}
 		else if (pos.Equals(robotController.PositionInGrid) && direction == Quaternion.Euler(0, -90, 0) * robotController.Direction) {
 			timeStart = Time.time;
 			nextAction = ActionType.TurnLeft;
 			quad.SetState(QuadStates.CURSOR_ON);
-			Debug.Log("You are going to turn left");
+			MyDebug.Log("You are going to turn left");
 		}
 		else if (pos.Equals(robotController.PositionInGrid) && direction == Quaternion.Euler(0, 90, 0) * robotController.Direction) {
 			timeStart = Time.time;
 			nextAction = ActionType.TurnRight;
 			quad.SetState(QuadStates.CURSOR_ON);
-			Debug.Log("You are going to turn right");
+			MyDebug.Log("You are going to turn right");
 		}
 		else {
 			nextAction = ActionType.Null;
@@ -293,7 +293,7 @@ public class PlayerTrackableBehaviour : MonoBehaviour {
 	
 	private void CursorDirectionChangeAction(Vector3 dir, Vector3 prevDir) {
 
-		Debug.Log("Cursor direction changed: " + prevDir + " -> " + dir);
+		MyDebug.Log("Cursor direction changed: " + prevDir + " -> " + dir);
 
 		if (!cursorPosInGrid.IsNull()) {
 			var quad = GetQuad(cursorPosInGrid);

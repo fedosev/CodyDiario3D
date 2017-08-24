@@ -26,7 +26,7 @@ public class StateSwitchQuad : BaseGameObjectState {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, 100)) {
-				Debug.Log("Hit something: " + hit.transform.position);
+				//Debug.Log("Hit something: " + hit.transform.position);
 
 				// Check for not UI
              	var pointerData = new PointerEventData(EventSystem.current);

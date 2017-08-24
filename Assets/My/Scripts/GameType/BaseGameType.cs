@@ -30,8 +30,8 @@ public abstract class BaseGameType : ScriptableObject {
     }
 
     public virtual void BeforeInit() {
-        Debug.Log("BaseGameType INIT");
-        Debug.Log("Scene: " + sceneName);
+        MyDebug.Log("BaseGameType INIT");
+        MyDebug.Log("Scene: " + sceneName);
     }
 
     public abstract void InitBody();
