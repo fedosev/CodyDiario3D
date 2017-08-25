@@ -81,7 +81,8 @@ public class MainGameManager : MonoBehaviour {
     TargetInstance currentARTarget;
 
 	public void SetLogText(string str) {
-		logText.text = str;
+		if (logText.gameObject.activeSelf)
+			logText.text = str;
 	}
 
 	public virtual void TurnMusicOn(bool isOn) {
@@ -433,6 +434,8 @@ public class MainGameManager : MonoBehaviour {
 	*/
 
 	void Awake() {
+
+		gameConfig.Init();
 
 		easyARBehaviour = FindObjectOfType<EasyARBehaviour>();
 		cameraDevice = FindObjectOfType<CameraDeviceBehaviour>();

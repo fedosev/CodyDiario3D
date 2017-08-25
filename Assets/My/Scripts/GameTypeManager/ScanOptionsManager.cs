@@ -151,7 +151,7 @@ public class ScanOptionsManager : BaseGameTypeManager {
 
 	public void UpdateInfo() {
 
-		var isTimeOk = Time.time - allGoodChangedTime > 1f;
+		var isTimeOk = Time.time - allGoodChangedTime > 1.5f;
 
 		if (isTimeOk) {
 			if (isGood && (areGood & 15) != 15) {

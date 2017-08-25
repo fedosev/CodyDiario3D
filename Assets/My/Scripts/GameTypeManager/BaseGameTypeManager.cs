@@ -33,10 +33,11 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 	protected bool gameCanBeShown = true;
 	public bool wasShowBeforeMenu = false;
 
-
-
 	bool isGameVisible = true;
 	bool isGameUIVisible = true;
+
+    Canvas uICanvas;
+    float canvasScaleFactor;
 
 
     public void UpdateVisibility(bool force = false) {
@@ -141,7 +142,29 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 		isGameInit = true;
 
-		//yield return null;
+		// Fix font quality {
+		uICanvas = gameUI.GetComponent<Canvas>();
+		if (uICanvas != null) {
+			yield return new WaitUntil(() => {
+				return uICanvas.isActiveAndEnabled;
+			});
+			uICanvas = gameUI.GetComponent<Canvas>();
+			canvasScaleFactor = uICanvas.scaleFactor;
+			uICanvas.scaleFactor = 1f;
+			yield return new WaitForEndOfFrame();
+			/*
+			if (gameManager) {
+				if (useAR)
+					yield return new WaitForSeconds(0.5f);
+				yield return new WaitUntil(() => {
+					return !gameManager.mainMenu.isVisible && uICanvas.isActiveAndEnabled;
+				});
+			}
+			*/
+			uICanvas.scaleFactor = canvasScaleFactor;
+		}
+		// }
+
 	}
 
 	public void SetUseAR(bool useAR) {
@@ -170,18 +193,20 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 	void Awake() {
 		gameManager = FindObjectOfType<MainGameManager>();
-	}
+		
 
-	void Start() {
+    }
+
+    void Start() {
 
 		if (gameManager == null) {
 			StartCoroutine(Init());
 		}
-	}
+    }
 
 	void OnDestroy() {
 		
-		if (gameManager == null) {
+		if (gameManager != null) {
 			gameManager.wasTargetFound = false;
 		}
 	}

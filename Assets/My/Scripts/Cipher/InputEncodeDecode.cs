@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class InputEncodeDecode : MonoBehaviour {
+public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 
 	public bool isEncoded;
 
@@ -13,16 +14,30 @@ public class InputEncodeDecode : MonoBehaviour {
 
     public bool isLastFocused = false;
 
+	public Keyboard keyboard;
+
+	public bool isFixed = false;
+
 	InputField inputField;
 
+
 	InputEncodeDecode otherInputEncodeDecode;
+
+
+	public void OnPointerClick(PointerEventData eventData) {
+		keyboard.Show();
+		SetLastFocused();
+	}
 
 	public void SetText(string text) {
 		inputField.text = text;
 	}
 
 	public void SetFixed(bool isFixed) {
-		inputField.readOnly = isFixed;
+		this.isFixed = isFixed;
+		if (keyboard == null) {
+			inputField.readOnly = isFixed;
+		}
 	}
 
     public void UpdateText() {
@@ -43,11 +58,33 @@ public class InputEncodeDecode : MonoBehaviour {
 		otherInputField.text = rotCode.EncodeDecode(inputField.text, !isEncoded);
 	}
 
+	public void AppendLetter(char letter) {
+		if (isLastFocused && !isFixed) {
+			inputField.text += letter;
+			inputField.MoveTextEnd(true);
+			otherInputField.text = rotCode.EncodeDecode(inputField.text, !isEncoded);
+		}
+	}
+
+	public void RemoveLastLetter() {
+		if (isLastFocused && !isFixed && inputField.text.Length > 0) {
+			inputField.text = inputField.text.Substring(0, inputField.text.Length - 1);
+			otherInputField.text = rotCode.EncodeDecode(inputField.text, !isEncoded);
+		}
+	}
+
 	void Awake() {
 
 		inputField = GetComponent<InputField>();
 		inputField.onValueChanged.AddListener(UpdateOtherText);
 
+		if (keyboard != null) {
+			keyboard.onKeyPressed.AddListener(AppendLetter);
+			keyboard.onBackspacePressed.AddListener(RemoveLastLetter);
+			inputField.readOnly = true;
+		}
+
+		inputField.keyboardType = (TouchScreenKeyboardType)(-1);
 	}
 
 	// Use this for initialization
@@ -57,6 +94,8 @@ public class InputEncodeDecode : MonoBehaviour {
 		if (isEncoded) {
 			rotCode.onCodeChange.AddListener(UpdateText);
 		}
+
+        inputField.keyboardType = (TouchScreenKeyboardType)(-1);
 	}
 	
 	public void SetLastFocused() {
@@ -67,11 +106,12 @@ public class InputEncodeDecode : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (!inputField.readOnly && !isLastFocused && inputField.isFocused) {
+		/*
+		if (!isFixed && !isLastFocused && inputField.isFocused) {
 			SetLastFocused();
 			//rotCode.onCodeChange.RemoveListener(otherInputField.GetComponent<InputEncodeDecode>().UpdateText);
 			//rotCode.onCodeChange.AddListener(UpdateText);
 		}
-
+ 		*/
 	}
 }

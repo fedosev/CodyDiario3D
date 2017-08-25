@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class MyDebug {
 
-	public static string allLogs = "";
-	public static string lastLog = "";
+	static string allLogs = "";
+	static string lastLog = "";
 	static int index = 0;
 
 

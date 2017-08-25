@@ -437,7 +437,7 @@ public class Grid : MonoBehaviour {
 
 		for (var i = 0; i < 9; i++) // @tmp
 			ClearGrid();
-		config.gameConfig.Init();
+		//config.gameConfig.Init();
 		GenerateGrid();
 
 		inPause = false;

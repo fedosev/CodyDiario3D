@@ -41,12 +41,13 @@ public class GameConfig : ScriptableObject {
 
 	public void Load() {
 
+		MyDebug.Log("GameConfig - Load");
+
 		var jsonStr = PlayerPrefs.GetString("GameConfig");
 		if (jsonStr.Length > 0) {
 			JsonUtility.FromJsonOverwrite(jsonStr, this);
+			//MyDebug.Log(jsonStr);
 		}
-
-		MyDebug.Log("GameConfig - Load");
 		
 	}
 

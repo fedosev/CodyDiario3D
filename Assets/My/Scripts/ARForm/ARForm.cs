@@ -90,7 +90,8 @@ public abstract class ARFormElement : MonoBehaviour {
 
 public class ARFormElementValue<t> {
 
-	private const int numSamples = 15;
+	public const int numSamples = 15;
+
 	private t[] vals = new t[numSamples];
 	private int index = 0;
 
