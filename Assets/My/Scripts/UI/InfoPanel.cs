@@ -7,13 +7,15 @@ using UnityEngine.UI;
 public class InfoPanel : MonoBehaviour {
 
 	public Text title;
+	public Text subTitle;
 	public Text content;
 	public Button closeButton;
 
 	public event Action onClose;
 
-	public void Setup(string titleStr, string contentStr) {
+	public void Setup(string titleStr, string subTitleStr, string contentStr) {
 		title.text = titleStr;
+		subTitle.text = subTitleStr;
 		content.text = contentStr;
 	}
 

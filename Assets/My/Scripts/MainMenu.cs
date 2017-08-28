@@ -13,6 +13,7 @@ public class MainMenu : MonoBehaviour {
 
 	public int mainPanelIndex = 0;
 	public int infoPanelIndex = 1;
+	public int daySelectorPanelIndex = 2;
 	public int optionsPanelIndex = 3;
 
 	// @tmp
@@ -132,6 +133,15 @@ public class MainMenu : MonoBehaviour {
 
 	public void ShowOptions() {
 		ShowPanel(optionsPanelIndex);
+	}
+
+	public void ShowDaySelector() {
+		if (!MainGameManager.Instance.today.IsGTE(new MyDate(2017, 9, 1))) { // today < 1th September
+			MainGameManager.Instance.LoadCover();
+			return;
+		}
+
+		ShowPanel(daySelectorPanelIndex);
 	}
 
 	public void ShowInfoOnStart() {

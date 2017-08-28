@@ -10,6 +10,10 @@ public class ScanOptionsGameType : BaseGameType {
 		return "Scanzione delle opzioni";
 	} }
 
+    public override string subTitle { get {
+        return "Divertiti con la matita";
+    } }
+
 	public override string generalInfo { get {
 		return "Annerisci bene le caselle desiderate. Assicurati di trovarti in un luogo ben illuminato. "
 			 + "Inquadra il marker lentamente evitando di creare ombre sul marker. Quando vedrai i valori stabilizzati premi su \"Usa i valori\". "

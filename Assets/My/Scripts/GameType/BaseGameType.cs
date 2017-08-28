@@ -11,7 +11,13 @@ public abstract class BaseGameType : ScriptableObject {
     } }
 
     public abstract string title { get; }
+    public virtual string subTitle { get {
+        return "Gioco del " + name + " " + MyDate.GetMonthName(month) + " " + year;
+    } }
     public virtual string generalInfo { get; }
+
+    public int year = 2017;
+    public int month = 9;
 
     public bool showInfoOnStart = true;
     [TextArea(10, 10)] public string info = "";

@@ -9,11 +9,14 @@ public class RobotSounds : MonoBehaviour {
 	public AudioClip soundStep;
 	public AudioClip soundMoving;
 
+	public bool isAudioOn = true;
+
 	private AudioSource aSource;
 
 	// Use this for initialization
 	void Start() {
 		aSource = GetComponent<AudioSource>();
+		aSource.mute = !isAudioOn;
 	}
 
 	public void PlaySound(AudioClip sound) {
@@ -51,8 +54,4 @@ public class RobotSounds : MonoBehaviour {
 		PlaySound(soundLose, 0.9f);
 	}
 	
-	// Update is called once per frame
-	void Update() {
-		
-	}
 }

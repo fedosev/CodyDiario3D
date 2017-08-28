@@ -18,6 +18,10 @@ public class RotNumberText : MonoBehaviour {
 			foreach (var c in rotCode.code) {
 				text.text += "-" + c;
 			}
+			if (rotCode.withSpace) {
+				text.text += "s";
+			}
+				
 		}
 	}
 

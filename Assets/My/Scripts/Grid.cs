@@ -182,6 +182,7 @@ public class Grid : MonoBehaviour {
 		players[index].transform.parent = this.transform;
 		players[index].GetComponent<PlayerBehaviour>().Index = index;
 		//robotController = robotPrefabs.GetComponent<RobotController>();
+		players[index].GetComponent<RobotSounds>().isAudioOn = config.gameConfig.isSoundOn;
 		var quadBh = quad.GetComponent<QuadBehaviour>();
 		quadBh.SetState(quadState);
 

@@ -10,6 +10,8 @@ public class AllGameTypes : ScriptableObject {
     public class Month {
         public string name;
         public bool active = false;
+        public int month;
+        public int year = 2018;
         public List<BaseGameType> days = new List<BaseGameType>();
 
     }
@@ -28,9 +30,9 @@ public class AllGameTypes : ScriptableObject {
         return false;
     }
 
-    public bool TryGetMonth(string monthName, out Month value) {
+    public bool TryGetMonth(int monthNumber, out Month value) {
         foreach (var item in months) {
-            if (item.name == monthName) {
+            if (item.month == monthNumber) {
                 value = item;
                 return true;
             }

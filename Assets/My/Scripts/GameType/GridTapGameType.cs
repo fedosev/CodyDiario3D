@@ -6,12 +6,12 @@ using UnityEngine;
 [CreateAssetMenu]
 public class GridTapGameType : BaseGridRobyGameType {
 
-	public override string generalInfo { get {
-		return "Puoi provare a fare il tap sulle caselle per annerirle";
-	} }
-
 	public override string title { get {
 		return "La griglia";
+	} }
+    
+	public override string generalInfo { get {
+		return "Puoi provare a fare il tap sulle caselle per annerirle";
 	} }
 
     public override void InitBody() {

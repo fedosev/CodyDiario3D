@@ -146,7 +146,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		uICanvas = gameUI.GetComponent<Canvas>();
 		if (uICanvas != null) {
 			yield return new WaitUntil(() => {
-				return uICanvas.isActiveAndEnabled;
+				return uICanvas != null && uICanvas.isActiveAndEnabled;
 			});
 			uICanvas = gameUI.GetComponent<Canvas>();
 			canvasScaleFactor = uICanvas.scaleFactor;

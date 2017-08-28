@@ -41,8 +41,6 @@ public class MainGameManager : MonoBehaviour {
 	public UnityEngine.UI.Image fadeOverlay;
 	public float fadeDuration = 0.5f;
 
-	IEnumerator fadeOverlayCoroutine;
-
 	bool isMainImageTargetsActive = true;
 
 	public BaseGameTypeManager gameTypeManager;
@@ -55,9 +53,15 @@ public class MainGameManager : MonoBehaviour {
 
 	public Text logText;
 
+	public bool isUnlocked = false;
+
+	public MyDate today;
+
+
 	[HideInInspector] public bool isLoading;
 	[HideInInspector] public bool isBackground;
 
+	IEnumerator fadeOverlayCoroutine;
 
 	BaseGameType gameType;
 
@@ -68,6 +72,13 @@ public class MainGameManager : MonoBehaviour {
 
     bool useARchanged = true;
     bool isGameVisible;
+
+    [HideInInspector] public bool isARPaused;
+
+    IEnumerator coroutine;
+    TargetInstance currentARTarget;
+
+
     public bool IsARTracked { get {
 		if (currentARTarget != null && currentARTarget.Status == TargetInstance.TrackStatus.Tracked) {
 			return true;
@@ -75,10 +86,12 @@ public class MainGameManager : MonoBehaviour {
 		return false;
 	} }
 
-    [HideInInspector] public bool isARPaused;
-
-    IEnumerator coroutine;
-    TargetInstance currentARTarget;
+	public void Unlock() {
+		isUnlocked = true;
+		//today = new MyDate(2018, 9, 1);
+		//@todo
+		today = new MyDate(2017, 10, 29);
+	}
 
 	public void SetLogText(string str) {
 		if (logText.gameObject.activeSelf)
@@ -144,6 +157,22 @@ public class MainGameManager : MonoBehaviour {
 		StartCoroutine(Init(gameType));
 	}
 
+    public void LoadTodayGameType() {
+		if (!today.IsGTE(new MyDate(2017, 9, 1))) { // today < 1th September
+			LoadCover();
+			return;
+		}
+		foreach (var month in allGameTypes.months) {
+			if (month.month == today.month) {
+				int dayIndex = (today.day - 1) / 2;
+				if (dayIndex < month.days.Count) {
+					StartCoroutine(Init(month.days[dayIndex]));
+				}
+				return;
+			}
+		}
+	}
+
     public IEnumerator Init(BaseGameType gameType) {
 
 		AsyncOperation asyncOp;
@@ -197,7 +226,7 @@ public class MainGameManager : MonoBehaviour {
 
 		isLoading = false;
 
-		Menu.InfoPanelObj.Setup(gameType.title, gameType.GetInfo());
+		Menu.InfoPanelObj.Setup(gameType.title, gameType.subTitle, gameType.GetInfo());
 
 		if (gameType.name != "ScanOptions")
 			Menu.AfterFirstGameLoad();
@@ -434,6 +463,8 @@ public class MainGameManager : MonoBehaviour {
 	*/
 
 	void Awake() {
+
+		today = new MyDate();
 
 		gameConfig.Init();
 
