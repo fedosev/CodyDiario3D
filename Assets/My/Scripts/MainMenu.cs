@@ -21,6 +21,7 @@ public class MainMenu : MonoBehaviour {
 	public bool isVisible = false;
 	
 	public GameObject coverButton;
+	public GameObject daySelectorButton;
 	public GameObject resumeButton;
 	public GameObject helpButton;
 
@@ -45,8 +46,11 @@ public class MainMenu : MonoBehaviour {
 	int prevPanelIndex = -1;
     bool disableFadeIn = false;
 
+    bool isAfterFirstDay = false;
+
 
     void Awake() {
+
 		gameManager = MainGameManager.Instance;
 		if (isVisible)
 			panelIndex = mainPanelIndex;
@@ -62,10 +66,16 @@ public class MainMenu : MonoBehaviour {
 		var optionsPanelColor = optionsPanelImg.color;
 		optionsPanelImg.color = new Color(optionsPanelColor.r, optionsPanelColor.g, optionsPanelColor.b, 0.5f);
 
-		coverButton.SetActive(false);
 		resumeButton.SetActive(true);
 		helpButton.SetActive(true);
 		
+	}
+
+	public void CheckAfterFirstDay() {
+		var isFirstDay = gameManager.today.IsGTE(gameManager.allGameTypes.startDate);
+		coverButton.SetActive(!isFirstDay);
+		daySelectorButton.SetActive(isFirstDay);
+		isAfterFirstDay = isFirstDay;
 	}
 
 	public void SetupGameTypeSelector() {
@@ -108,6 +118,8 @@ public class MainMenu : MonoBehaviour {
 
 		menuButton.onClick.AddListener(ShowMain);
 		InfoPanelObj.onClose += Hide;
+
+		CheckAfterFirstDay();
 	}
 
 	public void ShowMain() {
@@ -124,6 +136,10 @@ public class MainMenu : MonoBehaviour {
 	public void ShowPanel(int panelIndex) {
 		prevPanelIndex = panelIndex == mainPanelIndex ? -1 : mainPanelIndex;
 		this.panelIndex = panelIndex;
+
+		if (!isAfterFirstDay && panelIndex == mainPanelIndex) {
+			CheckAfterFirstDay();
+		}
 		StartCoroutine(ShowAnimated(true, true, panelIndex));
 	}
 
@@ -136,7 +152,7 @@ public class MainMenu : MonoBehaviour {
 	}
 
 	public void ShowDaySelector() {
-		if (!MainGameManager.Instance.today.IsGTE(new MyDate(2017, 9, 1))) { // today < 1th September
+		if (!gameManager.today.IsGTE(gameManager.allGameTypes.startDate)) {
 			MainGameManager.Instance.LoadCover();
 			return;
 		}
@@ -191,6 +207,7 @@ public class MainMenu : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			if (isVisible && panelIndex == mainPanelIndex) {
 				//gameManager.Quit();

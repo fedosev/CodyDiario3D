@@ -10,11 +10,22 @@ public class CoverGameType : FreeModeGameType {
 		return "Copertina";
 	} }
 
+    string _subTitle;
+
     public override string subTitle { get {
-        return "Questa è una demo. Le sfide inizieranno dal 1 Settembre";
+        return _subTitle;
     } }
 
+    public void SetOtherSubTitle(bool isAfterEnd) {
+        if (isAfterEnd)
+            _subTitle = "Questa è una demo, non ci sono altri giochi disponibili per oggi";
+        else
+            _subTitle = "Questa è una demo, le sfide inizieranno dal 1 Settembre";
+    }   
+
     public override void InitBody() {
+
+        _subTitle = "Questa è una demo";
 
 		grid.gameType = GameTypes.FREE;
 		grid.playersNumber = 1;

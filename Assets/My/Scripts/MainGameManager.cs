@@ -25,8 +25,6 @@ public class MainGameManager : MonoBehaviour {
 
     public ARCameraBaseBehaviour aRCamera;
 
-    public Text gameTitle; //@todo
-
 	public bool useAR = true;
 
 	public GameObject aRGameObject;
@@ -47,6 +45,7 @@ public class MainGameManager : MonoBehaviour {
 
 	public Camera noARCamera;
 
+	public ConfigScriptableObject config;
 	public GameConfig gameConfig;
 
 	public AudioSource music;
@@ -75,7 +74,7 @@ public class MainGameManager : MonoBehaviour {
 
     [HideInInspector] public bool isARPaused;
 
-    IEnumerator coroutine;
+    //IEnumerator coroutine;
     TargetInstance currentARTarget;
 
 
@@ -158,7 +157,7 @@ public class MainGameManager : MonoBehaviour {
 	}
 
     public void LoadTodayGameType() {
-		if (!today.IsGTE(new MyDate(2017, 9, 1))) { // today < 1th September
+		if (!today.IsGTE(allGameTypes.startDate) || today.IsGTE(allGameTypes.endDate)) {
 			LoadCover();
 			return;
 		}
@@ -226,6 +225,14 @@ public class MainGameManager : MonoBehaviour {
 
 		isLoading = false;
 
+		if (gameType.name == "Cover") {
+			if (!today.IsGTE(allGameTypes.startDate))
+				((CoverGameType)gameType).SetOtherSubTitle(false);
+			else if (today.IsGTE(allGameTypes.endDate))
+				((CoverGameType)gameType).SetOtherSubTitle(true);
+
+		}
+		
 		Menu.InfoPanelObj.Setup(gameType.title, gameType.subTitle, gameType.GetInfo());
 
 		if (gameType.name != "ScanOptions")

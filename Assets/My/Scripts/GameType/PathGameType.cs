@@ -24,7 +24,7 @@ public class PathGameType : BaseGridRobyGameType {
 				str += "Annerisci bene le caselle opportune del programmatore sulla pagina del diario. ";
 				str += "Assicurati di trovarti in un posto ben illuminato. Stendi bene la pagina con la mano senza coprire il programmatore. ";
 				str += "Con l'altra mano inquadra il programmatore. Quando compariranno i valori premi su \"Usa la sequenza\". ";
-				str += "Se i valori sono stati presi male potrai correggerli nella fare successiva.\n";
+				str += "Se i valori sono stati presi male potrai correggerli nella fase successiva.\n";
 			} else {
 				str += "Premi sulle carte per aggiungerle alla sequenza di istruzioni e premi su \"Esegui\".\n";
 			}

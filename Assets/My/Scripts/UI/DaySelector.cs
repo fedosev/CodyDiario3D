@@ -24,8 +24,11 @@ public class DaySelector : MonoBehaviour {
 
 	AllGameTypes.Month month;
 
+	bool wasInit = false;
+    List<AllGameTypes.Month> months;
+    MonthButton[] monthButtons;
 
-	public void Show(int monthNumber) {
+    public void Show(int monthNumber) {
 
 		if (this.monthNumber != monthNumber) {
 			var m = monthNumber;
@@ -43,6 +46,8 @@ public class DaySelector : MonoBehaviour {
 				} while(--m > 0);
 				m = 12;
 			}
+		} else {
+			InitDays();
 		}
 		gameObject.SetActive(true);
 	}
@@ -68,8 +73,35 @@ public class DaySelector : MonoBehaviour {
 		}
 	}
 
+	public void Init() {
+
+		if (!wasInit) {
+			months = MainGameManager.Instance.allGameTypes.months;
+			monthButtons = GetComponentsInChildren<MonthButton>();
+		}
+		var i = 0;
+		var monthsCount = months.Count;
+
+		foreach (var mb in monthButtons) {
+			if (i < monthsCount) {
+				mb.isActive = months[i].active;
+				i++;
+			} else {
+				mb.isActive = false;
+			}
+			mb.Init();
+		}
+		Show(MainGameManager.Instance.today.month);
+		wasInit = true;
+	}
+
+	void OnEnable() {
+
+		Init();
+	}
+
 	void Start () {
 
-		Show(MainGameManager.Instance.today.month);
+		//Show(MainGameManager.Instance.today.month);
 	}
 }

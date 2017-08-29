@@ -19,6 +19,10 @@ public class AllGameTypes : ScriptableObject {
     public List<Month> months = new List<Month>();
     public List<BaseGameType> items = new List<BaseGameType>();
 
+    public MyDate startDate;
+    public MyDate endDate;
+
+
     public bool TryGetValue(string key, out BaseGameType value) {
         foreach (var item in items) {
             if (item.name == key) {
