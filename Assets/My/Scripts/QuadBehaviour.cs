@@ -18,6 +18,8 @@ public class QuadBehaviour : MonoBehaviour {
 
 	public char letter = ' ';
 
+	public int index;
+
 	private Grid grid;
 	private ConfigScriptableObject config;
 
@@ -152,6 +154,8 @@ public class QuadBehaviour : MonoBehaviour {
 				mainState = quadState;
 				break;
 		}
+
+		//grid.QuadStateChanged(this);
 	}
 	
 	public void SetMainState(QuadStates quadState) {

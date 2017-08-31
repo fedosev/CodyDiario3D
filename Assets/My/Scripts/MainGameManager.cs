@@ -87,9 +87,7 @@ public class MainGameManager : MonoBehaviour {
 
 	public void Unlock() {
 		isUnlocked = true;
-		//today = new MyDate(2018, 9, 1);
-		//@todo
-		today = new MyDate(2017, 10, 29);
+		today = allGameTypes.endDate;
 	}
 
 	public void SetLogText(string str) {
@@ -472,6 +470,9 @@ public class MainGameManager : MonoBehaviour {
 	void Awake() {
 
 		today = new MyDate();
+
+		//@todo: remove in production
+		Unlock();
 
 		gameConfig.Init();
 

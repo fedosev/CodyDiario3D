@@ -59,7 +59,9 @@ public class Grid : MonoBehaviour {
 
 	public BaseGridRobyGameType gameTypeConfig;
 
-    public event Action onNextTurn;
+    public event Action onNextTurn; // @todo: refactor small "o"
+
+    public event Action<QuadBehaviour> OnQuadStateChange;
 
 	public float QuadSize { get {
 		return quadTransforms[0].lossyScale.x;
@@ -102,6 +104,10 @@ public class Grid : MonoBehaviour {
 	}
 	public QuadBehaviour GetQuadBh(int row, int col) {
 		return GetQuad(row, col).GetComponent<QuadBehaviour>();
+	}
+
+	public QuadBehaviour GetQuadBh(int index) {
+		return quadTransforms[index].GetComponent<QuadBehaviour>();
 	}
 
 	public PositionInGrid GetQuadPositionInGrid(GameObject quad) {
@@ -338,12 +344,17 @@ public class Grid : MonoBehaviour {
 
 				//quadPositions[i] = new Vector3(pos.x, pos.y, pos.z);
 				quadTransforms[i] = quad.transform;
+
+				var quadBh = quad.GetComponent<QuadBehaviour>();
+				quadBh.index = i;
+
 				i ++;
 
+
 				if (gameTypeConfig.withLetters) {
-					quad.GetComponent<QuadBehaviour>().SetLetter(gameTypeConfig.letters[nRows - 1 - z][x]);
+					quadBh.SetLetter(gameTypeConfig.letters[nRows - 1 - z][x]);
 				}
-				gameTypeConfig.SetupQuad(quad.GetComponent<QuadBehaviour>(), x, z);
+				gameTypeConfig.SetupQuad(quadBh, x, z);
 
 				if (playerTypes[0] == PlayerTypes.VIRTUAL && x == gameTypeConfig.startPosition.col && z == gameTypeConfig.startPosition.row) {
 
@@ -419,6 +430,12 @@ public class Grid : MonoBehaviour {
         }
 
     }
+
+	public void QuadStateChanged(QuadBehaviour quad) {
+		if (OnQuadStateChange != null) {
+			OnQuadStateChange(quad);
+		}
+	}
 
 	public void Init() {
 		//gameType = GameTypes.SNAKE;

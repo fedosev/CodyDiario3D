@@ -100,8 +100,8 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 			show = false;
 		}
 		*/
-
-		TargetCanvas.SetActive(show);
+		if (TargetCanvas)
+			TargetCanvas.SetActive(show);
 	}
 
 	public void SetVisible(GameObject obj, bool visible) {
