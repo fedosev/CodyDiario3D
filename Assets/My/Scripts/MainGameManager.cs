@@ -215,6 +215,9 @@ public class MainGameManager : MonoBehaviour {
 
 		gameTypeManager.targetCanvas = targetsCanvas;
 
+		gameTypeManager.WinAction = mainMenu.popup.ShowWin;
+		gameTypeManager.LoseAction = mainMenu.popup.ShowLose;
+
 		StartCoroutine(gameTypeManager.Init());
 
 		yield return new WaitUntil(() => gameTypeManager.isGameInit && (Time.time - t) > fadeDuration);

@@ -25,6 +25,9 @@ public class MainMenu : MonoBehaviour {
 	public GameObject resumeButton;
 	public GameObject helpButton;
 
+	public Popup popup;
+
+
 	InfoPanel infoPanel;
 	OptionsPanel optionsPanel;
 
@@ -54,6 +57,8 @@ public class MainMenu : MonoBehaviour {
 		gameManager = MainGameManager.Instance;
 		if (isVisible)
 			panelIndex = mainPanelIndex;
+
+		popup.Init();
 	}
 
 	public void InitOptions() {
@@ -126,6 +131,7 @@ public class MainMenu : MonoBehaviour {
 		prevPanelIndex = -1;
 		panelIndex = mainPanelIndex;
 		StartCoroutine(ShowAnimated(true, true, mainPanelIndex));
+		popup.Hide();
 	}
 
 	public void ShowMainOnStart() {
@@ -141,6 +147,7 @@ public class MainMenu : MonoBehaviour {
 			CheckAfterFirstDay();
 		}
 		StartCoroutine(ShowAnimated(true, true, panelIndex));
+		popup.Hide();
 	}
 
 	public void ShowInfo() {

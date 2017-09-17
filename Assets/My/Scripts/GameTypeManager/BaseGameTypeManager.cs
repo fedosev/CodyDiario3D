@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,6 +28,9 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 	public bool useAR = true;
 
 	public bool isGameInit = false;
+
+	public Action WinAction;
+	public Action LoseAction;
 
 	protected MainGameManager gameManager;
 

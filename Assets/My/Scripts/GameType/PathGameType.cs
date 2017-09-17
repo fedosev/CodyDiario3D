@@ -63,6 +63,7 @@ public class PathGameType : BaseGridRobyGameType {
 		if (path.Length == 0 && grid.state.IsNull()) {
 			grid.state = grid.state.GoToState<StateSwitchQuad>();
 		}
+		grid.CurrentRobotController.OnLose += gridRobyManager.LoseAction;
 	}
 
 	public override void SetupQuad(QuadBehaviour quad, int col, int row) {

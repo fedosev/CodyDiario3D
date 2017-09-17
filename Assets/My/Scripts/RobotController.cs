@@ -67,6 +67,7 @@ public class RobotController : MonoBehaviour, IDirection {
 
 	public event DirectionChangeAction OnDirectionChange;
 	public event Action OnFinishMovementOnce;
+	public event Action OnLose;
 
 	bool isUpdatingCurrentQuad = false;
     public bool isFirstMove = true;
@@ -119,6 +120,9 @@ public class RobotController : MonoBehaviour, IDirection {
 		sounds.playLose();
 		Debug.Log("You lose!");
 		grid.inPause = true;
+		if (OnLose != null) {
+			OnLose();
+		}
 	}
 
 	public bool IsMoving() {
