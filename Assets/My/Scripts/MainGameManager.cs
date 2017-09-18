@@ -148,6 +148,8 @@ public class MainGameManager : MonoBehaviour {
 		else if (isBackground) {
 			targetsCanvas.SetActive(false);
 		}
+
+		mainMenu.popup.gameObject.SetActive(!mainMenu.isVisible && mainMenu.popup.isVisible);
     }
 
     public void LoadGameType(BaseGameType gameType) {
@@ -247,6 +249,8 @@ public class MainGameManager : MonoBehaviour {
 			PauseAR(true);
 		}
 		
+		Menu.popup.Init();
+
 		if (gameType.showInfoOnStart) {
 			Menu.ShowInfoOnStart();
 		} else {
@@ -391,6 +395,10 @@ public class MainGameManager : MonoBehaviour {
 	public void RestartWithAR(bool useAR) {
 		this.useAR = useAR;
 		useARchanged = true;
+		LoadGameType(gameType);
+	}
+
+	public void RestartGameType() {
 		LoadGameType(gameType);
 	}
 

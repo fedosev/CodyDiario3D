@@ -131,7 +131,6 @@ public class MainMenu : MonoBehaviour {
 		prevPanelIndex = -1;
 		panelIndex = mainPanelIndex;
 		StartCoroutine(ShowAnimated(true, true, mainPanelIndex));
-		popup.Hide();
 	}
 
 	public void ShowMainOnStart() {
@@ -147,7 +146,6 @@ public class MainMenu : MonoBehaviour {
 			CheckAfterFirstDay();
 		}
 		StartCoroutine(ShowAnimated(true, true, panelIndex));
-		popup.Hide();
 	}
 
 	public void ShowInfo() {
