@@ -59,7 +59,9 @@ public class Grid : MonoBehaviour {
 
 	public BaseGridRobyGameType gameTypeConfig;
 
-    public event Action onNextTurn; // @todo: refactor small "o"
+    public event Action OnNextTurn;
+
+    public event Action<int> OnLose;
 
     public event Action<QuadBehaviour> OnQuadStateChange;
 
@@ -181,9 +183,11 @@ public class Grid : MonoBehaviour {
 		players[index] = Instantiate(config.robotPrefabs[index], pos, Quaternion.AngleAxis(GetAngleFromDirection(direction), Vector3.up));
 		players[index].name = name;
 		RobotController rc = players[index].GetComponent<RobotController>();
+		rc.index = index;
 		rc.SetRowCol(z, x);
 		rc.SetDirection(RobyStartPosition.GetDirection(direction));
 		rc.CurrentQuad = quad;
+		rc.OnLose += OnLose;
 		players[index].transform.localScale *= 2.5f * config.size;
 		players[index].transform.parent = this.transform;
 		players[index].GetComponent<PlayerBehaviour>().Index = index;
@@ -528,8 +532,8 @@ public class Grid : MonoBehaviour {
 		playerTurn = (playerTurn + 1) % playersNumber;
 		CurrentRobotController.CurrentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ACTIVE);
 
-		if (onNextTurn != null) {
-			onNextTurn();
+		if (OnNextTurn != null) {
+			OnNextTurn();
 		}
 
 		// @todo {
@@ -578,10 +582,27 @@ public class Grid : MonoBehaviour {
     public void AddAction(CardTypes? type) {
         actionsQueue.Enqueue(type);
     }
+	
+	private void PlayerLose(int player) {
+		if (OnLose != null)
+			OnLose(player);
+	}
 
+	public int PlayerQuadCount(int player) {
+		int count = 0;
+		foreach (var quad in quadTransforms) {
+			if (quad.GetComponent<QuadBehaviour>().player == player)
+				count++;
+		}
+		return count;
+	}
 
-	// Update is called once per frame
-	void Update () {
-		
+	public int QuadCount(Func<QuadBehaviour, bool> Condition) {
+		int count = 0;
+		foreach (var quad in quadTransforms) {
+			if (Condition(quad.GetComponent<QuadBehaviour>()))
+				count++;
+		}
+		return count;
 	}
 }

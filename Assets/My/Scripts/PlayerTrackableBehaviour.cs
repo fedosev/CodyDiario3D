@@ -7,6 +7,7 @@ using UnityEngine;
 public delegate void PositionChangeAction(PositionInGrid currentPosition, PositionInGrid previousPosition);
 public delegate void DirectionChangeAction(Vector3 currentDirection, Vector3 previousDirection);
 
+[System.Serializable]
 public struct PositionInGrid {
 
 	public int row;

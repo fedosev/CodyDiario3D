@@ -16,7 +16,7 @@ public class Popup : MonoBehaviour {
 
 	public Color overlayColor = new Color(1f, 1f, 1f, 0f);
 	public float overlayAlpha = 0.1f;
-	public float showDelay = 0.5f;
+	public float showDelay = 1f;
 	public float fadeSpeed = 1f;
 
 	public string[] winTitles = {
@@ -36,11 +36,16 @@ public class Popup : MonoBehaviour {
 	}
 	
 	public void ShowWin() {
+		ShowWinText(winTitles[Random.Range(0, winTitles.Length)]);
+	}
+
+	public void ShowWinText(string text) {
 		title.color = winColor;
-		title.text = winTitles[Random.Range(0, winTitles.Length)];
-		buttonRetry.SetActive(false);
+		title.text = text;
+		buttonRetry.SetActive(true);
 		buttonPlayAgain.SetActive(true);
 		Show();
+
 	}
 
 	public void ShowLose() {

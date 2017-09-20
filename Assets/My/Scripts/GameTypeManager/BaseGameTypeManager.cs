@@ -30,6 +30,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 	public bool isGameInit = false;
 
 	public Action WinAction;
+	public Action<string> WinTextAction;
 	public Action LoseAction;
 
 	protected MainGameManager gameManager;
@@ -54,7 +55,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 	void UpdateGameVisibility() {
 
 		bool showGame = true;
-
+		
 		if (gameManager && useAR && (gameManager.isARPaused || !gameManager.IsARTracked)) {
 			showGame = false;
 		}
@@ -96,7 +97,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 		bool show = false;
 
-		if (gameManager && useAR && !gameManager.isARPaused && !gameManager.IsARTracked) {
+		if (gameManager && useAR && !gameManager.isARPaused && !gameManager.IsARTracked && !gameManager.mainMenu.popup.isVisible) {
 			show = true;
 		}
 		/*

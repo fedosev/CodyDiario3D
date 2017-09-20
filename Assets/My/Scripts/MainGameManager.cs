@@ -218,6 +218,7 @@ public class MainGameManager : MonoBehaviour {
 		gameTypeManager.targetCanvas = targetsCanvas;
 
 		gameTypeManager.WinAction = mainMenu.popup.ShowWin;
+		gameTypeManager.WinTextAction = mainMenu.popup.ShowWinText;
 		gameTypeManager.LoseAction = mainMenu.popup.ShowLose;
 
 		StartCoroutine(gameTypeManager.Init());

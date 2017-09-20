@@ -11,6 +11,10 @@ public class StateSwitchQuad : BaseGameObjectState {
 		grid = GetComponent<Grid>();
 	}
 	
+	public override void OnEnter() {
+		grid.UIControls.SetActive(false);
+	}
+
 	// Update is called once per frame
 	void Update() {
 		

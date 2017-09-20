@@ -43,6 +43,7 @@ public class GridRobyManager : BaseGameTypeManager {
 		return isDevBoardMode ? devBoardTargetCanvas : targetCanvas;
 	} }
 
+	string text;
 
 	Text lettersText;
 
@@ -58,6 +59,7 @@ public class GridRobyManager : BaseGameTypeManager {
 		if (panelLetters != null) {
 			panelLetters.SetActive(grid.gameTypeConfig.withLetters);
 			lettersText = panelLetters.GetComponentInChildren<Text>();
+			text = "";
 			lettersText.text = "";
 		}
 
@@ -70,11 +72,23 @@ public class GridRobyManager : BaseGameTypeManager {
 		}		
 	}
 
-	public void AppendLetter(char letter) {
+	public string GetLettersText() {
+		return text;
+	}
+
+	public void AppendLetter(char letter, bool skipText = false) {
+		if (!skipText)
+			text += letter.ToString();
 		if (!panelLetters.gameObject.activeSelf) {
 			panelLetters.gameObject.SetActive(true);
 		}
-		lettersText.text += letter.ToString();
+		lettersText.text = text;
+	}
+
+	public IEnumerator AppendLetterDelayed(char letter, float delay) {
+		text += letter;
+		yield return new WaitForSeconds(delay);
+		AppendLetter(letter, true);
 	}
 
 	public void RemoveLastLetter() {

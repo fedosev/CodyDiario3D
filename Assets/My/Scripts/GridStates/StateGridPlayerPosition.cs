@@ -9,6 +9,7 @@ public class StateGridPlayerPosition : BaseGameObjectState, IPointerClickHandler
 
 	public override void OnEnter() {
 		grid.inPause = true;
+		grid.UIControls.SetActive(false);
 	}
 
 	public override BaseGameObjectState NextState() {

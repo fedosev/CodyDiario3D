@@ -37,11 +37,17 @@ public class PathGameType : BaseGridRobyGameType {
 		return str;
 	} }
 
+	// [Header("Path")]
+
 	public string[] path;
 	
 	public string code;
 
 	public bool ignoreCheckPath = false;
+
+	[Header("Win conditions")]
+
+	public PositionInGrid endPosition = new PositionInGrid(-1, -1);
 
 	[HideInInspector] public CodingGrid codingGrid;
 
@@ -49,6 +55,9 @@ public class PathGameType : BaseGridRobyGameType {
 
 		grid.gameType = GameTypes.PATH;
 		grid.playersNumber = 1;
+
+		grid.OnNextTurn += CheckWin;
+		grid.OnLose += Lose;
 
 		grid.Init();
 
@@ -63,7 +72,6 @@ public class PathGameType : BaseGridRobyGameType {
 		if (path.Length == 0 && grid.state.IsNull()) {
 			grid.state = grid.state.GoToState<StateSwitchQuad>();
 		}
-		grid.CurrentRobotController.OnLose += gridRobyManager.LoseAction;
 	}
 
 	public override void SetupQuad(QuadBehaviour quad, int col, int row) {
@@ -88,10 +96,12 @@ public class PathGameType : BaseGridRobyGameType {
         } else {
             //prevQuad.SetState(QuadStates.OBSTACLE);
             prevQuad.SetState(QuadStates.PATH);
+			prevQuad.player = 0;
         }
         
         if (nextQuad.IsFreeToGoIn()) {
             nextQuad.SetState(QuadStates.ACTIVE);
+			nextQuad.player = 0;
             //robot.sounds.playSound(sounds.soundStep);
         } else {
             nextQuad.SetState(QuadStates.ERROR);
@@ -102,5 +112,30 @@ public class PathGameType : BaseGridRobyGameType {
     public override bool QuadIsFreeToGoIn(QuadBehaviour quad) {
         return ignoreCheckPath || quad.mainState == QuadStates.PATH;
     }
+
+	public void Lose(int player) {
+		gridRobyManager.LoseAction();
+	}
+
+	public void CheckWin() {
+		if (ignoreCheckPath) { // Probably is just a text
+			if (withLetters) {
+				var text = gridRobyManager.GetLettersText();
+				if (text.Length > 0)
+					gridRobyManager.WinTextAction(text);
+				else
+					gridRobyManager.WinAction();
+			} else {
+				gridRobyManager.WinAction();
+			}
+		} else if (grid.PlayerQuadCount(0) == grid.QuadCount((QuadBehaviour quad) => quad.mainState == QuadStates.PATH)) {
+			if (!endPosition.IsNull() && !grid.GetQuadPositionInGrid(grid.CurrentRobotController.CurrentQuad).Equals(endPosition))
+				gridRobyManager.LoseAction();
+			else
+				gridRobyManager.WinAction();
+		} else {
+			gridRobyManager.LoseAction();
+		}
+	}
 
 }

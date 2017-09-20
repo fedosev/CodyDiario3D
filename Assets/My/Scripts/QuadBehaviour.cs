@@ -20,6 +20,8 @@ public class QuadBehaviour : MonoBehaviour {
 
 	public int index;
 
+	public int player = -1;
+
 	private Grid grid;
 	private ConfigScriptableObject config;
 
@@ -331,8 +333,8 @@ public class QuadBehaviour : MonoBehaviour {
 			//textCloneObj.transform.DOMoveY(0.5f, animTime).SetEase(Ease.InExpo);
 			//textCloneObj.transform.DOScale(textObj.transform.localScale * 2, animTime).SetEase(Ease.InQuad);
 			textCloneObj.transform.DOLookAt(Camera.main.transform.forward, animTime).SetEase(Ease.InQuad);
-			yield return new WaitForSeconds(animTime - 0.1f);
-			grid.gameTypeManager.AppendLetter(letter);
+			//yield return new WaitForSeconds(animTime - 0.1f);
+			yield return StartCoroutine(grid.gameTypeManager.AppendLetterDelayed(letter, animTime - 0.1f));
 			yield return new WaitForSeconds(0.1f);
 			Destroy(textCloneObj);
 		}

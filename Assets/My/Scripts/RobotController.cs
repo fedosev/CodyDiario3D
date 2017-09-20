@@ -7,6 +7,8 @@ public enum RobotStates { Idle, MovingForward, TurningLeft, TurningRight, Waitin
 
 public class RobotController : MonoBehaviour, IDirection {
 
+	[HideInInspector] public int index = -1;
+
 	protected ConfigScriptableObject config;
     protected Animator animator;
 	protected GameObject gridGameObj;
@@ -67,7 +69,7 @@ public class RobotController : MonoBehaviour, IDirection {
 
 	public event DirectionChangeAction OnDirectionChange;
 	public event Action OnFinishMovementOnce;
-	public event Action OnLose;
+	public event Action<int> OnLose;
 
 	bool isUpdatingCurrentQuad = false;
     public bool isFirstMove = true;
@@ -121,7 +123,7 @@ public class RobotController : MonoBehaviour, IDirection {
 		Debug.Log("You lose!");
 		grid.inPause = true;
 		if (OnLose != null) {
-			OnLose();
+			OnLose(index);
 		}
 	}
 

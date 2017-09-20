@@ -23,6 +23,7 @@ public class StateGridPlayerDirection : BaseGameObjectState, IPointerClickHandle
 	public override void OnExit() {
 		grid.ClearDirectionalQuads();
 		grid.inPause = false;
+		grid.UIControls.SetActive(true);
 	}
 
 	public void OnPointerClick(PointerEventData eventData) {
