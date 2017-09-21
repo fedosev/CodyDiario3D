@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Text.RegularExpressions;
 
 public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 
@@ -114,4 +115,19 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 		}
  		*/
 	}
+	public void Copy() {
+		var input = isLastFocused ? this : otherInputEncodeDecode;
+		UniClipboard.SetText(input.inputField.text);
+	}
+
+	public void Paste() {
+		var input = isLastFocused ? this : otherInputEncodeDecode;
+		var text = UniClipboard.GetText();
+		text = Regex.Replace(text, @"([^A-Za-z ])", "");
+		if (text.Length > 0) {
+			input.SetText(text.ToUpper());
+			UpdateText();
+		}
+	}
+	
 }
