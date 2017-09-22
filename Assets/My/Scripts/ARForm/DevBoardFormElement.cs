@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -34,12 +35,14 @@ public class DevBoardFormElement : ARFormElement {
 	public Text uiPreviewValues;
 	public Text uiSavedValues;
 
-	public CodingGrid codingGrid;
+	//public CodingGrid codingGrid;
 
 	float bestColorIntensity;
 
 	CardType bestCard;
 	CardType[] bestCards;
+
+	public event Action<string> OnSendToCodingGrid;
 	
 	private string GetCardChar(CardType card) {
 		switch (card) {
@@ -148,10 +151,8 @@ public class DevBoardFormElement : ARFormElement {
 	public void SendToCodingGrid() {
 
 		var code = GetCardLetters();
-		if (code != "") {
-			Debug.Log(code);
-			codingGrid.SetCards(code);
-			GridRobyManager.Instance.SetDevBoardActive(false);
+		if (code != "" && OnSendToCodingGrid != null) {
+			OnSendToCodingGrid(code);
 		}
 	}
 

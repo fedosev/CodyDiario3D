@@ -15,7 +15,7 @@ public class GridColorsFormElement : ARFormElement {
 
 	public GridColors gridColors;
 
-	public GameConfig gameConfig;
+	//public GameConfig gameConfig;
 
     public UnityEventColorBool onBorderPreviewChange;
     public UnityEventColorBool onQuadPreviewChange;

@@ -15,7 +15,7 @@ public class GridTransparenciesFormElement : ARFormElement {
 
 	public GridTransparencies gridTransparencies;
 
-	public GameConfig gameConfig;
+	//public GameConfig gameConfig;
 
 	public const float defaultValue = 0.5f;
 

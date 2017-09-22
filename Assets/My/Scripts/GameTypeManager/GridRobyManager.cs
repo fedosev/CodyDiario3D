@@ -134,6 +134,11 @@ public class GridRobyManager : BaseGameTypeManager {
 			imageTargetDevBoard.Bind(gameManager.imageTracker);
 			//gameManager.imageTracker.LoadImageTargetBehaviour(imageTargetDevBoard);
 			imageTargetDevBoard.gameObject.SetActive(false);
+			imageTargetDevBoard.GetComponentInChildren<ARFormOptions.DevBoardFormElement>().OnSendToCodingGrid += (string code) => {
+				MyDebug.Log(code);
+				codingGrid.SetCards(code);
+				GridRobyManager.Instance.SetDevBoardActive(false);
+			};
 		}
 		else { // Deactivate
 			if (imageTargetDevBoard) {

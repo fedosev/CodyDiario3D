@@ -20,7 +20,7 @@ public class BooleanFormElement : ARFormElement {
 
 	public bool defaultValueTrue = false;
 
-	public GameConfig gameConfig;
+	//public GameConfig gameConfig;
 
     ARFormElementValue<bool> boolValue;
 
