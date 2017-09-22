@@ -33,11 +33,15 @@ public class ARMarkerFormContainer : MonoBehaviour {
     [HideInInspector]
     public int screenHeight = 0;
 
-    [SerializeField]
+    //[SerializeField]
     private Texture2D tex2d;
+    private Color[] tex2dColors;
 
     Vec2 texOffset;
 
+    private Color GetText2dPixel(int x, int y) {
+        return tex2dColors[renderTexture.width * y + x];
+    }
 
     public void SetMinChangeToApply(float val) {
         minChangeToApply = val;
@@ -168,6 +172,8 @@ public class ARMarkerFormContainer : MonoBehaviour {
         RenderTexture.active = previous;
         RenderTexture.ReleaseTemporary(tmp);
 
+        //tex2dColors = tex2d.GetPixels();
+
         //outObj2.GetComponent<RawImage>().texture = tex2d;
 
         //tex2d.ReadPixels(new Rect(0, 0, 150*3, 150), 0, 0);
@@ -185,6 +191,7 @@ public class ARMarkerFormContainer : MonoBehaviour {
         for (var i = 0; i < texturePixelScale; i++) {
             for (var j = 0; j < texturePixelScale; j++) {
                 avg += tex2d.GetPixel(
+                //avg += GetText2dPixel(
                     i + texOffset.x + pos.x * texturePixelScale,
                     j + texOffset.y + pos.y * texturePixelScale
                 ).grayscale;

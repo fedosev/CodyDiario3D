@@ -88,11 +88,23 @@ public class DevBoardFormElement : ARFormElement {
 				}
 			}
 			avgColorIntensity /= cardsNumber;
+
+			// /*
+			bool hasBestValue = false;
+			CardType bestAvgCard = CardType.Null;
+			if (cardsValues[i].TryGetValue(out bestAvgCard) && bestAvgCard != CardType.Null) {
+				sb.Append(GetCardChar(bestAvgCard));
+				sb.Append(" ");
+				hasBestValue = true;
+			}
+			// */
 			if (bestCard != CardType.Null && minColorIntensityDifference <= (avgColorIntensity - bestColorIntensity)) {
 				bestCards[i] = bestCard;
 				cardsValues[i].SetValue(bestCard);
-				sb.Append(GetCardChar(bestCard));
-				sb.Append(" ");
+				if (!hasBestValue) {
+					sb.Append(GetCardChar(bestCard));
+					sb.Append(" ");
+				}
 			} else {
 				cardsValues[i].SetValue(CardType.Null);
 				break;
