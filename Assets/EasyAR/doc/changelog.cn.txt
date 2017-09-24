@@ -1,3 +1,31 @@
+2.1.0
++ 添加新的编程语言支持：Swift for iOS
++ 添加Android使用的arm64-v8a库文件
++ 添加新接口（Buffer），实现在Android Java API中访问图像数据
++ 添加 Android Kotlin 样例
++ 添加 iOS dynamic framework 样例
+* All: 所有接口都不会抛出异常
+* All: 修复camera图像在屏幕显示的色彩失真
+* Unity: 修复iOS Unity录屏后的系统杂音
+* Unity: 如果OnPreRender中修改了RevertBackfacing，会在OnPostRender中重置
+* Unity: 添加ObjectTargetBaseBehaviour中缺失的LoadList*接口
+* Unity: 默认不在AndroidManifest中添加音频权限
+* Unity: 修改容易产生误导的错误信息，"EasyAR is running on an unsupported graphics device" 改为 "EasyAR is running with an unsupported graphics API"
+* Android: Engine API 已经可以替换 cn.easyar.engine.EasyAR。cn.easyar.engine.EasyAR 已经弃用并将在今后版本中移除
+* Android: 修复调用ImageTarget.setupAll 配置大量target时可能产生的 local reference table overflow
+* Android: 修复在Android平板和眼镜上SLAM不正常的漂移
+* Android: 修复在某些罕见Android设备上拒绝camera权限导致的崩溃
+* Android: 改善在某些罕见Android设备上的camera分辨率选择策略
+* iOS: 修复iOS 11视频播放
+* iOS: framework将不会再包含签名
+* iOS: 修复在某些设备上的某些分辨率下camera显示问题
+* iOS: 修复录屏内存泄漏
+* Sample: 重命名Unity样例代码的文件名和namespace，划分样例代码和SDK的明确边界
+* Sample: 删除HelloARCloud样例中的本地目标
+* Sample: 改善Android/iOS HelloARQRCode样例中QR Code检测到之后的信息显示
+* Sample: 在iOS Unity上默认打开IL2CPP
+* 其它修正和完善
+
 2.0.0
 ++ 全新的编程语言支持：C/C++11/traditional C++/Java for Android/Objective-C for iOS
 ++ 所有编程语言和不同IDE的sample

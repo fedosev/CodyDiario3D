@@ -43,16 +43,9 @@ namespace EasyAR
             if (initialized)
                 return;
             initialized = true;
-            Engine.ExceptionEvent += HandleException;
             ARBuilder.Instance.InitializeEasyAR(Key);
             if (!ARBuilder.Instance.EasyBuild())
                 Debug.LogError("fail to build AR");
-        }
-
-        private void HandleException(string message)
-        {
-            //throw new System.Exception(message);
-            Debug.LogError(message);
         }
     }
 }

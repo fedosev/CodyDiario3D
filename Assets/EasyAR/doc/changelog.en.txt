@@ -1,3 +1,31 @@
+2.1.0
++ added new language binding: Swift for iOS
++ added arm64-v8a binaries for Android
++ added new interface (Buffer) for image data access in Android Java API
++ added Android Kotlin sample
++ added iOS dynamic framework sample
+* All: all interfaces are now exception free
+* All: fixed camera image color display on screen
+* Unity: fixed noisy sound after recording on iOS Unity
+* Unity: reset RevertBackfacing in OnPostRender if it has been changed in OnPreRender
+* Unity: added missing LoadList* interface in ObjectTargetBaseBehaviour
+* Unity: do not include audio permission in AndroidManifest by default
+* Unity: changed misleading error message of "EasyAR is running on an unsupported graphics device" to "EasyAR is running with an unsupported graphics API"
+* Android: Engine API is now ready to replace cn.easyar.engine.EasyAR. cn.easyar.engine.EasyAR is deprecated and will be removed in later releases
+* Android: fixed local reference table overflow when calling ImageTarget.setupAll to setup a large number of targets
+* Android: fixed irregular drift of SLAM on Android tablets and glasses
+* Android: fixed crash when camera permission denied on some rare Android devices
+* Android: refined camera resolution selection strategy on some rare Android devices
+* iOS: fixed video playback on iOS 11
+* iOS: frameworks are not signed now
+* iOS: fixed camera display in some rare resolutions on some devices
+* iOS: fixed memory leak in recording
+* Sample: renamed Unity sample namespace and files, to make clear boundaries between sample code and the SDK
+* Sample: removed local targets from HelloARCloud samples
+* Sample: refined message display for Android/iOS HelloARQRCode sample when QR code is detected
+* Sample: turn on IL2CPP on iOS Unity by default
+* other refines and bug fixes
+
 2.0.0
 ++ new language bindings: C/C++11/traditional C++/Java for Android/Objective-C for iOS
 ++ samples for all language bindings and different IDE
