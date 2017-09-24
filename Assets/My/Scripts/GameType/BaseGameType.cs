@@ -17,7 +17,7 @@ public abstract class BaseGameType : ScriptableObject {
     public virtual string generalInfo { get; }
 
     public int year = 2017;
-    public int month = 9;
+    public int month = 11;
 
     public bool showInfoOnStart = true;
     [TextArea(10, 10)] public string info = "";

@@ -9,8 +9,10 @@ public class StateGridPlayerDirection : BaseGameObjectState, IPointerClickHandle
 
 	public override BaseGameObjectState NextState() {
 
-		if (grid.gameType == GameTypes.PATH && ((PathGameType)(grid.gameTypeConfig)).path.Length == 0) {
-			return GoToState<StateSwitchQuad>();
+		if (grid.gameType == GameTypes.PATH) {
+			var gameType = ((PathGameType)(grid.gameTypeConfig));
+			if (gameType.path.Length == 0 && !gameType.ignoreCheckPath)
+				return GoToState<StateSwitchQuad>();
 		}
 
 		return GoToState<StateNull>();
@@ -23,14 +25,14 @@ public class StateGridPlayerDirection : BaseGameObjectState, IPointerClickHandle
 	public override void OnExit() {
 		grid.ClearDirectionalQuads();
 		grid.inPause = false;
-		grid.UIControls.SetActive(true);
+		grid.SetActiveUI(true);
 	}
 
 	public void OnPointerClick(PointerEventData eventData) {
 		if (eventData.pointerEnter.tag == "DirectionSelector") {
 			RobyDirection direction = eventData.pointerEnter.GetComponent<QuadBehaviour>().GetDirection();
 			grid.InitRobot1(grid.startPosInGrid.col, grid.startPosInGrid.row, direction, true);
-			NextState();
+			grid.state = NextState();
 		} else if (eventData.pointerEnter.tag == "Quad") {
 			GoToState<StateGridPlayerPosition>();
 		}

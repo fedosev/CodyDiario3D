@@ -32,6 +32,7 @@ public class Grid : MonoBehaviour {
 	public float scaleSize = 4f;
 
 	public GameObject UIControls;
+	[HideInInspector] public bool canBeActiveUI = true;
 
 	public int nCols = 0;
 	public int nRows = 0;
@@ -505,6 +506,10 @@ public class Grid : MonoBehaviour {
 	}
 	// */
 
+	public void SetActiveUI(bool active) {
+		UIControls.SetActive(canBeActiveUI && active);
+	}
+
 	public void RobotMoveForward() {
 		if (inPause)
 			return;
@@ -604,5 +609,10 @@ public class Grid : MonoBehaviour {
 				count++;
 		}
 		return count;
+	}
+
+	void OnDestroy() {
+		if (particleSystemShowRoby != null)
+			Destroy(particleSystemShowRoby.gameObject);
 	}
 }

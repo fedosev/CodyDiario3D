@@ -18,7 +18,7 @@ public class PathGameType : BaseGridRobyGameType {
 			if (!startPosition.IsSet())
 				str += strSelPos;
 			str += "Seleziona le caselle della scacchiera che faranno parte del percorso e premi su \"Esegui\".\n";
-		} else if (code.Length == 0 && path.Length > 0) {
+		} else if (code.Length == 0 && path.Length > 0 && !ignoreCheckPath) {
 			str = "Il percorso è noto. Devi trovare trovare la sequenza di istruzioni.\n";
 			if (useDevBoard && MainGameManager.Instance && MainGameManager.Instance.useAR) {
 				str += "Annerisci bene le caselle opportune del programmatore sulla pagina del diario. ";
@@ -67,9 +67,11 @@ public class PathGameType : BaseGridRobyGameType {
 		if (code.Length > 0) {
 			gridRobyManager.codingGrid.SetCards(code);
 			gridRobyManager.codingGrid.DisableEdit();
+			grid.canBeActiveUI = false;
+			grid.SetActiveUI(false);
 		}
 
-		if (path.Length == 0 && grid.state.IsNull()) {
+		if (path.Length == 0 && grid.state.IsNull() && !ignoreCheckPath) {
 			grid.state = grid.state.GoToState<StateSwitchQuad>();
 		}
 	}

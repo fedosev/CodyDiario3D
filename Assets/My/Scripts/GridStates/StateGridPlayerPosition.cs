@@ -9,7 +9,7 @@ public class StateGridPlayerPosition : BaseGameObjectState, IPointerClickHandler
 
 	public override void OnEnter() {
 		grid.inPause = true;
-		grid.UIControls.SetActive(false);
+		grid.SetActiveUI(false);
 	}
 
 	public override BaseGameObjectState NextState() {
@@ -27,7 +27,7 @@ public class StateGridPlayerPosition : BaseGameObjectState, IPointerClickHandler
 			grid.startPosInGrid = startPos;
 			//grid.InitRobot1(grid.startPosInGrid.col, grid.startPosInGrid.row, RobyDirection.North);
 			quad.SetState(QuadStates.ACTIVE);
-			NextState();
+			grid.state = NextState();
 		}
 	}
 

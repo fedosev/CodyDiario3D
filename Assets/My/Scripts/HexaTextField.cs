@@ -23,6 +23,7 @@ public class HexaTextField : MonoBehaviour, IPointerClickHandler {
 		this.hexaText = hexaText;
 		this.index = index;
 		rend = GetComponent<Renderer>();
+		rend.material.color = hexaText.defaultQuadColor;
 		text = GetComponentInChildren<TMP_Text>();
 	}
 

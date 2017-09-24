@@ -18,6 +18,7 @@ public class CodingGrid : MonoBehaviour {
     public Text text;
 
     public GameObject removeButton;
+    //public GameObject executeButton;
     public GameObject panelCards;
 
     public char GetLetterFromType(CardTypes cardType) {
@@ -98,6 +99,7 @@ public class CodingGrid : MonoBehaviour {
             cards[i] = null;
         }
         cardsNumber = 0;
+        grid.state.GoToState<StateNull>();
         grid.NextAction();
     }
 
@@ -117,7 +119,8 @@ public class CodingGrid : MonoBehaviour {
 
         // /*
         if (cardsNumber > 0 && !controlsUI.activeSelf) {
-            controlsUI.SetActive(true);
+            if (!(grid.state is StateGridPlayerPosition || grid.state is StateGridPlayerDirection))
+                controlsUI.SetActive(true);
         } else if (cardsNumber == 0 && controlsUI.activeSelf) {
             controlsUI.SetActive(false);
         }

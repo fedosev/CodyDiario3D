@@ -11,15 +11,20 @@ public class GridHexaGameType : BaseGridRobyGameType {
 	} }
     
 	public override string generalInfo { get {
-		return 
-            "Divertiti con la codifica esadecimale.\n" + 
-            (isGridToCode
-                ? "Fai il tap sulle caselle della griglia per annerirle. Vedrai il risultato della codifica in tempo reale."
-                : "Scrivi il codice usando la tastiera. Vedrai il risultato sulla griglia in tempo reale."
-            );
+        var str = "";;
+        if (isFreeMode)
+            str += "Codifica esadecimale in modalità libera. \nOggi puoi disegnare sulla griglia con il tap continuo.\n";
+        else
+            str += "Divertiti con la codifica esadecimale.\n";
+        if (isGridToCode || isFreeMode)
+            str += "Puoi fare il tap sulle caselle della griglia per annerirle (secondo tap per anullare l'azione). Vedrai il risultato della codifica in tempo reale.\n";
+        if (!isGridToCode || isFreeMode)
+            str += "Puoi scrivere il codice usando la tastiera. Vedrai il risultato sulla griglia in tempo reale.\n";
+        return str;
 	} }
 
     public bool isGridToCode = true;
+    public bool isFreeMode = false;
 
     protected GridHexaManager gridHexaManager;
 
@@ -70,11 +75,10 @@ public class GridHexaGameType : BaseGridRobyGameType {
 
         grid.Init();
 
-        if (isGridToCode) {
+        if (isGridToCode || isFreeMode) {
             grid.state = grid.state.InitState<StateHexaSwitchQuad>();
+            ((StateHexaSwitchQuad)grid.state).isDrawMode = isFreeMode;
             grid.OnQuadStateChange += OnQuadStateChange;
-        } else {
-            // @todo
         }
     }
 

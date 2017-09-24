@@ -74,20 +74,19 @@ public class GridHexaManager : GridRobyManager {
 	public override void InitConfig() {
 
 		//GetGameType().grid = FindObjectOfType<Grid>();
-		GetGameType().grid = grid;
+		var gameType = GetGameType();
+		gameType.grid = grid;
 		grid.gameTypeManager = this;
 		grid.gameTypeConfig = GetGameType();
 
 		for (var i = 0; i < hexaCodeLenght; i++) {
 			hexaCode[i] = 0;
 		}
-		if (GetGameType().isGridToCode) {
-			//keyboard.Hide(true);
-		} else {
+		if (!gameType.isGridToCode || gameType.isFreeMode) {
 			StartCoroutine(ShowKeyboardDelayed(2f));
 			keyboard.onKeyPressed.AddListener(HandleKeyPress);
 			hexaText.OnFieldClick += SelectField;
 		}
-		hexaText.Init(!GetGameType().isGridToCode);
+		hexaText.Init(!gameType.isGridToCode);
 	}
 }

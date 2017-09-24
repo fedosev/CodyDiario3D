@@ -12,20 +12,24 @@ public class Keyboard : MonoBehaviour {
 
 	public UnityEventChar onKeyPressed = new UnityEventChar();
 	public UnityEvent onBackspacePressed = new UnityEvent();
-
-	public float posY = 18f;
-	public float posYHidden;
+    public float posY = 18f;
+    public float posYHidden;
 
 	public float animDuration = 0.5f;
 
 	bool isAnimating = false;
 
 	float height;
+    float rectRatio;
 
 	bool isVisible = true;
 
+    RectTransform rt;
 
-	public void HandleClick(char letter) {
+    public bool useRT = false;
+
+
+    public void HandleClick(char letter) {
 
 		MyDebug.Log(letter, true);
 
@@ -67,6 +71,7 @@ public class Keyboard : MonoBehaviour {
 		float animFreq = 0f;
 		if (duration > 0)
 			animFreq = 1 / duration;
+		var rectRatioInv = 1f / rectRatio;
 		while (t <= duration + Time.deltaTime) {
 			v = (t * animFreq);
 			v = Mathf.Clamp01(v);
@@ -82,11 +87,15 @@ public class Keyboard : MonoBehaviour {
 			if (!show) {
 				v = 1f - v;
 			}
-			transform.position = new Vector3(
-				transform.position.x,
-				posYHidden + (posY - posYHidden) * v,
-				transform.position.z
-			);
+			if (useRT) {
+				rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, (posYHidden + (posY - posYHidden) * v) * rectRatioInv);
+			} else {
+				transform.position = new Vector3(
+					transform.position.x,
+					posYHidden + (posY - posYHidden) * v,
+					transform.position.z
+				);
+			}
 			t = Time.time - t0;
 			yield return null;
 		}
@@ -98,9 +107,9 @@ public class Keyboard : MonoBehaviour {
 
 	void Start() {
 		
-		var rt = GetComponent<RectTransform>();
+		rt = GetComponent<RectTransform>();
 		posY = transform.position.y;
-		var rectRatio = posY / rt.anchoredPosition.y;
+		rectRatio = posY / rt.anchoredPosition.y;
 		posYHidden = - rectRatio * rt.rect.height - posY;
 
 		Hide(true);
