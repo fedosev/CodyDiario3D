@@ -24,8 +24,9 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 
 	InputEncodeDecode otherInputEncodeDecode;
 
+    float tKeyPressed = float.MaxValue;
 
-	public void OnPointerClick(PointerEventData eventData) {
+    public void OnPointerClick(PointerEventData eventData) {
 		keyboard.Show();
 		SetLastFocused();
 	}
@@ -64,6 +65,7 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 			inputField.text += letter;
 			inputField.MoveTextEnd(true);
 			otherInputField.text = rotCode.EncodeDecode(inputField.text, !isEncoded);
+			tKeyPressed = Time.time;
 		}
 	}
 
@@ -104,9 +106,27 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 		isLastFocused = true;
 
 	}
+
+	void SetDebugMode(bool isOn) {
+		if (MainGameManager.Instance)
+			MainGameManager.Instance.SetDebugMode(isOn);
+		inputField.text = "DEBUG";
+		otherInputField.text = rotCode.EncodeDecode(inputField.text, !isEncoded);
+	}
+
 	// Update is called once per frame
 	void Update () {
 
+		#if F_ALLOW_DEBUG
+			if (!isEncoded && tKeyPressed + 1f < Time.time) {
+				if (inputField.text == "DEBUGFFF") {
+					SetDebugMode(true);
+				} else if (inputField.text == "DEBUGOFF") {
+					SetDebugMode(false);
+				}
+				tKeyPressed = float.MaxValue;
+			}
+		#endif
 		/*
 		if (!isFixed && !isLastFocused && inputField.isFocused) {
 			SetLastFocused();

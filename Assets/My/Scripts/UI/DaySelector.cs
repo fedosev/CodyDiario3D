@@ -6,10 +6,9 @@ using UnityEngine.UI;
 public class DaySelector : MonoBehaviour {
 
 	static DaySelector instance;
-
 	public static DaySelector Instance { get {
 		if (instance == null)
-			instance = GameObject.FindObjectOfType<DaySelector>();
+			instance = MainGameManager.Menu.GetComponentInChildren<DaySelector>(true);
 		return instance;
 	} }
 	
@@ -19,6 +18,7 @@ public class DaySelector : MonoBehaviour {
 	public GameObject dayButtonPrefab;
 
 	public Color disabledColor = new Color(0.53f, 0.53f, 0.53f);
+	public Color enabledColor = new Color(0.53f, 0.53f, 0.53f);
 
 	int monthNumber;
 
@@ -27,6 +27,10 @@ public class DaySelector : MonoBehaviour {
 	bool wasInit = false;
     List<AllGameTypes.Month> months;
     MonthButton[] monthButtons;
+
+	public void RefreshNextTime() {
+		wasInit = false;
+	}
 
     public void Show(int monthNumber) {
 

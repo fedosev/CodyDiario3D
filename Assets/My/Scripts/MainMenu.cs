@@ -25,6 +25,8 @@ public class MainMenu : MonoBehaviour {
 	public GameObject resumeButton;
 	public GameObject helpButton;
 
+	public Toggle aRCheck;
+
 	public Popup popup;
 
 

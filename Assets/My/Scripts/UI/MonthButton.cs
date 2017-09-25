@@ -21,6 +21,8 @@ public class MonthButton : MonoBehaviour, IPointerClickHandler {
 	public void Init() {
 		if (!(isActive && MainGameManager.Instance.today.IsMonthGTE(year, month))) {
 			GetComponent<Image>().color = DaySelector.Instance.disabledColor;
+		} else {
+			GetComponent<Image>().color = DaySelector.Instance.enabledColor;
 		}
 	}
 

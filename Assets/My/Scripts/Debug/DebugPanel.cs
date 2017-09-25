@@ -6,6 +6,12 @@ using UnityEngine.EventSystems;
 
 public class DebugPanel : MonoBehaviour, IPointerClickHandler {
 
+	private static DebugPanel instance;
+	public static DebugPanel Instance { get {
+		if (instance == null)
+			instance = GameObject.FindObjectOfType<DebugPanel>();
+		return instance;
+	} }	
 	float t;
 	RectTransform rt;
 	bool isExpanded = false;

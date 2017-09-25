@@ -31,7 +31,7 @@ public class Keyboard : MonoBehaviour {
 
     public void HandleClick(char letter) {
 
-		MyDebug.Log(letter, true);
+		//MyDebug.Log(letter, true);
 
 		if (letter == space) {
 			letter = ' ';

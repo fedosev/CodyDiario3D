@@ -36,13 +36,11 @@ public class Unlock : MonoBehaviour, IPointerClickHandler {
 			MainGameManager.Instance.Unlock();
 			StartCoroutine(ResetProps());
 		}
-		MyDebug.Log(taps, true);
-
-
+		//MyDebug.Log(taps, true);
 	}
 
 	IEnumerator ResetProps() {
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(0.5f);
 		text.color = color;
 		this.enabled = false;
 	}

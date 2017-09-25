@@ -25,7 +25,8 @@ public class MainGameManager : MonoBehaviour {
 
     public ARCameraBaseBehaviour aRCamera;
 
-	public bool useAR = true;
+	public bool shoudUseAR;
+	public bool useAR;
 
 	public GameObject aRGameObject;
 
@@ -56,6 +57,8 @@ public class MainGameManager : MonoBehaviour {
 
 	public MyDate today;
 
+	public DebugPanel debugPanel;
+
 
 	[HideInInspector] public bool isLoading;
 	[HideInInspector] public bool isBackground;
@@ -77,6 +80,21 @@ public class MainGameManager : MonoBehaviour {
     //IEnumerator coroutine;
     TargetInstance currentARTarget;
 
+    bool isDebug;
+    bool isDebugOnScreen;
+
+
+    public void SetDebugMode(bool isOn) {
+		isDebug = isOn;
+		isDebugOnScreen = isOn;
+		debugPanel.gameObject.SetActive(isOn);
+		logText.gameObject.SetActive(isOn);
+		Menu.aRCheck.gameObject.SetActive(isOn);
+	}
+
+	public void ToggleDebugMode() {
+		SetDebugMode(!isDebug);
+	}
 
     public bool IsARTracked { get {
 		if (currentARTarget != null && currentARTarget.Status == TargetInstance.TrackStatus.Tracked) {
@@ -88,10 +106,11 @@ public class MainGameManager : MonoBehaviour {
 	public void Unlock() {
 		isUnlocked = true;
 		today = allGameTypes.endDate;
+		DaySelector.Instance.RefreshNextTime();
 	}
 
 	public void SetLogText(string str) {
-		if (logText.gameObject.activeSelf)
+		if (isDebugOnScreen)
 			logText.text = str;
 	}
 
@@ -188,6 +207,8 @@ public class MainGameManager : MonoBehaviour {
 				noARCamera.gameObject.SetActive(true);
 			}
 			yield return new WaitUntil(() => asyncOp.isDone && (Time.time - t) > fadeDuration);
+		} else if (!useAR) {
+			noARCamera.gameObject.SetActive(true);
 		}
 		SetUseAR();
 
@@ -293,7 +314,7 @@ public class MainGameManager : MonoBehaviour {
 
 		Menu.ShowMainOnStart();
 
-		useAR = true;
+		useAR = !isDebug || shoudUseAR;
 		useARchanged = true;
 	}
 
@@ -481,10 +502,39 @@ public class MainGameManager : MonoBehaviour {
 
 	void Awake() {
 
+		#if !UNITY_EDITOR
+			shoudUseAR = true;
+		#endif
+
+		#if F_ALLOW_DEBUG
+			MyDebug.ShowOnScreen = SetLogText;
+		#endif
+
+		#if F_DEBUG
+			isDebug = true;
+			Menu.aRCheck.gameObject.SetActive(true);
+			Menu.aRCheck.isOn = shoudUseAR;
+			Menu.aRCheck.onValueChanged.AddListener(ChangeWithAR);
+		#else
+			isDebug = false;
+			Menu.aRCheck.gameObject.SetActive(false);
+		#endif
+
+		#if F_DEBUG_ON_SCREEN
+			isDebugOnScreen = true;
+			debugPanel.gameObject.SetActive(true);
+		#else
+			isDebugOnScreen = false;
+			debugPanel.gameObject.SetActive(false);
+		#endif
+
+		useAR = shoudUseAR;
+
 		today = new MyDate();
 
-		//@todo: remove in production
-		Unlock();
+		#if F_UNLOCK
+			Unlock();
+		#endif
 
 		gameConfig.Init();
 

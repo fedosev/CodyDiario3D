@@ -35,7 +35,7 @@ public class RotCode : MonoBehaviour {
 			for (var i = code.Length; i < rotCylinders.Length; i++) {
 				rotCylinders[i].gameObject.SetActive(false);
 			}
-			if (code.Length == 1 && MainGameManager.Instance != null && MainGameManager.Instance.useAR) {
+			if (code.Length == 1 && MainGameManager.Instance != null/* && MainGameManager.Instance.useAR*/) {
 				transform.position = new Vector3(0f, transform.position.y, transform.position.z);
 			}
 		}
@@ -55,6 +55,12 @@ public class RotCode : MonoBehaviour {
 		SetCode(code);
 		for (var i = 0; i < code.Length; i++) {
 			rotCylinders[i].onRotNumberChange.AddListener(UpdateCodeFromCylinders);
+		}
+
+		if (false && MainGameManager.Instance != null && !MainGameManager.Instance.useAR) {
+			var maskObj = GameObject.Find("QuadMask");
+			if (maskObj != null)
+				maskObj.SetActive(false);
 		}
 	}
 
