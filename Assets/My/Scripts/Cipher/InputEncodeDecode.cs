@@ -27,8 +27,10 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
     float tKeyPressed = float.MaxValue;
 
     public void OnPointerClick(PointerEventData eventData) {
-		keyboard.Show();
-		SetLastFocused();
+		if (!isFixed) {
+			keyboard.Show();
+			SetLastFocused();
+		}
 	}
 
 	public void SetText(string text) {

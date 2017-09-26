@@ -7,6 +7,12 @@ public class CodingGrid : MonoBehaviour {
 
     public GameObject controlsUI;
 
+    public Text text;
+
+    public GameObject removeButton;
+    public Button executeButton;
+    public GameObject panelCards;
+
     //bool isControlsUIVisible = false;
 
     const int maxCardsNumber = 25;
@@ -15,13 +21,13 @@ public class CodingGrid : MonoBehaviour {
 
     Grid grid;
 
-    public Text text;
+    bool shouldBeHiddenUI = false;
 
-    public GameObject removeButton;
-    //public GameObject executeButton;
-    public GameObject panelCards;
+    public void HideUI() {
+        shouldBeHiddenUI = true;
+    }
 
-    public char GetLetterFromType(CardTypes cardType) {
+    public static char GetLetterFromType(CardTypes cardType) {
         switch (cardType) {
             case CardTypes.FORWARD: return 'A';
             case CardTypes.LEFT: return 'S';
@@ -39,7 +45,7 @@ public class CodingGrid : MonoBehaviour {
         return cardLetter.ToString();
     }
 
-    public CardTypes GetTypeFromLetter(char cardLetter) {
+    public static CardTypes GetTypeFromLetter(char cardLetter) {
         switch (cardLetter) {
             case 'A': return CardTypes.FORWARD;
             case 'S': return CardTypes.LEFT;
@@ -49,6 +55,11 @@ public class CodingGrid : MonoBehaviour {
                 Debug.LogError("Should be A, S or D");
                 return CardTypes.FORWARD;
         }
+    }
+
+    public void Init() {
+        executeButton.onClick.AddListener(Execute);
+        Clear();
     }
 
     public void Clear() {
@@ -111,17 +122,17 @@ public class CodingGrid : MonoBehaviour {
     // Use this for initialization
     void Start () {
         grid = GameObject.Find("Grid").GetComponent<Grid>();
-        Clear();
+        //Init();
     }
 	
 	// Update is called once per frame
 	void Update () {
 
         // /*
-        if (cardsNumber > 0 && !controlsUI.activeSelf) {
+        if (!shouldBeHiddenUI && cardsNumber > 0 && !controlsUI.activeSelf) {
             if (!(grid.state is StateGridPlayerPosition || grid.state is StateGridPlayerDirection))
                 controlsUI.SetActive(true);
-        } else if (cardsNumber == 0 && controlsUI.activeSelf) {
+        } else if ((shouldBeHiddenUI || cardsNumber == 0) && controlsUI.activeSelf) {
             controlsUI.SetActive(false);
         }
         // */

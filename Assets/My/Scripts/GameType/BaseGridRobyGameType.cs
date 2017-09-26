@@ -90,4 +90,10 @@ public abstract class BaseGridRobyGameType : BaseGameType {
         return "GridRoby";
     } }
 
+	protected const string devBoardInstructions = 
+		"Annerisci bene le caselle opportune del programmatore sulla pagina del diario. " +
+		"Assicurati di trovarti in un posto ben illuminato. Stendi bene la pagina con la mano senza coprire il programmatore. " +
+		"Con l'altra mano inquadra il programmatore. Quando compariranno i valori premi su \"Usa la sequenza\". " +
+		"Se i valori sono stati presi male potrai correggerli nella fase successiva.\n";
+
 }

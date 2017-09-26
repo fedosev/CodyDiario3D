@@ -9,6 +9,8 @@ public class RotCode : MonoBehaviour {
 	public RotCylinder fixedRotCylinder;
 	public RotCylinder[] rotCylinders;
 
+	public GameObject codeSizeUI;
+
 	public bool withSpace = false;
 
 	public bool isFixed = false;
@@ -19,7 +21,8 @@ public class RotCode : MonoBehaviour {
 
 	bool isPaused = false;
 
-	public void Pause(bool pause) {
+
+    public void Pause(bool pause) {
 		isPaused = pause;
 		for (var i = 0; i < code.Length; i++) {
 			rotCylinders[i].isPaused = pause;
@@ -27,6 +30,9 @@ public class RotCode : MonoBehaviour {
 		fixedRotCylinder.isPaused = pause;
 	}
 	
+	public void SetCodeSizeVariable(bool isVariable) {
+		codeSizeUI.SetActive(isVariable);
+	}
 
 	public void Init() {
 
@@ -35,7 +41,7 @@ public class RotCode : MonoBehaviour {
 			for (var i = code.Length; i < rotCylinders.Length; i++) {
 				rotCylinders[i].gameObject.SetActive(false);
 			}
-			if (code.Length == 1 && MainGameManager.Instance != null/* && MainGameManager.Instance.useAR*/) {
+			if (code.Length == 1/* && MainGameManager.Instance != null && MainGameManager.Instance.useAR*/) {
 				transform.position = new Vector3(0f, transform.position.y, transform.position.z);
 			}
 		}
@@ -61,6 +67,31 @@ public class RotCode : MonoBehaviour {
 			var maskObj = GameObject.Find("QuadMask");
 			if (maskObj != null)
 				maskObj.SetActive(false);
+		}
+	}
+
+	public void IncreaseCodeSize() {
+		if (code.Length < rotCylinders.Length) {
+			var l = code.Length;
+			System.Array.Resize<int>(ref code, l + 1);
+			code[l] = 0;
+			rotCylinders[l].gameObject.SetActive(true);
+			rotCylinders[l].SetRotNumber(code[l], false, true);
+			if (onCodeChange != null) {
+				onCodeChange.Invoke();
+			}
+		}
+	}
+
+	public void DecreaseCodeSize() {
+
+		if (code.Length > 1) {
+			var l = code.Length - 1;
+			System.Array.Resize<int>(ref code, l);
+			rotCylinders[l].gameObject.SetActive(false);
+			if (onCodeChange != null) {
+				onCodeChange.Invoke();
+			}
 		}
 	}
 

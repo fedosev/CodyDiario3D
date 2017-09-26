@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class RotNumberText : MonoBehaviour {
 
 	public string textPrefix = "ROT";
+	public string textPrefixVar = "VAR";
 	
 	Text text;
 	
@@ -14,9 +15,22 @@ public class RotNumberText : MonoBehaviour {
 	public void UpdateText() {
 
 		if (rotCode != null) {
-			text.text = textPrefix;
+			bool useSeparator = false;
+			if (rotCode.code.Length > 1) {
+				text.text = textPrefixVar;
+				foreach (var c in rotCode.code) {
+					if (c > 9) {
+						useSeparator = true;
+						break;
+					}
+				}
+			} else {
+				text.text = textPrefix;
+			}
 			foreach (var c in rotCode.code) {
-				text.text += "-" + c;
+				if (useSeparator)
+					text.text += '-';
+				text.text += c;
 			}
 			if (rotCode.withSpace) {
 				text.text += "s";

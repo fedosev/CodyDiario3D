@@ -200,10 +200,12 @@ public class RotCylinder : MonoBehaviour {
 		yield return null;
 	}
 
-	public void SetRotNumber(int rotNumber, bool animate = false) {
+	public void SetRotNumber(int rotNumber, bool animate = false, bool stop = true) {
 
-		foreach (var rotCylRB in rotCylindersRB) {
-			rotCylRB.angularVelocity = Vector3.zero;
+		if (stop) {
+			foreach (var rotCylRB in rotCylindersRB) {
+				rotCylRB.angularVelocity = Vector3.zero;
+			}
 		}
 		var mainRotAngX = mainRotCylinder.transform.localRotation.eulerAngles.x;
 		if (mainRotCylinder.transform.forward.z < 0) {

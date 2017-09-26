@@ -33,6 +33,7 @@ public class CipherRotGameType : BaseGameType {
 	public bool isDecodedTextFixed = false;
 	public bool isEncodedTextFixed = false;
 	public bool isRotFixed = false;
+	public bool isCodeSizeVariable = false;
 
 	RotCode rotObj;
 	
@@ -52,6 +53,8 @@ public class CipherRotGameType : BaseGameType {
 		rotObj.code = (int[])rotCode.Clone();
 		rotObj.withSpace = withSpace;
 		rotObj.isFixed = isRotFixed;
+
+		rotObj.SetCodeSizeVariable(!isRotFixed && isCodeSizeVariable);
 
 		var inputFieldDecoded = GameObject.Find("InputFieldDecoded").GetComponent<InputEncodeDecode>();
 		var inputFieldEncoded = GameObject.Find("InputFieldEncoded").GetComponent<InputEncodeDecode>();
