@@ -21,6 +21,7 @@ public class QuadBehaviour : MonoBehaviour {
 	public int index;
 
 	public int player = -1;
+	public int number = -1;
 
 	private Grid grid;
 	private ConfigScriptableObject config;

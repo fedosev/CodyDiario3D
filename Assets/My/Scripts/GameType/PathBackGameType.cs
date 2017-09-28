@@ -85,6 +85,17 @@ public class PathBackGameType : BaseGridRobyGameType {
 		prevQuad.SetState(QuadStates.PATH);
 		prevQuad.SetOtherState(QuadStates.DEFAULT);
         
+		if (ignoreCheckPath) { // Forward
+			if (robot.isFirstMove) {
+				prevQuad.number = 0;
+			}
+			nextQuad.number = prevQuad.number + 1;
+		} else { // Back
+			if (nextQuad.number != prevQuad.number - 1 && nextQuad.number != prevQuad.number + 1) {
+				robot.DoLose();
+			}
+		}
+
         if (nextQuad.IsFreeToGoIn()) {
             nextQuad.SetState(QuadStates.ACTIVE);
 			nextQuad.player = 0;

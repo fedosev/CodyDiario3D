@@ -14,7 +14,7 @@ public abstract class BaseGameType : ScriptableObject {
     public virtual string subTitle { get {
         return "Gioco del " + name + " " + MyDate.GetMonthName(month) + " " + year;
     } }
-    public virtual string generalInfo { get; }
+    public virtual string generalInfo { get { return ""; } }
 
     public int year = 2017;
     public int month;
