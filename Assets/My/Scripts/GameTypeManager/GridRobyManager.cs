@@ -66,7 +66,8 @@ public class GridRobyManager : BaseGameTypeManager {
 		if (codingGrid == null) {
 			codingGrid = GameObject.FindObjectOfType<CodingGrid>();
 		}
-		codingGrid.Init();
+		if (codingGrid != null)
+			codingGrid.Init();
 
 		if (GetGameType().useDevBoard && useAR) {
 			SetDevBoardActive(true);
