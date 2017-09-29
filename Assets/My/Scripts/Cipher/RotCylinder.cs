@@ -174,14 +174,14 @@ public class RotCylinder : MonoBehaviour {
 			var rotNum = GetRotNumber();
 			if (rotNum != rotNumber) {
 
-				//print(rotNum);
+				//MyDebug.Log(rotNum);
 				rotNumber = rotNum;
 				
 				if (onRotNumberChange != null)
 					onRotNumberChange.Invoke();
 
-				//print("" + mainRotCylinder.transform.localRotation.eulerAngles + " - " + transform.localRotation.eulerAngles);
-				//print("" + mainRotCylinder.transform.localRotation.eulerAngles + " - " + transform.localRotation.eulerAngles);
+				//MyDebug.Log("" + mainRotCylinder.transform.localRotation.eulerAngles + " - " + transform.localRotation.eulerAngles);
+				//MyDebug.Log("" + mainRotCylinder.transform.localRotation.eulerAngles + " - " + transform.localRotation.eulerAngles);
 			}
 		}
 		
@@ -214,13 +214,13 @@ public class RotCylinder : MonoBehaviour {
 		var angleDiff = 360f * rotNumber / nChars;
 		var rotV3 = new Vector3(mainRotAngX + angleDiff, 0f, 90f);
 		if (animate && this.gameObject.activeInHierarchy) {
-			//Debug.Log(transform.rotation.eulerAngles);
-			//Debug.Log(rotV3);
+			//MyDebug.Log(transform.rotation.eulerAngles);
+			//MyDebug.Log(rotV3);
 			/*
 			if (Mathf.Abs(rotV3.x - transform.eulerAngles.x) > 180f) {
 				rotV3.x -= (360f * 4);
 			}
-			// Debug.Log(rotV3);
+			//MyDebug.Log(rotV3);
 			// */
 			//transform.DORotateQuaternion(Quaternion.Euler(rotV3), 0.4f);
 			//transform.DORotate(rotV3, 0.4f);
@@ -243,7 +243,7 @@ public class RotCylinder : MonoBehaviour {
 		float mainAngle = mainRot.eulerAngles.x;
 		float myAngle = myRot.eulerAngles.x;
 		// */
-		//print("" + mainAngle + " - " + myAngle);
+		//MyDebug.Log("" + mainAngle + " - " + myAngle);
 		// /*
 		/*
 		if (mainAngle < 0f)

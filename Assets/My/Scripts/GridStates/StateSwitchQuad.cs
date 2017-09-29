@@ -30,14 +30,14 @@ public class StateSwitchQuad : BaseGameObjectState {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, 100)) {
-				//Debug.Log("Hit something: " + hit.transform.position);
+				//MyDebug.Log("Hit something: " + hit.transform.position);
 
 				// Check for not UI
              	var pointerData = new PointerEventData(EventSystem.current);
              	pointerData.position = Input.mousePosition;
 				var raycastResults = new List<RaycastResult>();
 				EventSystem.current.RaycastAll(pointerData, raycastResults);
-				//Debug.Log(raycastResults.Count);
+				//MyDebug.Log(raycastResults.Count);
 				if (raycastResults.Count > 1) {
 					foreach (var res in raycastResults) {
 						if (res.gameObject.layer == 5) { // UI

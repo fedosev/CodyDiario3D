@@ -84,21 +84,21 @@ public class UIManager : MonoBehaviour {
 
     public void SwitchCamera() {
 
-        Debug.Log("Switching Camera...");
+        MyDebug.Log("Switching Camera...");
     }
 
     public void FlipCamera() {
 
-        Debug.Log("Flipping Camera...");
+        MyDebug.Log("Flipping Camera...");
     }
 
     public void SwitchFocusMode() {
         
-        Debug.Log("SwitchFocusMode()");
+        MyDebug.Log("SwitchFocusMode()");
     }
 
     public void TriggerFocus() {
-        Debug.Log("TriggerFocus()");
+        MyDebug.Log("TriggerFocus()");
     }
 
     public void SwitchBorderVisibility() {

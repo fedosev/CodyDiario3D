@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using EasyAR;
 using System;
+using System.Diagnostics;
 
 public class MainGameManager : MonoBehaviour {
 
@@ -162,10 +164,12 @@ public class MainGameManager : MonoBehaviour {
 
     public void UpdateVisibility() {
 
-		if (gameTypeManager)
+		if (gameTypeManager) {
         	gameTypeManager.UpdateVisibility();
-		else if (isBackground) {
-			targetsCanvas.SetActive(false);
+		} else if (isBackground) {
+			#if F_AR_ENABLED
+				targetsCanvas.SetActive(false);
+			#endif
 		}
 
 		mainMenu.popup.gameObject.SetActive(!mainMenu.isVisible && mainMenu.popup.isVisible);
@@ -200,7 +204,9 @@ public class MainGameManager : MonoBehaviour {
 		isBackground = false;
 
 		if (SceneManager.sceneCount > 1) {
-			imageTracker.StopTrack();
+			#if F_AR_ENABLED
+				imageTracker.StopTrack();
+			#endif
 			yield return StartCoroutine(FadeOverlay(true, fadeDuration));
 			asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
 			if (!useAR) {
@@ -314,8 +320,10 @@ public class MainGameManager : MonoBehaviour {
 
 		Menu.ShowMainOnStart();
 
-		useAR = !isDebug || shoudUseAR;
-		useARchanged = true;
+		#if F_AR_ENABLED
+			useAR = !isDebug || shoudUseAR;
+			useARchanged = true;
+		#endif
 	}
 
 	public IEnumerator FadeOverlay(bool fadeIn, float duration) {
@@ -394,8 +402,8 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 
+	[Conditional("F_AR_ENABLED")]
 	public void SetUseAR() {
-
 		if (!useARchanged)
 			return;
 
@@ -463,6 +471,7 @@ public class MainGameManager : MonoBehaviour {
 		yield return null;
 	}
 
+	[Conditional("F_AR_ENABLED")]
 	public void PauseAR(bool pause) {
 		if (!useAR)
 			return;
@@ -502,7 +511,7 @@ public class MainGameManager : MonoBehaviour {
 
 	void Awake() {
 
-		#if !UNITY_EDITOR
+		#if !UNITY_EDITOR && F_AR_ENABLED
 			shoudUseAR = true;
 		#endif
 
@@ -538,19 +547,22 @@ public class MainGameManager : MonoBehaviour {
 
 		gameConfig.Init();
 
-		easyARBehaviour = FindObjectOfType<EasyARBehaviour>();
-		cameraDevice = FindObjectOfType<CameraDeviceBehaviour>();
-		if (imageTracker == null) {
-			imageTracker = FindObjectOfType<ImageTrackerBaseBehaviour>();
-		}
-		aRCamera = FindObjectOfType<ARCameraBaseBehaviour>();
-		aRCamera.FrameUpdate += (ARCameraBaseBehaviour aRCam, Frame frame) => {
-			if (frame.Targets.Count > 0) {
-				currentARTarget = frame.Targets[0];
-			} else {
-				currentARTarget = null;
+		#if F_AR_ENABLED
+			easyARBehaviour = FindObjectOfType<EasyARBehaviour>();
+			cameraDevice = FindObjectOfType<CameraDeviceBehaviour>();
+			if (imageTracker == null) {
+				imageTracker = FindObjectOfType<ImageTrackerBaseBehaviour>();
 			}
-		};
+			aRCamera = FindObjectOfType<ARCameraBaseBehaviour>();
+			aRCamera.FrameUpdate += (ARCameraBaseBehaviour aRCam, Frame frame) => {
+				if (frame.Targets.Count > 0) {
+					currentARTarget = frame.Targets[0];
+				} else {
+					currentARTarget = null;
+				}
+			};
+		#endif
+
 		TurnMusicOnAction(gameConfig.isMusicOn);
 	}
 
@@ -572,12 +584,14 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	public void LoadScanOptions() {
-		if (!useAR) {
-			useAR = true;
-			useARchanged = true;
-			SetUseAR();
-		}
-		StartCoroutine(Init("ScanOptions"));
+		#if F_AR_ENABLED
+			if (!useAR) {
+				useAR = true;
+				useARchanged = true;
+				SetUseAR();
+			}
+			StartCoroutine(Init("ScanOptions"));
+		#endif
 	}
 
 	public void LoadCover() {

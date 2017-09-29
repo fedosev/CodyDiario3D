@@ -52,14 +52,14 @@ public class FollowController : MonoBehaviour {
 			}
 			var avgSpeed = speedsSum / framesForAverage;
 
-			Debug.Log(avgSpeed);
+			MyDebug.Log(avgSpeed);
 
 			if (avgSpeed > minimumSpeed)
 				animator.SetFloat("Speed", speed / baseSpeed);
 			else if (avgSpeed < minimumSpeed * 0.5)
 				animator.SetFloat("Speed", 0);
 
-			Debug.Log("Speed: " + speed);
+			MyDebug.Log("Speed: " + speed);
 
 			prevPosition = transform.position;
 
@@ -83,29 +83,29 @@ public class FollowController : MonoBehaviour {
 			);
 			float angularSpeed = deltaAngle / Time.deltaTime;
 			
-			//Debug.Log(AngularSpeed);
+			//MyDebug.Log(AngularSpeed);
 
-			//Debug.Log(transform.rotation.x + ", " + transform.rotation.y + ", " + transform.rotation.z + ", " + transform.rotation.w);
-			//Debug.Log(transform.localEulerAngles.x + ", " + transform.localEulerAngles.y + ", " + transform.localEulerAngles.z) ;
-			//Debug.Log(Mathf.Atan2(playerAvatar.transform.forward.x, direction.x));
+			//MyDebug.Log(transform.rotation.x + ", " + transform.rotation.y + ", " + transform.rotation.z + ", " + transform.rotation.w);
+			//MyDebug.Log(transform.localEulerAngles.x + ", " + transform.localEulerAngles.y + ", " + transform.localEulerAngles.z) ;
+			//MyDebug.Log(Mathf.Atan2(playerAvatar.transform.forward.x, direction.x));
 			/*
-			Debug.Log(Vector3.Angle(
+			MyDebug.Log(Vector3.Angle(
 				Vector3.ProjectOnPlane(transform.forward, Vector3.up),
 				Vector3.ProjectOnPlane(direction, Vector3.up)
 			));
 			*/
 			/*
-			Debug.Log(
+			MyDebug.Log(
 				Vector3.ProjectOnPlane(transform.forward, Vector3.up) + " - " +
 				Vector3.ProjectOnPlane(direction, Vector3.up)
 			);
-			Debug.Log(direction);
-			Debug.Log(transform.forward);
+			MyDebug.Log(direction);
+			MyDebug.Log(transform.forward);
 			// */
 			/*
-			Debug.Log("D time: " + Time.deltaTime);
-			Debug.Log("AngularSpeed: " + AngularSpeed);
-			Debug.Log("deltaAngle: " + deltaAngle);
+			MyDebug.Log("D time: " + Time.deltaTime);
+			MyDebug.Log("AngularSpeed: " + AngularSpeed);
+			MyDebug.Log("deltaAngle: " + deltaAngle);
 			*/
 
 			indexAngSpeed = (indexAngSpeed + 1) % framesForAverage;

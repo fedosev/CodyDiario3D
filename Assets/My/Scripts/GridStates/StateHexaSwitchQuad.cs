@@ -65,7 +65,7 @@ public class StateHexaSwitchQuad : BaseGameObjectState, IPointerDownHandler, IPo
              	pointerData.position = Input.mousePosition;
 				var raycastResults = new List<RaycastResult>();
 				EventSystem.current.RaycastAll(pointerData, raycastResults);
-				//Debug.Log(raycastResults.Count);
+				//MyDebug.Log(raycastResults.Count);
 				if (raycastResults.Count > 1) {
 					foreach (var res in raycastResults) {
 						if (res.gameObject.layer == 5) { // UI

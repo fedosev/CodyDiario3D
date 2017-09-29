@@ -113,7 +113,7 @@ public class HighlightBehaviour : MonoBehaviour, IDirection {
 							}
 						}
 					}
-					//Debug.Log("Color change");
+					//MyDebug.Log("Color change");
 				}
 			}
 		}

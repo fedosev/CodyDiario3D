@@ -105,7 +105,7 @@ public class ARMarkerFormContainer : MonoBehaviour {
 
 
         if (!renderTexture || screenWidth != Screen.width || screenHeight != Screen.height) {
-            //Debug.Log(new Vector4(screenWidth, Screen.width, screenHeight, Screen.height));
+            //MyDebug.Log(new Vector4(screenWidth, Screen.width, screenHeight, Screen.height));
             if (ratioObject > ratioScreen) {
                 // Add top and bottom padding
                 /*

@@ -48,7 +48,7 @@ public class AllGameTypes : ScriptableObject {
     public void Save() {
         MyDebug.Log("AllGameTypes - Save");
         PlayerPrefs.SetString("AllGameTypes", JsonUtility.ToJson(this));
-        //Debug.Log(JsonUtility.ToJson(this));
+        //MyDebug.Log(JsonUtility.ToJson(this));
     }
 
     public void Load() {

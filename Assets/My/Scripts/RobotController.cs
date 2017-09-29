@@ -26,7 +26,7 @@ public class RobotController : MonoBehaviour, IDirection {
 				currentQuad = grid.GetQuad(currentQuadRow, currentQuadCol);
 			}
 			catch (Exception e) {
-                Debug.Log(e.Message);
+                Debug.LogError(e.Message);
             }
 
 		}
@@ -49,7 +49,7 @@ public class RobotController : MonoBehaviour, IDirection {
     public bool isFreeMove = true;
 
     public Vector3 Direction { get {
-		Debug.Log(direction);
+		MyDebug.Log(direction);
 		return direction;
 	} }
 
@@ -92,7 +92,7 @@ public class RobotController : MonoBehaviour, IDirection {
 		*/
 		if (grid.gameTypeConfig.withLetters) {
 			StartCoroutine(quadBh.AnimateLetter());
-			Debug.Log(quadBh.letter);
+			MyDebug.Log(quadBh.letter);
 		}
 		
 		isFirstMove = false;
@@ -120,7 +120,7 @@ public class RobotController : MonoBehaviour, IDirection {
 	public void DoLose() {
 		animator.SetTrigger("Lose");
 		sounds.playLose();
-		Debug.Log("You lose!");
+		MyDebug.Log("You lose!");
 		grid.inPause = true;
 		if (OnLose != null) {
 			OnLose(index);
@@ -225,7 +225,7 @@ public class RobotController : MonoBehaviour, IDirection {
 				}
 			}
 		}
-		//Debug.Log((int)(transform.rotation.eulerAngles.y / 10));
+		//MyDebug.Log((int)(transform.rotation.eulerAngles.y / 10));
 		/*
 		animator.MatchTarget(new Vector3(targetPosition.x, transform.position.y, transform.position.z), transform.rotation,
 			AvatarTarget.LeftFoot, new MatchTargetWeightMask(Vector3.one, 1f), 0.141f, 0.78f
@@ -264,7 +264,7 @@ public class RobotController : MonoBehaviour, IDirection {
 		animator.SetTrigger("Forward");
 		sounds.PlaySound(sounds.soundStep);
 		//sounds.PlayMoving();
-		Debug.Log("Move Forward");
+		MyDebug.Log("Move Forward");
 	}
 
 	protected void Turn(int degrees) {
@@ -284,7 +284,7 @@ public class RobotController : MonoBehaviour, IDirection {
 			animator.SetBool("Turn Right", true);
 			animator.SetTrigger("Turn");
 
-			Debug.Log("Turn Right");
+			MyDebug.Log("Turn Right");
 		}
 		else {
 			currentState = RobotStates.TurningLeft;
@@ -292,7 +292,7 @@ public class RobotController : MonoBehaviour, IDirection {
 			animator.SetBool("Turn Right", false);
 			animator.SetTrigger("Turn");
 
-			Debug.Log("Turn Left");
+			MyDebug.Log("Turn Left");
 		}
 		sounds.PlayStep();
 		//sounds.PlayMoving();
@@ -312,7 +312,7 @@ public class RobotController : MonoBehaviour, IDirection {
 
 		StartCoroutine(WaitAndFixTransform());
 
-		//Debug.Log("Stop Move");
+		//MyDebug.Log("Stop Move");
 	}
 
 	public void SetRowCol(int row, int col) {
@@ -385,14 +385,14 @@ public class RobotController : MonoBehaviour, IDirection {
 				break;
 			case RobotStates.TurningLeft:
 				var angleDiff = transform.rotation.eulerAngles.y - nextAngle;
-				//Debug.Log(angleDiff);
+				//MyDebug.Log(angleDiff);
 				if (angleDiff <= 0 || angleDiff > 180 && angleDiff < 360) {
 					StopMove();
 				}
 				break;
 			case RobotStates.TurningRight:
 				angleDiff = transform.rotation.eulerAngles.y - nextAngle;
-				//Debug.Log(angleDiff);
+				//MyDebug.Log(angleDiff);
 				if (angleDiff >= 0 && angleDiff < 180) {
 					StopMove();
 				}

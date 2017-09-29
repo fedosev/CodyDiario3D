@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using EasyAR;
+using System.Diagnostics;
 
 public class GridRobyManager : BaseGameTypeManager {
 
@@ -103,6 +104,7 @@ public class GridRobyManager : BaseGameTypeManager {
 		GameUI.SetActive(enable);
 	}
 
+	[Conditional("F_AR_ENABLED")]
 	public void SetDevBoardActive(bool activate) {
 
 		//gameManager.imageTracker.StopTrack();

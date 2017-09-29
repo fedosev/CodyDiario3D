@@ -29,7 +29,7 @@ public class GridMovableBehaviour : MonoBehaviour {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, 100)) {
-				//Debug.Log("Hit something: " + hit.transform.position);
+				//MyDebug.Log("Hit something: " + hit.transform.position);
 				//if (hit.transform.gameObject.tag == "Quad") {
 				if (/*hit.transform.gameObject == gameObject ||*/ hit.transform.parent.gameObject == gameObject
 					|| hit.transform.parent.parent.gameObject == gameObject) {

@@ -138,7 +138,7 @@ public class PlayerTrackableBehaviour : MonoBehaviour {
 
 		}
 
-		// Debug.Log(transform.localEulerAngles.y + ", " + SelfAngleYTest()); // More or less the same stuff
+		// MyDebug.Log(transform.localEulerAngles.y + ", " + SelfAngleYTest()); // More or less the same stuff
 		// _testPlane.rotation = Quaternion.LookRotation(transform.up, Vector3.back);
 		// _testPlane.rotation = Quaternion.Euler(new Vector3(transform.eulerAngles.x, 0, transform.eulerAngles.z));
 
@@ -226,7 +226,7 @@ public class PlayerTrackableBehaviour : MonoBehaviour {
 		else {
 			nextAction = ActionType.Null;
 			quad.SetState(QuadStates.CURSOR_WARNING);
-			// Debug.Log("You will not move here");
+			//MyDebug.Log("You will not move here");
 		}
 	}
 

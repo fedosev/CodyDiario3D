@@ -81,7 +81,7 @@ public class PathGameType : BaseGridRobyGameType {
 		base.SetupQuad(quad, col, row);
 
 		if (path.Length > 0) {
-			//Debug.Log(grid.nRows);
+			//MyDebug.Log(grid.nRows);
 			if (path[grid.nRows - 1 - row][col] != '0') {
 				quad.SetState(QuadStates.PATH);
 			}

@@ -81,7 +81,7 @@ public class GridColorsFormElement : ARFormElement {
                 quadColorValue.SetValue(bestGC.color);
             
             onQuadPreviewChange.Invoke(bestGC.color, isGood);
-            //Debug.Log(bestGC.name);
+            //MyDebug.Log(bestGC.name);
         }
 
         //uiText.text = "Border: " + (int)((prevBestBorderColor - bestBorderColor) * 100) + ", Quad: (" + (int)((prevBestColor - bestColor) * 100) + ")";
