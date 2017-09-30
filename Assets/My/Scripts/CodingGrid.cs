@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class CodingGrid : MonoBehaviour {
 
     public GameObject controlsUI;
 
-    public Text text;
+    public TextMeshProUGUI text;
 
     public GameObject removeButton;
     public Button executeButton;
@@ -76,6 +77,7 @@ public class CodingGrid : MonoBehaviour {
         cardsNumber++;
 
         text.text += (WrapWithColor(GetLetterFromType(type)));
+        //MyDebug.Log(text.mesh.vertexCount);
     }
     public void AppendCard(char cardLetter) {
 
