@@ -92,6 +92,7 @@ public class MainGameManager : MonoBehaviour {
 		debugPanel.gameObject.SetActive(isOn);
 		logText.gameObject.SetActive(isOn);
 		Menu.aRCheck.gameObject.SetActive(isOn);
+		Menu.debugOptions.SetActive(isOn);
 	}
 
 	public void ToggleDebugMode() {
@@ -524,9 +525,11 @@ public class MainGameManager : MonoBehaviour {
 			Menu.aRCheck.gameObject.SetActive(true);
 			Menu.aRCheck.isOn = shoudUseAR;
 			Menu.aRCheck.onValueChanged.AddListener(ChangeWithAR);
+			Menu.debugOptions.SetActive(true);
 		#else
 			isDebug = false;
 			Menu.aRCheck.gameObject.SetActive(false);
+			Menu.debugOptions.SetActive(false);
 		#endif
 
 		#if F_DEBUG_ON_SCREEN
@@ -603,17 +606,32 @@ public class MainGameManager : MonoBehaviour {
 		Application.Quit();
 	}
 
+	public void ChangeQuality(bool increase) {
+		if (increase) {
+			QualitySettings.IncreaseLevel();
+			//QualitySettings.resolutionScalingFixedDPIFactor = 1.5f;
+		}
+		else {
+			QualitySettings.DecreaseLevel();
+			//QualitySettings.resolutionScalingFixedDPIFactor = 1f;
+		}
+	}
+
+	public void SetTimeScale(float timeScale) {
+		Time.timeScale = timeScale;
+	}
+
 	void LoadNextGameType() {
 		// @tmp
 		StartCoroutine(Init(allGameTypes.items[(++gameTypeIndex) % allGameTypes.items.Count].name));
 	}
 
+	/*
 	void Update () {
 	
-		/*
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			LoadNextGameType();
 		}
-		*/
 	}
+	*/
 }
