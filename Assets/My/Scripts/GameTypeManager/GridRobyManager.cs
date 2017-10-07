@@ -22,6 +22,7 @@ public class GridRobyManager : BaseGameTypeManager {
 	public GameObject panelLetters;
 
     public CodingGrid codingGrid;
+    public HandCards handCards;
 
 	public ImageTargetBehaviour imageTargetDevBoard;
 	public GameObject devBoardTargetCanvas;
@@ -50,7 +51,10 @@ public class GridRobyManager : BaseGameTypeManager {
 
 	bool isDevBoardMode = false;
 
-	public override void InitConfig() {
+    [HideInInspector] public Deck deck;
+
+
+    public override void InitConfig() {
 
 		//GetGameType().grid = FindObjectOfType<Grid>();
 		GetGameType().grid = grid;
@@ -69,6 +73,10 @@ public class GridRobyManager : BaseGameTypeManager {
 		}
 		if (codingGrid != null)
 			codingGrid.Init();
+
+		if (handCards == null) {
+			handCards = GameObject.FindObjectOfType<HandCards>();
+		}
 
 		if (GetGameType().useDevBoard && useAR) {
 			SetDevBoardActive(true);

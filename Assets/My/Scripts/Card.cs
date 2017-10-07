@@ -27,31 +27,26 @@ public class Card : MonoBehaviour, IPointerClickHandler
         if (grid.gameType != GameTypes.PATH) {
             if (grid.CurrentRobotController == null)
                 return;
-                
-            switch (cardType) {
-                case CardTypes.LEFT:
-                    grid.CurrentRobotController.TurnLeft();
-                    break;
-                case CardTypes.FORWARD:
-                    grid.CurrentRobotController.MoveForward();
-                    break;
-                case CardTypes.RIGHT:
-                    grid.CurrentRobotController.TurnRight();
-                    break;
-            }
+            RobotActionFromCard(grid.CurrentRobotController, cardType);
         }
         else { // if (grid.gameType == GameTypes.PATH)
             codingGrid.AppendCard(cardType);
         }
     }
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public static void RobotActionFromCard(RobotController robot, CardTypes cardType) {
+        switch (cardType) {
+            case CardTypes.LEFT:
+                robot.TurnLeft();
+                break;
+            case CardTypes.FORWARD:
+                robot.MoveForward();
+                break;
+            case CardTypes.RIGHT:
+                robot.TurnRight();
+                break;
+        }
+        
+    }
+
 }

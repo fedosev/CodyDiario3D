@@ -109,10 +109,6 @@ public class PathBackGameType : BaseGridRobyGameType {
         return ignoreCheckPath || quad.mainState == QuadStates.PATH;
     }
 
-	public void Lose(int player) {
-		gridRobyManager.LoseAction();
-	}
-
 	public void CheckWin() {
 
 		if (grid.GetQuadPositionInGrid(grid.CurrentRobotController.CurrentQuad).Equals(new PositionInGrid(startPosition.row, startPosition.col))) {

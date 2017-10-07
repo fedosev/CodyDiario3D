@@ -19,6 +19,8 @@ public class RobotController : MonoBehaviour, IDirection {
 
 	public RobotStates currentState;
 
+	public int score = 0;
+
 	private GameObject currentQuad;
 	public GameObject CurrentQuad { get {
 		if (currentQuad == null) {

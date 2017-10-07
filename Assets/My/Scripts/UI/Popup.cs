@@ -49,8 +49,12 @@ public class Popup : MonoBehaviour {
 	}
 
 	public void ShowLose() {
+		ShowLoseText("Ooops...");
+	}
+
+	public void ShowLoseText(string text) {
 		title.color = loseColor;
-		title.text = "Ooops...";
+		title.text = text;
 		buttonRetry.SetActive(true);
 		buttonPlayAgain.SetActive(false);
 		Show();

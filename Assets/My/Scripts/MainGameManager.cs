@@ -248,6 +248,7 @@ public class MainGameManager : MonoBehaviour {
 		gameTypeManager.WinAction = mainMenu.popup.ShowWin;
 		gameTypeManager.WinTextAction = mainMenu.popup.ShowWinText;
 		gameTypeManager.LoseAction = mainMenu.popup.ShowLose;
+		gameTypeManager.LoseTextAction = mainMenu.popup.ShowLoseText;
 
 		StartCoroutine(gameTypeManager.Init());
 
@@ -615,6 +616,7 @@ public class MainGameManager : MonoBehaviour {
 			QualitySettings.DecreaseLevel();
 			//QualitySettings.resolutionScalingFixedDPIFactor = 1f;
 		}
+		MyDebug.Log(QualitySettings.GetQualityLevel(), true);
 	}
 
 	public void SetTimeScale(float timeScale) {

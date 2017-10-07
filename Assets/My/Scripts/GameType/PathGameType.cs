@@ -115,10 +115,6 @@ public class PathGameType : BaseGridRobyGameType {
         return ignoreCheckPath || quad.mainState == QuadStates.PATH;
     }
 
-	public void Lose(int player) {
-		gridRobyManager.LoseAction();
-	}
-
 	public void CheckWin() {
 		if (ignoreCheckPath) { // Probably is just a text
 			if (withLetters) {

@@ -32,6 +32,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 	public Action WinAction;
 	public Action<string> WinTextAction;
 	public Action LoseAction;
+	public Action<string> LoseTextAction;
 
 	protected MainGameManager gameManager;
 

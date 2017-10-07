@@ -86,6 +86,11 @@ public abstract class BaseGridRobyGameType : BaseGameType {
         }
     }
 
+	public virtual void Lose(int player) {
+		gridRobyManager.LoseAction();
+	}
+    
+
     public override string sceneName { get {
         return "GridRoby";
     } }

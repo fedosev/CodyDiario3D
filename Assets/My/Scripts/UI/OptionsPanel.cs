@@ -7,6 +7,7 @@ public class OptionsPanel : MonoBehaviour {
 
 	public Toggle musicCheck;
 	public Toggle soundCheck;
+	public Toggle qualityCheck;
 
 	public void Init() {
 		
@@ -25,6 +26,9 @@ public class OptionsPanel : MonoBehaviour {
 	void Start () {
 
 		Init();
+
+		qualityCheck.isOn = QualitySettings.GetQualityLevel() != 0;
+		qualityCheck.onValueChanged.AddListener(MainGameManager.Instance.ChangeQuality);
 	}
 
 }

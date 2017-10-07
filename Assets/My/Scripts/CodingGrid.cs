@@ -37,7 +37,7 @@ public class CodingGrid : MonoBehaviour {
         return 'X';
     }
 
-    public string WrapWithColor(char cardLetter) {
+    public static string WrapWithColor(char cardLetter) {
         switch (cardLetter) {
             case 'A': return "<color=#00ff00ff>A</color>";
             case 'S': return "<color=#ffff00ff>S</color>";
