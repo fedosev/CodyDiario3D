@@ -628,12 +628,19 @@ public class MainGameManager : MonoBehaviour {
 		StartCoroutine(Init(allGameTypes.items[(++gameTypeIndex) % allGameTypes.items.Count].name));
 	}
 
-	/*
 	void Update () {
 	
+		/*
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			LoadNextGameType();
 		}
+		*/
+		if (Input.GetKeyDown(KeyCode.Alpha0)) {
+			Time.timeScale *= 2;
+		} else if (Input.GetKeyDown(KeyCode.Alpha9)) {
+			Time.timeScale *= 0.5f;
+		}
+		#if UNITY_EDITOR
+		#endif
 	}
-	*/
 }

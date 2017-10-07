@@ -5,7 +5,7 @@ using UnityEngine;
 using TMPro;
 using DG.Tweening;
 
-public enum QuadStates { DEFAULT, ON, ACTIVE, CURSOR_ON, CURSOR_ACTIVE, CURSOR_WARNING, WARNING, ERROR, OBSTACLE, PATH };
+public enum QuadStates { DEFAULT, ON, ACTIVE, CURSOR_ON, CURSOR_ACTIVE, CURSOR_WARNING, WARNING, ERROR, OBSTACLE, PATH, ART };
 
 public class QuadBehaviour : MonoBehaviour {
 
@@ -74,14 +74,6 @@ public class QuadBehaviour : MonoBehaviour {
 		}
 		return material;
 	}
-	
-	void OnEnable() {
-		
-	}
-
-	void OnDisable() {
-
-	}
 
 	void Awake() {
 		grid = GridRobyManager.Instance.grid;
@@ -95,7 +87,6 @@ public class QuadBehaviour : MonoBehaviour {
 		defaultMesh = MyMeshFilter.mesh;
 	}
 
-	// Use this for initialization
 	void Start () {
 		//grid = GameObject.Find("Grid").GetComponent<Grid>();
 		config = grid.config;
@@ -103,10 +94,6 @@ public class QuadBehaviour : MonoBehaviour {
 		RecordUndo();
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
 	public void SetState(QuadStates quadState) {
 
@@ -153,6 +140,11 @@ public class QuadBehaviour : MonoBehaviour {
 				break;
 			case QuadStates.PATH:
 				rend.material = config.quadPathMaterial;
+				otherState = QuadStates.DEFAULT;
+				mainState = quadState;
+				break;
+			case QuadStates.ART:
+				rend.material = config.quadActiveMaterial;
 				otherState = QuadStates.DEFAULT;
 				mainState = quadState;
 				break;
@@ -215,6 +207,7 @@ public class QuadBehaviour : MonoBehaviour {
 	}
 
 	public RobyDirection GetDirection() {
+
 		if (direction == Vector3.forward) return RobyDirection.North;
 		if (direction == Vector3.right) return RobyDirection.East;
 		if (direction == Vector3.back) return RobyDirection.South;
@@ -300,6 +293,7 @@ public class QuadBehaviour : MonoBehaviour {
 	TextMeshPro text;
 
 	public TextMeshPro GetText() {
+
 		#if UNITY_EDITOR
 			if (!UnityEditor.EditorApplication.isPlaying && grid == null) {
 				grid = FindObjectOfType<Grid>();
@@ -323,6 +317,7 @@ public class QuadBehaviour : MonoBehaviour {
 	}
 
 	public IEnumerator AnimateLetter() {
+
 		var animTime = 0.75f;
 		if (grid.gameTypeConfig.withLetters && letter != ' ') {
 			var textObj = GetText().gameObject;
