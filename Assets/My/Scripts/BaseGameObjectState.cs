@@ -1,8 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class BaseGameObjectState : MonoBehaviour {
+
+	Action<BaseGameObjectState> StateChanger;
+	
+	public void Init(Action<BaseGameObjectState> stateChanger) {
+		StateChanger = stateChanger;
+	}
 
 	public virtual void OnEnter() {}
 	public virtual void OnExit() {}
@@ -37,6 +44,8 @@ public abstract class BaseGameObjectState : MonoBehaviour {
 		}
 		this.enabled = false;
 
+		StateChanger(nextState);
+		nextState.Init(StateChanger);
 		return nextState;
 	}
 
@@ -47,6 +56,8 @@ public abstract class BaseGameObjectState : MonoBehaviour {
 		this.enabled = false;
 		Destroy(this);
 
+		StateChanger(state);
+		state.Init(StateChanger);
 		return state;
 	}
 
@@ -65,13 +76,4 @@ public abstract class BaseGameObjectState : MonoBehaviour {
 
 	}
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

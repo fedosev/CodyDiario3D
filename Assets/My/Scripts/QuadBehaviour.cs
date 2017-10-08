@@ -5,7 +5,7 @@ using UnityEngine;
 using TMPro;
 using DG.Tweening;
 
-public enum QuadStates { DEFAULT, ON, ACTIVE, CURSOR_ON, CURSOR_ACTIVE, CURSOR_WARNING, WARNING, ERROR, OBSTACLE, PATH, ART };
+public enum QuadStates { DEFAULT, ON, ACTIVE, CURSOR_ON, CURSOR_ACTIVE, CURSOR_WARNING, WARNING, ERROR, OBSTACLE, PATH, ART, INFO };
 
 public class QuadBehaviour : MonoBehaviour {
 
@@ -147,6 +147,11 @@ public class QuadBehaviour : MonoBehaviour {
 				rend.material = config.quadActiveMaterial;
 				otherState = QuadStates.DEFAULT;
 				mainState = quadState;
+				break;
+			case QuadStates.INFO:
+				rend.material = config.quadInfoMaterial;
+				otherState = QuadStates.DEFAULT;
+				mainState = QuadStates.INFO;
 				break;
 		}
 

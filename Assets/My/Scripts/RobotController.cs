@@ -235,9 +235,14 @@ public class RobotController : MonoBehaviour, IDirection {
 		*/
 	}
 
-    public bool CanMoveForward() {
-		int nextQuadCol = currentQuadCol + (int)direction.x;
-		int nextQuadRow = currentQuadRow + (int)direction.z;
+    public bool CanMoveForward(int turn = 0) {
+
+		var dir = direction;
+		if (turn != 0)
+			dir = new Vector3(turn * direction.z, 0, -turn * direction.x);
+
+		int nextQuadCol = currentQuadCol + (int)dir.x;
+		int nextQuadRow = currentQuadRow + (int)dir.z;
 		bool canMove = nextQuadCol >= 0 && nextQuadCol < config.gridNumberX &&
 				nextQuadRow >= 0 && nextQuadRow < config.gridNumberZ;
 
@@ -247,6 +252,14 @@ public class RobotController : MonoBehaviour, IDirection {
 		var nextQuad = grid.GetQuad(nextQuadRow, nextQuadCol);
 
 		return nextQuad.GetComponent<QuadBehaviour>().IsFreeToGoIn();
+	}
+
+	public bool CanGoLeft() {
+		return CanMoveForward(-1);
+	}
+
+	public bool CanGoRight() {
+		return CanMoveForward(1);
 	}
 
 	public void MoveForward() {

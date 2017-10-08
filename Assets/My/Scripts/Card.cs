@@ -6,12 +6,13 @@ using UnityEngine.EventSystems;
 
 public enum CardTypes { LEFT, FORWARD, RIGHT };
 
-public class Card : MonoBehaviour, IPointerClickHandler
-{
+public class Card : MonoBehaviour, IPointerClickHandler {
+
     public CardTypes cardType;
 
     CodingGrid codingGrid;
     Grid grid;
+
 
     void Awake() {
 
@@ -24,17 +25,18 @@ public class Card : MonoBehaviour, IPointerClickHandler
         if (grid.inPause)
             return;
 
-        if (grid.gameType != GameTypes.PATH) {
+        if (grid.gameType == GameTypes.PATH || grid.gameType == GameTypes.AUTO) {
+            codingGrid.AppendCard(cardType);
+        }
+        else { // if (grid.gameType == GameTypes.PATH)
             if (grid.CurrentRobotController == null)
                 return;
             RobotActionFromCard(grid.CurrentRobotController, cardType);
         }
-        else { // if (grid.gameType == GameTypes.PATH)
-            codingGrid.AppendCard(cardType);
-        }
     }
 
     public static void RobotActionFromCard(RobotController robot, CardTypes cardType) {
+
         switch (cardType) {
             case CardTypes.LEFT:
                 robot.TurnLeft();
@@ -48,5 +50,18 @@ public class Card : MonoBehaviour, IPointerClickHandler
         }
         
     }
+
+
+    #if UNITY_EDITOR
+        void Update() {
+            
+            if (cardType == CardTypes.LEFT && Input.GetKeyDown(KeyCode.S) ||
+                cardType == CardTypes.FORWARD && Input.GetKeyDown(KeyCode.A) ||
+                cardType == CardTypes.RIGHT && Input.GetKeyDown(KeyCode.D)
+            ) {
+                OnPointerClick(new PointerEventData(EventSystem.current));
+            }
+        }
+    #endif
 
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,18 +15,30 @@ public class CodingGrid : MonoBehaviour {
     public Button executeButton;
     public GameObject panelCards;
 
+    public event Action<int> OnChange;
+
+    public CardTypes[] GetInstructions() {
+        return cards;
+    }
+
     //bool isControlsUIVisible = false;
 
-    const int maxCardsNumber = 25;
-    int cardsNumber = 0;
-    CardTypes?[] cards;
+    int maxCardsNumber;
+    CardTypes[] cards;
+    int cardsNumber;
 
     Grid grid;
-
+    RectTransform removeButtonRT;
+    readonly Vector2 removeButtonOffset = new Vector2(177f, 0f);
     bool shouldBeHiddenUI = false;
+    bool shouldBeHiddenExec = false;
 
-    public void HideUI() {
-        shouldBeHiddenUI = true;
+    public void HideUI(bool hide = true) {
+        shouldBeHiddenUI = hide;
+    }
+
+    public void HideExec(bool hide = true) {
+        shouldBeHiddenExec = hide;
     }
 
     public static char GetLetterFromType(CardTypes cardType) {
@@ -58,14 +71,22 @@ public class CodingGrid : MonoBehaviour {
         }
     }
 
-    public void Init() {
+    public void Init(int maxCards = 25) {
+        maxCardsNumber = maxCards;
         executeButton.onClick.AddListener(Execute);
+        cards = new CardTypes[maxCardsNumber];
         Clear();
     }
 
+    public void SetMaxCardsNumber(int maxCards) {
+        maxCardsNumber = maxCards;
+    }
+
     public void Clear() {
-        cards = new CardTypes?[maxCardsNumber];
+        cardsNumber = 0;
         text.text = "";
+        if (OnChange != null)
+            OnChange(cardsNumber);
     }
 
     public void AppendCard(CardTypes type) {
@@ -78,16 +99,20 @@ public class CodingGrid : MonoBehaviour {
 
         text.text += (WrapWithColor(GetLetterFromType(type)));
         //MyDebug.Log(text.mesh.vertexCount);
+        if (OnChange != null)
+            OnChange(cardsNumber);
     }
     public void AppendCard(char cardLetter) {
 
-        if (cardsNumber >= maxCardsNumber) 
+        if (cardsNumber >= maxCardsNumber)
             return;
 
         cards[cardsNumber] = GetTypeFromLetter(cardLetter);
         cardsNumber++;
 
         text.text += (WrapWithColor(cardLetter));
+        if (OnChange != null)
+            OnChange(cardsNumber);
     }
 
     public void SetCards(string cardLetters) {
@@ -98,18 +123,18 @@ public class CodingGrid : MonoBehaviour {
 
     public void RemoveLastCard() {
         if (cardsNumber > 0) {
-            cards[cardsNumber - 1] = null;
             cardsNumber--;
             text.text = text.text.Substring(0, text.text.Length - 26);
         }
+        if (OnChange != null)
+            OnChange(cardsNumber);
     }
 
     public void Execute() {
         if (grid.inPause)
             return;
-        for (var i = 0; i < maxCardsNumber && cards[i] != null; i++) {
+        for (var i = 0; i < cardsNumber; i++) {
             grid.AddAction(cards[i]);
-            cards[i] = null;
         }
         cardsNumber = 0;
         grid.state.GoToState<StateNull>();
@@ -121,13 +146,12 @@ public class CodingGrid : MonoBehaviour {
         panelCards.SetActive(!disable);
     }
 
-    // Use this for initialization
     void Start () {
         grid = GameObject.Find("Grid").GetComponent<Grid>();
+        removeButtonRT = removeButton.GetComponent<RectTransform>();
         //Init();
     }
 	
-	// Update is called once per frame
 	void Update () {
 
         // /*
@@ -137,6 +161,14 @@ public class CodingGrid : MonoBehaviour {
         } else if ((shouldBeHiddenUI || cardsNumber == 0) && controlsUI.activeSelf) {
             controlsUI.SetActive(false);
         }
+        if (shouldBeHiddenExec && executeButton.gameObject.activeSelf) {
+            executeButton.gameObject.SetActive(false);
+            removeButtonRT.anchoredPosition += removeButtonOffset;
+        } else if (!shouldBeHiddenExec && !executeButton.gameObject.activeSelf) {
+            executeButton.gameObject.SetActive(true);
+            removeButtonRT.anchoredPosition -= removeButtonOffset;
+        }
+
         // */
         /* 
 		if (Input.GetKeyDown(KeyCode.Escape)) {

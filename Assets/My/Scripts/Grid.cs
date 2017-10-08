@@ -4,7 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 
-public enum GameTypes { FREE, TAP, SNAKE, PATH };
+public enum GameTypes { FREE, TAP, SNAKE, PATH, AUTO };
 
 public enum PlayerTypes { VIRTUAL, REAL };
 
@@ -467,7 +467,7 @@ public class Grid : MonoBehaviour {
 
 		if (gameType != GameTypes.TAP && !gameTypeConfig.startPosition.IsSet()) {
 			// Waiting for Roby's position
-			state = state.InitState<StateGridPlayerPosition>();
+			state.InitState<StateGridPlayerPosition>();
 		}
 
         actionsQueue = new Queue<CardTypes?>();
@@ -483,6 +483,7 @@ public class Grid : MonoBehaviour {
 		if (state == null) {
 			state = gameObject.AddComponent<StateNull>();
 		}
+		state.Init(newState => { state = newState; });
 
 		if (UIControls == null) {
 			UIControls = GameObject.Find("PanelCards");
@@ -554,6 +555,7 @@ public class Grid : MonoBehaviour {
 	}
 
     public void NextAction() {
+
         if (gameType == GameTypes.SNAKE) {
             NextTurn();
         } else {

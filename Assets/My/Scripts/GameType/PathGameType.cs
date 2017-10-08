@@ -72,7 +72,7 @@ public class PathGameType : BaseGridRobyGameType {
 		}
 
 		if (path.Length == 0 && grid.state.IsNull() && !ignoreCheckPath) {
-			grid.state = grid.state.GoToState<StateSwitchQuad>();
+			grid.state.GoToState<StateSwitchQuad>();
 		}
 	}
 

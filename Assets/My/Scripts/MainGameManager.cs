@@ -635,12 +635,14 @@ public class MainGameManager : MonoBehaviour {
 			LoadNextGameType();
 		}
 		*/
-		if (Input.GetKeyDown(KeyCode.Alpha0)) {
-			Time.timeScale *= 2;
-		} else if (Input.GetKeyDown(KeyCode.Alpha9)) {
-			Time.timeScale *= 0.5f;
-		}
 		#if UNITY_EDITOR
+			if (Input.GetKeyDown(KeyCode.W)) {
+				Time.timeScale *= 2;
+				MyDebug.Log(Time.timeScale + "x");
+			} else if (Input.GetKeyDown(KeyCode.Q)) {
+				Time.timeScale *= 0.5f;
+				MyDebug.Log(Time.timeScale + "x");
+			}
 		#endif
 	}
 }
