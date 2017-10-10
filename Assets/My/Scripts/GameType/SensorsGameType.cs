@@ -31,7 +31,8 @@ public class SensorsGameType : BaseGridRobyGameType {
 	public override void InitBody() {
 
 		instructionIndex = 0;
-		instructions = gridRobyManager.codingGrid.GetInstructions();
+		codingGrid = gridRobyManager.codingGrid;
+		instructions = codingGrid.GetInstructions();
 
 		if (!startPosition.IsSet()) {
 			startPosition.col = 1;
@@ -48,12 +49,12 @@ public class SensorsGameType : BaseGridRobyGameType {
 
 		grid.Init();
 
-		gridRobyManager.codingGrid.gameObject.SetActive(true);
-		gridRobyManager.codingGrid.executeButton.onClick.RemoveAllListeners();
-		gridRobyManager.codingGrid.executeButton.onClick.AddListener(Execute);
-		gridRobyManager.codingGrid.SetMaxCardsNumber(instructionsSize);
-		gridRobyManager.codingGrid.HideExec();
-		gridRobyManager.codingGrid.OnChange += (num) => {
+		codingGrid.gameObject.SetActive(true);
+		codingGrid.executeButton.onClick.RemoveAllListeners();
+		codingGrid.executeButton.onClick.AddListener(Execute);
+		codingGrid.SetMaxCardsNumber(instructionsSize);
+		codingGrid.HideExec();
+		codingGrid.OnChange += (num) => {
 			if (num == instructionsSize && selectedQuad != null) {
 				gridRobyManager.codingGrid.HideExec(false);
 			} else {
@@ -74,7 +75,7 @@ public class SensorsGameType : BaseGridRobyGameType {
 		quad.RecordUndo();
 		quad.SetOtherState(QuadStates.INFO);
 		selectedQuad = quad;
-		grid.SetActiveUI(true);
+		grid.SetActiveUIAnimated(true);
 	}
 
 	public override void SetupQuad(QuadBehaviour quad, int col, int row) {
@@ -91,6 +92,8 @@ public class SensorsGameType : BaseGridRobyGameType {
 
 	void Execute() {
 		grid.state.GoToState<StateNull>();
+		codingGrid.HideUI();
+		grid.SetActiveUIAnimated(false);
 		NextAction();
 	}
 

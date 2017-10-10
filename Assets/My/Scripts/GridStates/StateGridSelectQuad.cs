@@ -17,7 +17,7 @@ public class StateGridSelectQuad : BaseGameObjectState, IPointerClickHandler {
 
 	public override void OnExit() {
 		//grid.inPause = false;
-		grid.SetActiveUI(true);
+		//grid.SetActiveUI(true);
 	}
 
 	public void OnPointerClick(PointerEventData eventData) {

@@ -35,6 +35,8 @@ public class GridRobyManager : BaseGameTypeManager {
 	public GameObject gameObjDevBoard;
 	public GameObject gameUIDevBoard;
 
+	public Button execButton;
+
 	public override GameObject GameObj { get {
 		return isDevBoardMode ? gameObjDevBoard : gameObj;
 	} }
@@ -60,6 +62,10 @@ public class GridRobyManager : BaseGameTypeManager {
 		GetGameType().grid = grid;
 		grid.gameTypeManager = this;
 		grid.gameTypeConfig = GetGameType();
+
+		if (execButton != null) {
+			execButton.gameObject.SetActive(false);
+		}
 
 		if (panelLetters != null) {
 			panelLetters.SetActive(grid.gameTypeConfig.withLetters);

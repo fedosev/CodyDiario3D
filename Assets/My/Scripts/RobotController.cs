@@ -279,7 +279,7 @@ public class RobotController : MonoBehaviour, IDirection {
 		animator.SetTrigger("Forward");
 		sounds.PlaySound(sounds.soundStep);
 		//sounds.PlayMoving();
-		MyDebug.Log("Move Forward");
+		//MyDebug.Log("Move Forward");
 	}
 
 	protected void Turn(int degrees) {
@@ -299,7 +299,7 @@ public class RobotController : MonoBehaviour, IDirection {
 			animator.SetBool("Turn Right", true);
 			animator.SetTrigger("Turn");
 
-			MyDebug.Log("Turn Right");
+			//MyDebug.Log("Turn Right");
 		}
 		else {
 			currentState = RobotStates.TurningLeft;
@@ -307,7 +307,7 @@ public class RobotController : MonoBehaviour, IDirection {
 			animator.SetBool("Turn Right", false);
 			animator.SetTrigger("Turn");
 
-			MyDebug.Log("Turn Left");
+			//MyDebug.Log("Turn Left");
 		}
 		sounds.PlayStep();
 		//sounds.PlayMoving();

@@ -19,6 +19,8 @@ public class ConfigScriptableObject : ScriptableObject {
 	public Material quadPathMaterial;
 	public Material obstacleMaterial;
     public Material transparentMaterial;
+	public Material quadStarMaterial;
+	public Material quadCircleMaterial;
     public GameObject quadPrefab;
     public GameObject borderPrefab;
     public GameObject quadLetterPrefab;

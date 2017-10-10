@@ -511,6 +511,34 @@ public class Grid : MonoBehaviour {
 		UIControls.SetActive(canBeActiveUI && active);
 	}
 
+	public void SetActiveUIAnimated(bool active, float duration = 0.5f) {
+
+		/*
+		if (false && !canBeActiveUI) {
+			SetActiveUI(false);
+			return;
+		}
+		// */
+
+		var hiddenY = -240f;
+		var tr = UIControls.transform;
+		if (active && !UIControls.activeSelf) {
+			UIControls.SetActive(true);
+			for (int i = 0; i < tr.childCount; i++) {
+				var rt = tr.GetChild(i).GetComponent<RectTransform>();
+				rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, hiddenY);
+				rt.DOAnchorPosY(40f, duration).SetEase(Ease.OutExpo);
+			}
+		} else if (!active && UIControls.activeSelf) {
+			for (int i = 0; i < tr.childCount; i++) {
+				var rt = tr.GetChild(i).GetComponent<RectTransform>();
+				rt.DOAnchorPosY(hiddenY, duration * 0.5f).OnComplete(() => {
+					UIControls.SetActive(false);
+				});
+			}
+		}
+	}
+
 	public void RobotMoveForward() {
 		if (inPause)
 			return;
@@ -534,9 +562,11 @@ public class Grid : MonoBehaviour {
 	}
 
 	public void NextTurn() {
-		CurrentRobotController.CurrentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ON);
-		playerTurn = (playerTurn + 1) % playersNumber;
-		CurrentRobotController.CurrentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ACTIVE);
+		if (playersNumber > 1) {
+			CurrentRobotController.CurrentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ON);
+			playerTurn = (playerTurn + 1) % playersNumber;
+			CurrentRobotController.CurrentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ACTIVE);
+		}
 
 		if (OnNextTurn != null) {
 			OnNextTurn();
