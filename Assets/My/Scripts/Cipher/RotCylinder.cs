@@ -91,7 +91,9 @@ public class RotCylinder : MonoBehaviour {
 
 	public UnityEvent onRotNumberChange;
 
-	public void GenerateChars() {
+    RotCode rotCode;
+
+    public void GenerateChars() {
 
 		// Clear
 		#if UNITY_EDITOR
@@ -114,15 +116,23 @@ public class RotCylinder : MonoBehaviour {
 			charGameObj = Instantiate(/*config.RotCylinderCharPrefab*/charPrefab, transform.position, Quaternion.Euler(-(360f * i / n), 0, 0));
 			charGameObj.transform.parent = transform;
 			charGameObj.transform.localScale = new Vector3(20f, 1f, 1f);
-			if (i < 26) {
-				charStr = ((char)(65 + i)).ToString();
-			} else {
-				charStr = " ";
+			if (rotCode.sequence.Length > 0 && mainRotCylinder != this) {
+				charStr = rotCode.sequence[i % rotCode.sequence.Length].ToString();
+			} else { // ASCII
+				if (i < 26) {
+					charStr = ((char)(65 + i)).ToString();
+				} else {
+					charStr = " ";
+				}
 			}
 			charGameObj.GetComponentInChildren<TextMeshPro>().text = charStr;
 			charGameObj.name = "Char(" + charStr + ")";
 		}
 		
+	}
+
+	public void Init(RotCode rotCode) {
+		this.rotCode = rotCode;
 	}
 
 	void Awake() {
@@ -140,7 +150,6 @@ public class RotCylinder : MonoBehaviour {
 		
 	}
 
-	// Use this for initialization
 	void Start () {
 
 		lastHit.point = Vector3.zero;
@@ -150,25 +159,10 @@ public class RotCylinder : MonoBehaviour {
 		}
 	}
 	
-	// Update is called once per frame
 	void Update () {
 
 		if (isPaused)
 			return;
-		// @tmp
-		/*
-		if (mainRotCylinder != null) {
-			if (Input.GetKey(KeyCode.Alpha1)) {
-				SetRotNumber(1);
-			}
-			if (Input.GetKey(KeyCode.Alpha2)) {
-				SetRotNumber(2);
-			}
-			if (Input.GetKey(KeyCode.Alpha3)) {
-				SetRotNumber(3);
-			}
-		}
-		*/
 
 		if (!isFixed && mainRotCylinder != null && (isTouching || rb.angularVelocity != Vector3.zero)) {
 			var rotNum = GetRotNumber();

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,22 +20,45 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 
 	public bool isFixed = false;
 
+	public event Action<char> OnRemoveLetter;
+	public event Action<char> OnAddLetter;
+
+	bool isEditSequenceMode = false;
+
 	InputField inputField;
-
-
 	InputEncodeDecode otherInputEncodeDecode;
 
     float tKeyPressed = float.MaxValue;
+    string placeholderText;
+
 
     public void OnPointerClick(PointerEventData eventData) {
-		if (!isFixed) {
+		if (isEditSequenceMode) {
+			keyboard.Show();
+			isLastFocused = isEncoded;
+		} else if (!isFixed) {
 			keyboard.Show();
 			SetLastFocused();
 		}
 	}
 
+	public InputEncodeDecode GetField(bool encodedField) {
+		if (isEncoded == encodedField)
+			return this;
+		return otherInputEncodeDecode;
+	}
+
+	public void SetEditSequenceMode(bool isOn) {
+		isLastFocused = isEncoded;
+		isEditSequenceMode = isOn;
+	}
+
 	public void SetText(string text) {
 		inputField.text = text;
+	}
+
+	public string GetText() {
+		return inputField.text;
 	}
 
 	public void SetFixed(bool isFixed) {
@@ -44,37 +68,77 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 		}
 	}
 
+	string EncodeDecode(string str, bool encode) {
+
+		if (!isEditSequenceMode) {
+			return rotCode.EncodeDecode(inputField.text, !isEncoded);
+		} else {
+			if (encode) {
+				return str;
+			} else {
+				var chars = new char[str.Length];
+				for (int i = 0; i < str.Length && i < 26; i++) {
+					chars[i] = (char)(65 + i);
+				}
+				for (int i = 26; i < str.Length; i++) {
+					chars[i] = ' ';
+				}
+				return new string(chars);
+			}
+		}
+	}
+
     public void UpdateText() {
 		if (isLastFocused) {
-			 otherInputField.text = rotCode.EncodeDecode(inputField.text, !isEncoded);
+			 otherInputField.text = EncodeDecode(inputField.text, !isEncoded);
 		} else {
-			inputField.text = rotCode.EncodeDecode(otherInputField.text, isEncoded);
+			inputField.text = EncodeDecode(otherInputField.text, isEncoded);
 		}
 	}
 
 	public void UpdateOtherText(string str) {
 		if (inputField.isFocused) {
-			otherInputField.text = rotCode.EncodeDecode(str, !isEncoded);
+			otherInputField.text = EncodeDecode(str, !isEncoded);
 		}
 	}
 
 	public void InitOtherText() {
-		otherInputField.text = rotCode.EncodeDecode(inputField.text, !isEncoded);
+		otherInputField.text = EncodeDecode(inputField.text, !isEncoded);
 	}
 
 	public void AppendLetter(char letter) {
+		if (isEditSequenceMode) {
+			isLastFocused = isEncoded;
+			if (inputField.text.Length >= 26 + (rotCode.withSpace ? 1 : 0))
+				return;
+		}
 		if (isLastFocused && !isFixed) {
 			inputField.text += letter;
 			inputField.MoveTextEnd(true);
-			otherInputField.text = rotCode.EncodeDecode(inputField.text, !isEncoded);
+			otherInputField.text = EncodeDecode(inputField.text, !isEncoded);
 			tKeyPressed = Time.time;
+			if (OnAddLetter != null) {
+				OnAddLetter(letter);
+			}
 		}
+		UpdateOkButton();
 	}
 
 	public void RemoveLastLetter() {
 		if (isLastFocused && !isFixed && inputField.text.Length > 0) {
-			inputField.text = inputField.text.Substring(0, inputField.text.Length - 1);
-			otherInputField.text = rotCode.EncodeDecode(inputField.text, !isEncoded);
+			var lastIndex = inputField.text.Length - 1;
+			if (OnRemoveLetter != null) {
+				OnRemoveLetter(inputField.text[lastIndex]);
+			}
+			inputField.text = inputField.text.Substring(0, lastIndex);
+			otherInputField.text = EncodeDecode(inputField.text, !isEncoded);
+		}
+		UpdateOkButton();
+	}
+
+	void UpdateOkButton() {
+		if (isEditSequenceMode) {
+			keyboard.okButton.SetActive(inputField.text.Length == 26 + (rotCode.withSpace ? 1 : 0));
 		}
 	}
 
@@ -86,7 +150,7 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 
 	public void Init() {
 
-		inputField.onValueChanged.AddListener(UpdateOtherText);
+		//inputField.onValueChanged.AddListener(UpdateOtherText);
 
 		if (keyboard != null) {
 			keyboard.onKeyPressed.AddListener(AppendLetter);
@@ -101,6 +165,17 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 		}
 
         inputField.keyboardType = (TouchScreenKeyboardType)(-1);
+	}
+
+	public void SetPlaceholder(string text) {
+		if (placeholderText == null)
+			placeholderText = ((Text)inputField.placeholder).text;
+		((Text)inputField.placeholder).text = text;
+	}
+
+	public void ResetPlaceholder() {
+		if (placeholderText != null)
+			((Text)inputField.placeholder).text = placeholderText;
 	}
 	
 	public void SetLastFocused() {
@@ -146,9 +221,27 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 		var input = isLastFocused ? this : otherInputEncodeDecode;
 		var text = UniClipboard.GetText();
 		text = Regex.Replace(text, @"([^A-Za-z ])", "");
-		if (text.Length > 0) {
-			input.SetText(text.ToUpper());
-			UpdateText();
+		text = text.ToUpper();
+		// @todo...
+		if (isEditSequenceMode) {
+			var i = 0;
+			foreach (var chr in text) {
+				Key key;
+				if (keyboard.TryGetKey(chr, out key)) {
+					if (key.button.interactable) {
+						input.AppendLetter(chr);
+						key.button.interactable = false;
+					}
+					i++;
+				}
+				if (i > 27)
+					break;
+			}
+		} else {
+			if (text.Length > 0) {
+				input.SetText(text);
+				UpdateText();
+			}
 		}
 	}
 	

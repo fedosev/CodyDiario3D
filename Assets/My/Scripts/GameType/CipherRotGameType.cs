@@ -10,15 +10,21 @@ public class CipherRotGameType : BaseGameType {
 		return "Cifrario";
 	} }
     public override string generalInfo { get {
-        return "Il primo rotore rappresenta le lettere dell’alfabeto su cui è definito il testo in chiaro. Puoi ruotarlo per cercare la lettera che vuoi cifrare."
-            + (!isRotFixed ?
-                "\nI rotori a destra del primo rappresentano le corrispondenti lettere cifrate. Possono essere ruotati per cambiare il cifrario." : "")
-            + (!isRotFixed && rotCode.Length == 1 ?
-                "\nIn questo cifrario c'è un solo rotore a destra." : "")
-            + (!isDecodedTextFixed  ?
-                "\nPuoi scrivere e modificare il testo da cifrare facendo il tap sulla casella \"Testo in chiaro\"." : "")
-            + (!isEncodedTextFixed  ?
-                "\nPuoi scrivere e modificare il testo da decifrare facendo il tap sulla casella \"Testo cifrato\"." : "")
+        return 
+			isOrderCipher ? (
+				"Oggi puoi cambiare l'ordine del alfabeto per la cifratura. Usa la tastiera per inserire le lettere nell'ordine che preferisci compreso lo spazio.\n" +
+				"Quando le hai inserite tutte premi sulla spunta per confermare. \nDopodichè usa il cifrario con nei giorni precedenti."
+			) : (
+				"Il primo rotore rappresenta le lettere dell’alfabeto su cui è definito il testo in chiaro. Puoi ruotarlo per cercare la lettera che vuoi cifrare."
+				+ (!isRotFixed ?
+					"\nI rotori a destra del primo rappresentano le corrispondenti lettere cifrate. Possono essere ruotati per cambiare il cifrario." : "")
+				+ (!isRotFixed && rotCode.Length == 1 ?
+					"\nIn questo cifrario c'è un solo rotore a destra." : "")
+				+ (!isDecodedTextFixed ?
+					"\nPuoi scrivere e modificare il testo da cifrare facendo il tap sulla casella \"Testo in chiaro\"." : "")
+				+ (!isEncodedTextFixed ?
+					"\nPuoi scrivere e modificare il testo da decifrare facendo il tap sulla casella \"Testo cifrato\"." : "")
+			)
         ;
     } }
 
@@ -34,6 +40,9 @@ public class CipherRotGameType : BaseGameType {
 	public bool isRotFixed = false;
 	public bool isCodeSizeVariable = false;
 
+	public bool isOrderCipher = false;
+	public string sequence = "";
+
 	RotCode rotObj;
 	
     public override string sceneName { get {
@@ -47,6 +56,12 @@ public class CipherRotGameType : BaseGameType {
 	// */
 
 	public override void InitBody() {
+
+		if (isOrderCipher || sequence.Length < 0) {
+			rotCode = new int[] { 0 };
+			isRotFixed = true;
+			isCodeSizeVariable = false;
+		}
 
 		rotObj = FindObjectOfType<RotCode>();
 		rotObj.code = (int[])rotCode.Clone();
@@ -78,12 +93,20 @@ public class CipherRotGameType : BaseGameType {
 		inputFieldEncoded.SetFixed(isEncodedTextFixed);
 
 		GameObject.FindObjectOfType<RotNumberText>().UpdateText();
+
+		if (sequence.Length > 0) {
+			rotObj.sequence = sequence;
+		}
+
 		rotObj.Init();
 
-		var inputFields = FindObjectsOfType<InputEncodeDecode>();
-		foreach (var inputField in inputFields) {
-			inputField.Init();
+		if (isOrderCipher && sequence != null && sequence.Length == 0) {
+			rotObj.state.GoToState<StateCipherOrder>();
+			rotObj.InitInputEncodeDecode(true);
+		} else {
+			rotObj.InitInputEncodeDecode();
 		}
+
 	}
 
     public override void Pause(bool pause) {

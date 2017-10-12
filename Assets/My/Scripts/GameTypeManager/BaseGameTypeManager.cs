@@ -5,6 +5,13 @@ using UnityEngine;
 
 public abstract class BaseGameTypeManager : MonoBehaviour {
 
+	private static BaseGameTypeManager instance;
+	public static BaseGameTypeManager Instance { get {
+		if (instance == null)
+			instance = GameObject.FindObjectOfType<BaseGameTypeManager> ();
+		return instance;
+	} }
+
 	//[System.NonSerialized]
 	public BaseGameType gameType;
 
@@ -33,6 +40,8 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 	public Action<string> WinTextAction;
 	public Action LoseAction;
 	public Action<string> LoseTextAction;
+
+	public bool shouldBeVisibleTargetCanvas = true;
 
 	protected MainGameManager gameManager;
 
@@ -98,7 +107,9 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 		bool show = false;
 
-		if (gameManager && useAR && !gameManager.isARPaused && !gameManager.IsARTracked && !gameManager.mainMenu.popup.isVisible) {
+		if (shouldBeVisibleTargetCanvas && gameManager && useAR && !gameManager.isARPaused
+			&& !gameManager.IsARTracked && !gameManager.mainMenu.popup.isVisible
+		) {
 			show = true;
 		}
 		/*

@@ -23,6 +23,16 @@ public class RotCode : MonoBehaviour {
 
 	bool isPaused = false;
 
+	public string sequence = "";
+
+
+	public void InitInputEncodeDecode(bool isEditSequenceMode = false) {
+		var inputFields = FindObjectsOfType<InputEncodeDecode>();
+		foreach (var inputField in inputFields) {
+			inputField.SetEditSequenceMode(isEditSequenceMode);
+			inputField.Init();
+		}
+	}
 
     public void Pause(bool pause) {
 		isPaused = pause;
@@ -48,8 +58,9 @@ public class RotCode : MonoBehaviour {
 			}
 		}
 		for (var i = 0; i < code.Length; i++) {
-			if (withSpace) {
-				rotCylinders[i].withSpace = true;
+			rotCylinders[i].Init(this);
+			if (withSpace || sequence.Length > 0) {
+				rotCylinders[i].withSpace = withSpace;
 				rotCylinders[i].GenerateChars();
 			}
 			if (isFixed) {
@@ -58,6 +69,7 @@ public class RotCode : MonoBehaviour {
 		}
 		if (withSpace) {
 			fixedRotCylinder.withSpace = true;
+			fixedRotCylinder.Init(this);
 			fixedRotCylinder.GenerateChars();
 		}
 		SetCode(code);
@@ -120,6 +132,12 @@ public class RotCode : MonoBehaviour {
 		}
 	}
 
+	public void TriggerCodeChange() {
+		if (onCodeChange != null) {
+			onCodeChange.Invoke();
+		}
+	}
+
 	public void SetCode(int[] code) {
 
 		this.code = code;
@@ -146,13 +164,20 @@ public class RotCode : MonoBehaviour {
 				if (chars[i] == ' ') {
 					ascii[i] = 91;
 				}
-				chars[i] = (char)(65 + (ascii[i] - 65 + (encode ? 0 : n) + ((encode ? 1 : -1) * code[j])) % n);
+				var pos = (ascii[i] - 65 + (encode ? 0 : n) + ((encode ? 1 : -1) * code[j])) % n;
+				if (sequence.Length > 0) {
+					if (pos < 0)
+						chars[i] = '?';
+					else
+						chars[i] = sequence[pos % sequence.Length];
+				} else {
+					chars[i] = (char)(65 + pos);
+				}
 				if (chars[i] == '[') {
 					chars[i] = ' ';
 				}
 				j = (j + 1) % code.Length;
 			}
-			//chars[i] = (encode ? 'E' : 'D');
 		}
 		return new string(chars);
 	}

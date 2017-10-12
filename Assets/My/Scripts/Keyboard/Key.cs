@@ -10,8 +10,12 @@ public class Key : MonoBehaviour, IPointerClickHandler {
 	public Keyboard keyboard;
 	public char letter;
 
+	public Button button;
+
 	public void OnPointerClick(PointerEventData eventData) {
-		keyboard.HandleClick(letter);
+		if (button.interactable) {
+			keyboard.HandleClick(letter);
+		}
 	}
 
 	public void Init() {
@@ -20,7 +24,7 @@ public class Key : MonoBehaviour, IPointerClickHandler {
 	}
 
 	void Awake () {
-		//Init();
+		button = GetComponent<Button>();
 	}
 	
 	void Update () {
