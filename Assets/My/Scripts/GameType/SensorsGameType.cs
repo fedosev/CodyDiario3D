@@ -66,7 +66,7 @@ public class SensorsGameType : BaseGridRobyGameType {
 		((StateGridSelectQuad)grid.state).OnSelect += OnSelectQuad;
 	}
 
-	void OnSelectQuad(BaseGameObjectState state, QuadBehaviour quad) {
+	void OnSelectQuad(GameObjectState state, QuadBehaviour quad) {
 		if (quad.mainState != QuadStates.DEFAULT)
 			return;
 		if (selectedQuad != null) {

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class StateGridSelectQuad : BaseGameObjectState, IPointerClickHandler {
+public class StateGridSelectQuad : GameObjectState, IPointerClickHandler {
 
-	public event Action<BaseGameObjectState, QuadBehaviour> OnSelect;
+	public event Action<GameObjectState, QuadBehaviour> OnSelect;
 
 	Grid grid;
 

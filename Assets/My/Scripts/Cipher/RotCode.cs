@@ -19,6 +19,8 @@ public class RotCode : MonoBehaviour {
 
 	public UnityEvent onCodeChange;
 
+	public GameObjectState state;
+
 	bool isPaused = false;
 
 
@@ -62,15 +64,18 @@ public class RotCode : MonoBehaviour {
 		for (var i = 0; i < code.Length; i++) {
 			rotCylinders[i].onRotNumberChange.AddListener(UpdateCodeFromCylinders);
 		}
-
+	
 		if (false && MainGameManager.Instance != null && !MainGameManager.Instance.useAR) {
 			var maskObj = GameObject.Find("QuadMask");
 			if (maskObj != null)
 				maskObj.SetActive(false);
 		}
+
+		state = GameObjectState.Init(this.gameObject, newState => { state = newState; });
 	}
 
 	public void IncreaseCodeSize() {
+		
 		if (code.Length < rotCylinders.Length) {
 			var l = code.Length;
 			System.Array.Resize<int>(ref code, l + 1);
@@ -104,16 +109,6 @@ public class RotCode : MonoBehaviour {
 		if (onCodeChange == null) {
 			onCodeChange = new UnityEvent();
 		}
-	}
-
-	// Use this for initialization
-	void Start () {
-
-		//Init();
-	}
-
-	void OnEnable() {
-
 	}
 	
 	public void UpdateCodeFromCylinders() {
@@ -170,8 +165,4 @@ public class RotCode : MonoBehaviour {
 		return EncodeDecode(str, false);
 	}
 
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

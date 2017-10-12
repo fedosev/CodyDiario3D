@@ -81,6 +81,11 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 	void Awake() {
 
 		inputField = GetComponent<InputField>();
+		otherInputEncodeDecode = otherInputField.GetComponent<InputEncodeDecode>();
+	}
+
+	public void Init() {
+
 		inputField.onValueChanged.AddListener(UpdateOtherText);
 
 		if (keyboard != null) {
@@ -90,12 +95,7 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 		}
 
 		inputField.keyboardType = (TouchScreenKeyboardType)(-1);
-	}
 
-	// Use this for initialization
-	void Start () {
-
-		otherInputEncodeDecode = otherInputField.GetComponent<InputEncodeDecode>();
 		if (isEncoded) {
 			rotCode.onCodeChange.AddListener(UpdateText);
 		}

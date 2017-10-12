@@ -55,7 +55,7 @@ public class TargetGameType : BaseGridRobyGameType {
 		});
 	}
 
-	void OnSelectQuad(BaseGameObjectState state, QuadBehaviour quad) {
+	void OnSelectQuad(GameObjectState state, QuadBehaviour quad) {
 
 		if (quad.mainState == QuadStates.DEFAULT && quad.otherState == QuadStates.DEFAULT) {
 			starsNumber++;

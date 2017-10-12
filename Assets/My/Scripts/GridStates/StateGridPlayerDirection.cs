@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class StateGridPlayerDirection : BaseGameObjectState, IPointerClickHandler {
+public class StateGridPlayerDirection : GameObjectState, IPointerClickHandler {
 
 	Grid grid;
 
-	public override BaseGameObjectState NextState() {
+	public override GameObjectState NextState() {
 
 		if (grid.gameType == GameTypes.PATH) {
 			var gameType = ((PathGameType)(grid.gameTypeConfig));

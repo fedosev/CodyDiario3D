@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class StateHexaSwitchQuad : BaseGameObjectState, IPointerDownHandler, IPointerUpHandler {
+public class StateHexaSwitchQuad : GameObjectState, IPointerDownHandler, IPointerUpHandler {
 
 
 	public bool isDrawMode = false;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class StateSwitchQuad : BaseGameObjectState {
+public class StateSwitchQuad : GameObjectState {
 
 	Grid grid;
 

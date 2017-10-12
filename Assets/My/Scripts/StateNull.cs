@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StateNull : BaseGameObjectState {
+public class StateNull : GameObjectState {
 
 	public override bool IsNull() {
 		return true;

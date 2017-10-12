@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class StateGridPlayerPosition : BaseGameObjectState, IPointerClickHandler {
+public class StateGridPlayerPosition : GameObjectState, IPointerClickHandler {
 
 	Grid grid;
 
@@ -12,7 +12,7 @@ public class StateGridPlayerPosition : BaseGameObjectState, IPointerClickHandler
 		grid.SetActiveUI(false);
 	}
 
-	public override BaseGameObjectState NextState() {
+	public override GameObjectState NextState() {
 
 		return GoToState<StateGridPlayerDirection>();
 	}

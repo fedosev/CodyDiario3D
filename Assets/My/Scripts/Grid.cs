@@ -52,7 +52,7 @@ public class Grid : MonoBehaviour {
 
 	public GridRobyManager gameTypeManager;
 
-	public BaseGameObjectState state;
+	public GameObjectState state;
 
 	public PositionInGrid startPosInGrid = new PositionInGrid(-1, -1);
 
@@ -479,11 +479,7 @@ public class Grid : MonoBehaviour {
 
 		movableBehaviour = GetComponent<GridMovableBehaviour>();
 
-		state = GetComponent<StateNull>();
-		if (state == null) {
-			state = gameObject.AddComponent<StateNull>();
-		}
-		state.Init(newState => { state = newState; });
+		state = GameObjectState.Init(this.gameObject, newState => { state = newState; });
 
 		if (UIControls == null) {
 			UIControls = GameObject.Find("PanelCards");

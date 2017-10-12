@@ -29,7 +29,6 @@ public class CipherRotGameType : BaseGameType {
 	public int[] rotCode = { 0 };
 	public bool withSpace = false;
 	public string statringText = "";
-	//public bool isStatringTextEncoded;
 	public bool isDecodedTextFixed = false;
 	public bool isEncodedTextFixed = false;
 	public bool isRotFixed = false;
@@ -80,7 +79,11 @@ public class CipherRotGameType : BaseGameType {
 
 		GameObject.FindObjectOfType<RotNumberText>().UpdateText();
 		rotObj.Init();
-		//rotObj.SetCode(rotObj.code);
+
+		var inputFields = FindObjectsOfType<InputEncodeDecode>();
+		foreach (var inputField in inputFields) {
+			inputField.Init();
+		}
 	}
 
     public override void Pause(bool pause) {

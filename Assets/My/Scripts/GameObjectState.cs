@@ -3,11 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseGameObjectState : MonoBehaviour {
+public abstract class GameObjectState : MonoBehaviour {
 
-	Action<BaseGameObjectState> StateChanger;
+	Action<GameObjectState> StateChanger;
 	
-	public void Init(Action<BaseGameObjectState> stateChanger) {
+	public static GameObjectState Init(GameObject gameObj, Action<GameObjectState> stateChanger) {
+
+		var state = gameObj.GetComponent<StateNull>();
+		if (state == null) {
+			state = gameObj.AddComponent<StateNull>();
+		}
+		state.Setup(stateChanger);
+		return state;
+	}
+
+	void Setup(Action<GameObjectState> stateChanger) {
 		StateChanger = stateChanger;
 	}
 
@@ -18,7 +28,7 @@ public abstract class BaseGameObjectState : MonoBehaviour {
 		return false;
 	}
 
-	public T GetState<T>() where T : BaseGameObjectState {
+	public T GetState<T>() where T : GameObjectState {
 
 		T state = GetComponent<T>();
 		if (state != null) {
@@ -34,7 +44,7 @@ public abstract class BaseGameObjectState : MonoBehaviour {
 	}
 	*/
 
-	public T GoToState<T>() where T : BaseGameObjectState {
+	public T GoToState<T>() where T : GameObjectState {
 
 		var nextState = GetState<T>();
 		OnExit();
@@ -45,11 +55,11 @@ public abstract class BaseGameObjectState : MonoBehaviour {
 		this.enabled = false;
 
 		StateChanger(nextState);
-		nextState.Init(StateChanger);
+		nextState.Setup(StateChanger);
 		return nextState;
 	}
 
-	public T InitState<T>() where T : BaseGameObjectState {
+	public T InitState<T>() where T : GameObjectState {
 
 		var state = GoToState<T>();
 
@@ -57,11 +67,11 @@ public abstract class BaseGameObjectState : MonoBehaviour {
 		Destroy(this);
 
 		StateChanger(state);
-		state.Init(StateChanger);
+		state.Setup(StateChanger);
 		return state;
 	}
 
-	public virtual BaseGameObjectState NextState() {
+	public virtual GameObjectState NextState() {
 
 		return GoToState<StateNull>();
 	}
