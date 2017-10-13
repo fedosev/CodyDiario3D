@@ -17,7 +17,10 @@ public class Keyboard : MonoBehaviour {
 	public float animDuration = 0.5f;
 
 	public bool couldBeHidden = true;
+	public bool isHiddenOnStart = true;
 
+	public GameObject copyButton;
+	public GameObject pasteButton;
 	public GameObject okButton;
 
 	bool isAnimating = false;
@@ -138,12 +141,12 @@ public class Keyboard : MonoBehaviour {
 		
 		rt = GetComponent<RectTransform>();
 		posY = transform.position.y;
-		rectRatio = posY / rt.anchoredPosition.y;
+		rectRatio = posY / rt.anchoredPosition.y * transform.localScale.y;
 		posYHidden = - rectRatio * rt.rect.height - posY;
 
 		okButton.SetActive(false);
-		Hide(true);
-
+		if (isHiddenOnStart)
+			Hide(true);
 	}
 
 	void Update() {

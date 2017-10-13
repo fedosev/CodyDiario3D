@@ -29,6 +29,7 @@ public class CodingGrid : MonoBehaviour {
 
     Grid grid;
     RectTransform removeButtonRT;
+    private RectTransform lettersRT;
     readonly Vector2 removeButtonOffset = new Vector2(177f, 0f);
     bool shouldBeHiddenUI = false;
     bool shouldBeHiddenExec = false;
@@ -146,9 +147,10 @@ public class CodingGrid : MonoBehaviour {
         panelCards.SetActive(!disable);
     }
 
-    void Start () {
+    void Awake() {
         grid = GameObject.Find("Grid").GetComponent<Grid>();
         removeButtonRT = removeButton.GetComponent<RectTransform>();
+        lettersRT = grid.gameTypeManager.panelLetters.GetComponent<RectTransform>();
         //Init();
     }
 	
@@ -176,4 +178,12 @@ public class CodingGrid : MonoBehaviour {
 		}
         // */
 	}
+
+    void OnEnable() {
+        lettersRT.anchoredPosition = new Vector2(0f, 100f);
+    }
+
+    void OnDisable() {
+        lettersRT.anchoredPosition = new Vector2(0f, 0f);
+    }
 }

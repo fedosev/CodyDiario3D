@@ -283,9 +283,11 @@ public class MainGameManager : MonoBehaviour {
 
 		if (gameType.showInfoOnStart) {
 			Menu.ShowInfoOnStart();
+			Menu.InfoPanelObj.OnFirstClose += GameTypeStart;
 		} else {
 			Menu.Hide(false);
 			StartCoroutine(FadeOverlay(false, fadeDuration * 3));
+			StartCoroutine(GameTypeStartDelayed(fadeDuration * 3));
 		}
 
 		//gameTypeManager.ShowGame(false);
@@ -326,6 +328,15 @@ public class MainGameManager : MonoBehaviour {
 			useAR = !isDebug || shoudUseAR;
 			useARchanged = true;
 		#endif
+	}
+
+	void GameTypeStart() {
+		StartCoroutine(GameTypeStartDelayed(fadeDuration * 2));
+	}
+
+	public IEnumerator GameTypeStartDelayed(float delay) {
+		yield return new WaitForSeconds(delay);
+		gameTypeManager.StartGameType();
 	}
 
 	public IEnumerator FadeOverlay(bool fadeIn, float duration) {
@@ -629,17 +640,16 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	void Update () {
-	
 		/*
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			LoadNextGameType();
 		}
 		*/
 		#if UNITY_EDITOR
-			if (Input.GetKeyDown(KeyCode.W)) {
+			if (Input.GetKeyDown(KeyCode.W) && Input.inputString == "w") {
 				Time.timeScale *= 2;
 				MyDebug.Log(Time.timeScale + "x");
-			} else if (Input.GetKeyDown(KeyCode.Q)) {
+			} else if (Input.GetKeyDown(KeyCode.Q) && Input.inputString == "q") {
 				Time.timeScale *= 0.5f;
 				MyDebug.Log(Time.timeScale + "x");
 			}

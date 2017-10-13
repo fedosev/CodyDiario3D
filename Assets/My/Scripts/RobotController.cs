@@ -21,20 +21,22 @@ public class RobotController : MonoBehaviour, IDirection {
 
 	public int score = 0;
 
-	private GameObject currentQuad;
+	GameObject currentQuad;
 	public GameObject CurrentQuad { get {
 		if (currentQuad == null) {
-			try {
-				currentQuad = grid.GetQuad(currentQuadRow, currentQuadCol);
-			}
-			catch (Exception e) {
-                Debug.LogError(e.Message);
-            }
-
+			currentQuad = grid.GetQuad(currentQuadRow, currentQuadCol);
 		}
 		return currentQuad;
 	} set {
 		currentQuad = value;
+	} }
+
+	QuadBehaviour currentQuadBh;
+	public QuadBehaviour CurrentQuadBh { get {
+		if (currentQuadBh == null) {
+			currentQuadBh = grid.GetQuadBh(currentQuadRow, currentQuadCol);
+		}
+		return currentQuadBh;
 	} }
 
 	public GameObject prevQuad;
@@ -94,7 +96,7 @@ public class RobotController : MonoBehaviour, IDirection {
 		*/
 		if (grid.gameTypeConfig.withLetters) {
 			StartCoroutine(quadBh.AnimateLetter());
-			MyDebug.Log(quadBh.letter);
+			//MyDebug.Log(quadBh.letter);
 		}
 		
 		isFirstMove = false;
@@ -249,9 +251,9 @@ public class RobotController : MonoBehaviour, IDirection {
 		if (!canMove)
 			return false;
 
-		var nextQuad = grid.GetQuad(nextQuadRow, nextQuadCol);
+		var nextQuad = grid.GetQuadBh(nextQuadRow, nextQuadCol);
 
-		return nextQuad.GetComponent<QuadBehaviour>().IsFreeToGoIn();
+		return nextQuad.IsFreeToGoIn();
 	}
 
 	public bool CanGoLeft() {
@@ -270,7 +272,7 @@ public class RobotController : MonoBehaviour, IDirection {
 			if (grid.gameType != GameTypes.FREE) {
 				DoLose();
 				if (currentQuad != null)
-					currentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ERROR);
+					CurrentQuadBh.SetState(QuadStates.ERROR);
 			}
 			return;
 		}

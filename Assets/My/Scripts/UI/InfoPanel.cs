@@ -12,6 +12,9 @@ public class InfoPanel : MonoBehaviour {
 	public Button closeButton;
 
 	public event Action onClose;
+	public event Action OnFirstClose;
+
+	bool wasClosed = false;
 
 	public void Setup(string titleStr, string subTitleStr, string contentStr) {
 		title.text = titleStr;
@@ -25,6 +28,14 @@ public class InfoPanel : MonoBehaviour {
 			if (onClose != null)
 				onClose();
 		});
+		onClose += OnFirstClose;
+	}
+
+	void OnDisable() {
+		if (!wasClosed || OnFirstClose != null) {
+			OnFirstClose();
+			wasClosed = true;
+		}
 	}
 	
 }

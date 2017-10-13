@@ -21,7 +21,7 @@ public class SnakeGameType : BaseGridRobyGameType {
 		return str;
 	} }
 
-    public string deck;
+    public string deck = "";
 
     const int cardsNumber = 3;
 

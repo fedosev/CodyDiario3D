@@ -17,19 +17,21 @@ public class QuadBehaviour : MonoBehaviour {
 	public Vector3 direction;
 
 	public char letter = ' ';
+	public bool isSetLetter = false;
+	
 
 	public int index;
 
 	public int player = -1;
 	public int number = -1;
 
-	private Grid grid;
-	private ConfigScriptableObject config;
+	Grid grid;
+	ConfigScriptableObject config;
 
-	private Renderer rend;
+	Renderer rend;
 
-	private MeshFilter meshFilter;
-	private MeshFilter MyMeshFilter { get {
+	MeshFilter meshFilter;
+	MeshFilter MyMeshFilter { get {
 		if (!meshFilter)
 			meshFilter = GetComponent<MeshFilter>();
 		return meshFilter;
@@ -317,13 +319,14 @@ public class QuadBehaviour : MonoBehaviour {
 		if (text == null) {
 			text = Instantiate(grid.config.quadLetterPrefab).GetComponent<TextMeshPro>();
 			text.transform.position = transform.position + new Vector3(0f, 0.0009f, 0f);
-			text.transform.parent = transform;
+			text.transform.SetParent(transform);
 		}
 		return text;
 	}
 
     public void SetLetter(char c) {
 		letter = c;
+		isSetLetter = true;
         GetText().text = c.ToString();
     }
 

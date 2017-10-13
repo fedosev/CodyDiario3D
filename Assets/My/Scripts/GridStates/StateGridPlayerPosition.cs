@@ -23,7 +23,7 @@ public class StateGridPlayerPosition : GameObjectState, IPointerClickHandler {
 			var quad = eventData.pointerEnter.GetComponent<QuadBehaviour>();
 			var startPos = grid.GetQuadPositionInGrid(quad.gameObject);
 			if (!grid.startPosInGrid.IsNull() && (startPos.row != grid.startPosInGrid.row || startPos.col != grid.startPosInGrid.col)) {
-				grid.GetQuad(grid.startPosInGrid.row, grid.startPosInGrid.col).GetComponent<QuadBehaviour>().Undo();
+				grid.GetQuadBh(grid.startPosInGrid.row, grid.startPosInGrid.col).Undo();
 			}
 			grid.startPosInGrid = startPos;
 			//grid.InitRobot1(grid.startPosInGrid.col, grid.startPosInGrid.row, RobyDirection.North);

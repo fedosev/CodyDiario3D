@@ -16,6 +16,7 @@ public class Grid : MonoBehaviour {
 	public ConfigScriptableObject config;
 
 	public Transform[] quadTransforms;
+	public QuadBehaviour[] quadBhs;
 	//public Vector3[] quadPositions;
 	public GameObject[] robotPrefabs;
 
@@ -60,6 +61,8 @@ public class Grid : MonoBehaviour {
 
 	public BaseGridRobyGameType gameTypeConfig;
 
+	public Keyboard keyboard;
+
     public event Action OnNextTurn;
 
     public event Action<int> OnLose;
@@ -101,16 +104,21 @@ public class Grid : MonoBehaviour {
 		) + transform.position;
 	}
 
+	public int GetOtherIndex(int index) {
+		var row = index / nCols;
+		var col = index % nCols;
+		return ((nRows - row - 1) * nCols + col);
+	}
+
 	public GameObject GetQuad(int row, int col) {
-		var index = row * nCols + col;
-		return quadTransforms[index].gameObject;
+        return quadTransforms[row * nCols + col].gameObject;
 	}
 	public QuadBehaviour GetQuadBh(int row, int col) {
-		return GetQuad(row, col).GetComponent<QuadBehaviour>();
+		return quadBhs[row * nCols + col];
 	}
 
 	public QuadBehaviour GetQuadBh(int index) {
-		return quadTransforms[index].GetComponent<QuadBehaviour>();
+		return quadBhs[index];
 	}
 
 	public PositionInGrid GetQuadPositionInGrid(GameObject quad) {
@@ -332,6 +340,7 @@ public class Grid : MonoBehaviour {
 
 		var quadLength = nCols * nRows;
 		quadTransforms = new Transform[quadLength];
+		quadBhs = new QuadBehaviour[quadLength];
 		//quadPositions = new Vector3[quadLength];
 
 		QuadBehaviour.GetMaterialForModifying(config.quadMaterial).color = config.gameConfig.GetQuadColor();
@@ -351,12 +360,13 @@ public class Grid : MonoBehaviour {
 				quadTransforms[i] = quad.transform;
 
 				var quadBh = quad.GetComponent<QuadBehaviour>();
+				quadBhs[i] = quadBh;
 				quadBh.index = i;
 
 				i ++;
 
 
-				if (gameTypeConfig.withLetters) {
+				if (gameTypeConfig.withLetters && gameTypeConfig.letters != null && gameTypeConfig.letters.Length == nRows) {
 					quadBh.SetLetter(gameTypeConfig.letters[nRows - 1 - z][x]);
 				}
 				gameTypeConfig.SetupQuad(quadBh, x, z);
@@ -465,7 +475,9 @@ public class Grid : MonoBehaviour {
 
 		inPause = false;
 
-		if (gameType != GameTypes.TAP && !gameTypeConfig.startPosition.IsSet()) {
+		if (gameTypeConfig.withLetters && (gameTypeConfig.letters == null || gameTypeConfig.letters.Length == 0)) {
+			state.InitState<StateGridLettersSelector>();
+		} else if (gameType != GameTypes.TAP && !gameTypeConfig.startPosition.IsSet()) {
 			// Waiting for Roby's position
 			state.InitState<StateGridPlayerPosition>();
 		}
@@ -559,9 +571,9 @@ public class Grid : MonoBehaviour {
 
 	public void NextTurn() {
 		if (playersNumber > 1) {
-			CurrentRobotController.CurrentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ON);
+			CurrentRobotController.CurrentQuadBh.SetState(QuadStates.ON);
 			playerTurn = (playerTurn + 1) % playersNumber;
-			CurrentRobotController.CurrentQuad.GetComponent<QuadBehaviour>().SetState(QuadStates.ACTIVE);
+			CurrentRobotController.CurrentQuadBh.SetState(QuadStates.ACTIVE);
 		}
 
 		if (OnNextTurn != null) {
@@ -623,8 +635,8 @@ public class Grid : MonoBehaviour {
 
 	public int PlayerQuadCount(int player) {
 		int count = 0;
-		foreach (var quad in quadTransforms) {
-			if (quad.GetComponent<QuadBehaviour>().player == player)
+		foreach (var quad in quadBhs) {
+			if (quad.player == player)
 				count++;
 		}
 		return count;
@@ -632,8 +644,8 @@ public class Grid : MonoBehaviour {
 
 	public int QuadCount(Func<QuadBehaviour, bool> Condition) {
 		int count = 0;
-		foreach (var quad in quadTransforms) {
-			if (Condition(quad.GetComponent<QuadBehaviour>()))
+		foreach (var quad in quadBhs) {
+			if (Condition(quad))
 				count++;
 		}
 		return count;

@@ -41,6 +41,8 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 	public Action LoseAction;
 	public Action<string> LoseTextAction;
 
+	public event Action OnGameTypeStart;
+
 	public bool shouldBeVisibleTargetCanvas = true;
 
 	protected MainGameManager gameManager;
@@ -119,6 +121,12 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		*/
 		if (TargetCanvas)
 			TargetCanvas.SetActive(show);
+	}
+
+	public void StartGameType() {
+		if (OnGameTypeStart != null) {
+			OnGameTypeStart();
+		}
 	}
 
 	public void SetVisible(GameObject obj, bool visible) {
