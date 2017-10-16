@@ -183,10 +183,10 @@ public class QuadBehaviour : MonoBehaviour {
 	}
 
 	public bool IsFreeToGoIn() {
-
+		/*
 		if (otherState == QuadStates.ACTIVE || otherState == QuadStates.ON)
 			return false;
-
+		*/
 		return grid.gameTypeConfig.QuadIsFreeToGoIn(this);
 	}
 

@@ -21,12 +21,14 @@ public class PixelArtGameType : BaseGridRobyGameType {
 
 	public string[] drawing;
 
+	public bool usePath = false;
+
 	int drawingSize;
 
 
     public override void InitBody() {
 
-        grid.gameType = GameTypes.FREE;
+        grid.gameType = usePath ? GameTypes.ART : GameTypes.FREE;
         grid.playersNumber = 1;
 
 		grid.OnLose += Lose;
@@ -40,6 +42,10 @@ public class PixelArtGameType : BaseGridRobyGameType {
 				if (chr != '0')
 					drawingSize++;
 			}
+		}
+
+		if (usePath) {
+			gridRobyManager.codingGrid.gameObject.SetActive(true);
 		}
     }
 
@@ -66,7 +72,7 @@ public class PixelArtGameType : BaseGridRobyGameType {
         }
 		prevQuad.SetState(QuadStates.ART);
         
-        if (nextQuad.mainState == QuadStates.PATH) {
+        if (nextQuad.mainState == QuadStates.PATH || (drawing.Length == 0 && nextQuad.mainState != QuadStates.ART)) {
             nextQuad.SetState(QuadStates.ACTIVE);
 			nextQuad.player = 0;
 			grid.CurrentRobotController.score++;
@@ -85,7 +91,9 @@ public class PixelArtGameType : BaseGridRobyGameType {
 
 	public void CheckWin() {
 
-		if (grid.PlayerQuadCount(0) == drawingSize) {
+		if (usePath) {
+			gridRobyManager.WinTextAction("{ " + grid.CurrentRobotController.score + " }");
+		} else if (grid.PlayerQuadCount(0) == drawingSize) {
 			var score = grid.CurrentRobotController.score;
 			if (score == drawingSize)
 				gridRobyManager.WinTextAction("OTTIMO! { " + score + " }");

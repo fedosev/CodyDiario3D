@@ -4,7 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 
-public enum GameTypes { FREE, TAP, SNAKE, PATH, AUTO };
+public enum GameTypes { FREE, TAP, SNAKE, PATH, DUEL, ART, AUTO };
 
 public enum PlayerTypes { VIRTUAL, REAL };
 
@@ -377,10 +377,11 @@ public class Grid : MonoBehaviour {
 				}
 				if (playersNumber > 1 &&
 					// playerTypes[1] == PlayerTypes.VIRTUAL &&
-					x == nCols - 1 && z == nRows - 1
+					// x == nCols - 1 && z == nRows - 1
+					x == gameTypeConfig.startPositionP2.col && z == gameTypeConfig.startPositionP2.row
 				) {
 
-					InitRobot(1, "Player 2", pos, x, z, RobyDirection.South, quad, QuadStates.ON);
+					InitRobot(1, "Player 2", pos, x, z, gameTypeConfig.startPositionP2.direction, quad, QuadStates.ON);
 
 					// @todo 
 					if (playerTypes[1] == PlayerTypes.REAL) {
@@ -543,6 +544,15 @@ public class Grid : MonoBehaviour {
 				rt.DOAnchorPosY(hiddenY, duration * 0.5f).OnComplete(() => {
 					UIControls.SetActive(false);
 				});
+			}
+		}
+	}
+
+	public void SetRobotsColliderActive(bool active) {
+		foreach (var robot in players) {
+			var collider = robot.GetComponent<Collider>();
+			if (collider != null) {
+				collider.enabled = true;
 			}
 		}
 	}

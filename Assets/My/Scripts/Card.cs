@@ -25,10 +25,13 @@ public class Card : MonoBehaviour, IPointerClickHandler {
         if (grid.inPause)
             return;
 
-        if (grid.gameType == GameTypes.PATH || grid.gameType == GameTypes.AUTO) {
+        if (grid.gameType == GameTypes.PATH ||
+            grid.gameType == GameTypes.AUTO ||
+            grid.gameType == GameTypes.ART
+        ) {
             codingGrid.AppendCard(cardType);
         }
-        else { // if (grid.gameType == GameTypes.PATH)
+        else {
             if (grid.CurrentRobotController == null)
                 return;
             RobotActionFromCard(grid.CurrentRobotController, cardType);

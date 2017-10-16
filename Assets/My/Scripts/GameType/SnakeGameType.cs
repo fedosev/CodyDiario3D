@@ -42,12 +42,6 @@ public class SnakeGameType : BaseGridRobyGameType {
 
         if (deck.Length > 0) {
             gridRobyManager.deck = new Deck(deck);
-            /*
-            gridRobyManager.deck.UseCard(0);
-            gridRobyManager.deck.TakeCard();
-            gridRobyManager.deck.UseCard(2);
-            gridRobyManager.deck.TakeCard();
-            // */
     		gridRobyManager.codingGrid.gameObject.SetActive(true);
             gridRobyManager.codingGrid.HideUI();
             gridRobyManager.codingGrid.text.SetText(gridRobyManager.deck.GetRichText());
@@ -59,7 +53,6 @@ public class SnakeGameType : BaseGridRobyGameType {
                 gridRobyManager.codingGrid.text.SetText(gridRobyManager.deck.GetRichText());
             }
         }
-        
     }
 
     bool CanUseCard(CardInHand card) {

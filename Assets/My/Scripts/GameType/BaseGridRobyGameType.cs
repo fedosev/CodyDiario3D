@@ -46,6 +46,7 @@ public abstract class BaseGridRobyGameType : BaseGameType {
     public Grid grid;
 
     public RobyStartPosition startPosition;
+    public RobyStartPosition startPositionP2;
 
     public bool useFirstQuad = false;
     public bool withLetters = false;

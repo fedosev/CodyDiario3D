@@ -39,6 +39,15 @@ public class Deck {
 		return null;
 	}
 
+    public void ReturnCard() {
+
+		if (cardsInHand > 0) {
+			var card = cards[--index];
+			card.isInHand = false;
+			cardsInHand--;
+		}
+	}
+
 	public void UseCard(int indexInHand) {
 
 		if (cardsInHand > 0 && indexInHand < cardsInHand) {
@@ -47,15 +56,30 @@ public class Deck {
 				if (card.isInHand) {
 					if (indexInHand == i) {
 						card.isInHand = false;
+						cardsInHand--;
 						return;
 					} else {
 						i++;
 					}
 				}
-
 			}
-			cardsInHand--;
 		}
+	}
+
+	public void UseAllCards() {
+
+		foreach (var card in cards) {
+			if (card.isInHand) {
+					card.isInHand = false;
+					cardsInHand--;
+					if (cardsInHand == 0)
+						return;
+			}
+		}
+	}
+
+	public int RemainingCards() {
+		return nCards - index;
 	}
 
 	public string GetRichText() {
@@ -74,7 +98,6 @@ public class Deck {
 
 		return sb.ToString();
 	}
-
 
 }
 

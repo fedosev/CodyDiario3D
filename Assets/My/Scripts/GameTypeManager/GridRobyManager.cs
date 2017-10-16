@@ -23,6 +23,7 @@ public class GridRobyManager : BaseGameTypeManager {
 
     public CodingGrid codingGrid;
     public HandCards handCards;
+    public CardsSelection cardsSelection;
 
 	public ImageTargetBehaviour imageTargetDevBoard;
 	public GameObject devBoardTargetCanvas;
@@ -82,6 +83,9 @@ public class GridRobyManager : BaseGameTypeManager {
 
 		if (handCards == null) {
 			handCards = GameObject.FindObjectOfType<HandCards>();
+		}
+		if (cardsSelection == null) {
+			cardsSelection = GameObject.FindObjectOfType<CardsSelection>();
 		}
 
 		if (GetGameType().useDevBoard && useAR) {

@@ -21,6 +21,8 @@ public class RobotController : MonoBehaviour, IDirection {
 
 	public int score = 0;
 
+	public event Action OnStopMove;
+
 	GameObject currentQuad;
 	public GameObject CurrentQuad { get {
 		if (currentQuad == null) {
@@ -31,12 +33,8 @@ public class RobotController : MonoBehaviour, IDirection {
 		currentQuad = value;
 	} }
 
-	QuadBehaviour currentQuadBh;
 	public QuadBehaviour CurrentQuadBh { get {
-		if (currentQuadBh == null) {
-			currentQuadBh = grid.GetQuadBh(currentQuadRow, currentQuadCol);
-		}
-		return currentQuadBh;
+		return grid.GetQuadBh(currentQuadRow, currentQuadCol);
 	} }
 
 	public GameObject prevQuad;
@@ -328,6 +326,9 @@ public class RobotController : MonoBehaviour, IDirection {
 		currentState = RobotStates.WaitingForAnimation;
 
 		StartCoroutine(WaitAndFixTransform());
+
+		if (OnStopMove != null)
+			OnStopMove();
 
 		//MyDebug.Log("Stop Move");
 	}

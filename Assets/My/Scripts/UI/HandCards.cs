@@ -4,7 +4,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HandCards : MonoBehaviour {
+
+public interface ICardsContainer {
+
+	float GetInterpolationSpeed();
+	void HandleClick(CardInHand card);
+}
+
+
+public class HandCards : MonoBehaviour, ICardsContainer {
 
 	public GameObject cardLeftPrefab;
 	public GameObject cardForwardPrefab;
@@ -70,7 +78,6 @@ public class HandCards : MonoBehaviour {
 		} else {
 			cards[i] = null;
 		}
-
 	}
 
 	public void UseCard(CardInHand card) {
@@ -107,6 +114,10 @@ public class HandCards : MonoBehaviour {
 
 	public void HandleClick(CardInHand card) {
 		UseCard(card);
+	}
+
+	public float GetInterpolationSpeed() {
+		return interpolationSpeed;
 	}
 
 	public bool AllForward() {

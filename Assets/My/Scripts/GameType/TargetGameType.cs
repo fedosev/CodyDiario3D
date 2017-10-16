@@ -23,13 +23,13 @@ public class TargetGameType : BaseGridRobyGameType {
 
 	int starsNumber;
 
-	List<CardTypes> actions = new List<CardTypes>(); // Just in case...
+	//List<CardTypes> actions = new List<CardTypes>(); // Just in case...
     private bool shouldTakeStar;
 
     public override void InitBody() {
 
 		starsNumber = 0;
-		actions.Clear();
+		//actions.Clear();
 
 		if (!startPosition.IsSet()) {
 			startPosition.col = 1;
@@ -116,7 +116,7 @@ public class TargetGameType : BaseGridRobyGameType {
 		} else {
 			action = CardTypes.RIGHT;
 		}
-		actions.Add(action);
+		//actions.Add(action);
 		grid.AddAction(action);
 		grid.NextAction();
 	}

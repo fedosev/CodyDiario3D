@@ -7,10 +7,13 @@ public class CardInHand : MonoBehaviour, IPointerClickHandler {
 
 	public int index;
 	public CardTypes type;
+	[HideInInspector] public bool isSelected = false;
 
 	float interpolationSpeed = 15f;
 
-	HandCards parent;
+	bool useLocalPosition = false;
+
+	ICardsContainer parent;
 
 	Vector3 position;
 
@@ -19,10 +22,11 @@ public class CardInHand : MonoBehaviour, IPointerClickHandler {
 		parent.HandleClick(this);
 	}
 
-	public void Init(HandCards parent, int index) {
+	public void Init(ICardsContainer parent, int index, bool useLocalPosition = false) {
 		this.index = index;
 		this.parent = parent;
-		interpolationSpeed = parent.interpolationSpeed;
+		interpolationSpeed = parent.GetInterpolationSpeed();
+		this.useLocalPosition = useLocalPosition;
 	}
 
 	public void Remove() {
@@ -31,12 +35,19 @@ public class CardInHand : MonoBehaviour, IPointerClickHandler {
 
 	public void SetPosition(Vector3 pos, bool immediate = false) {
 		position = pos;
-		if (immediate)
+		if (immediate) {
+		if (useLocalPosition)
+			transform.localPosition = pos;
+		else
 			transform.position = pos;
+		}
 	}
 	
 	void Update () {
-		transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * interpolationSpeed);
+		if (useLocalPosition)
+			transform.localPosition = Vector3.Lerp(transform.position, position, Time.deltaTime * interpolationSpeed);
+		else
+			transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * interpolationSpeed);
 	}
 }
 
