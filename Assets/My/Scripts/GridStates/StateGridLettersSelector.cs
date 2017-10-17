@@ -24,6 +24,7 @@ public class StateGridLettersSelector : GameObjectState, IPointerClickHandler {
 		grid.keyboard.copyButton.GetComponent<Button>().onClick.AddListener(Copy);
 		grid.keyboard.pasteButton.GetComponent<Button>().onClick.AddListener(Paste);
 		grid.gameTypeManager.panelLetters.SetActive(false);
+		grid.gameTypeManager.codingGrid.HideTemporarily();
 		nRows = grid.nRows;
 		nCols = grid.nCols;
 		n = nRows * nCols;
@@ -41,7 +42,6 @@ public class StateGridLettersSelector : GameObjectState, IPointerClickHandler {
 	public override void OnExit() {
 
 		grid.inPause = false;
-		grid.SetActiveUI(true);
 		grid.keyboard.onKeyPressed.RemoveListener(SetLetter);
 		grid.keyboard.onBackspacePressed.RemoveListener(UnsetLetter);
 		grid.keyboard.okButton.GetComponent<Button>().onClick.RemoveListener(OkButtonHandler);
@@ -49,6 +49,7 @@ public class StateGridLettersSelector : GameObjectState, IPointerClickHandler {
 		grid.keyboard.pasteButton.GetComponent<Button>().onClick.RemoveListener(Paste);
 		grid.keyboard.Hide();
 		grid.gameTypeManager.panelLetters.SetActive(true);
+		grid.gameTypeManager.codingGrid.ShowIfWasVisible();
 		if (grid.QuadCount(quad => quad.isSetLetter) == n) {
 			var sb = new StringBuilder();
 			foreach (var qb in grid.quadBhs) {
@@ -56,13 +57,17 @@ public class StateGridLettersSelector : GameObjectState, IPointerClickHandler {
 			}
 			PlayerPrefs.SetString(GetSaveString(), sb.ToString());
 		}
+		if (quad != null)
+			quad.Undo();
 	}
 	
 	public override GameObjectState NextState() {
 
-		if (grid.CurrentRobotController == null)
+		if (grid.CurrentRobotController == null) {
 			return GoToState<StateGridPlayerPosition>();
+		}
 
+		grid.SetActiveUI(true);
 		return GoToState<StateNull>();
 	}	
 

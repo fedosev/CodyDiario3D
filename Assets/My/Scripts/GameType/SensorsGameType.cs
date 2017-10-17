@@ -49,7 +49,7 @@ public class SensorsGameType : BaseGridRobyGameType {
 
 		grid.Init();
 
-		codingGrid.gameObject.SetActive(true);
+		codingGrid.Show();
 		codingGrid.executeButton.onClick.RemoveAllListeners();
 		codingGrid.executeButton.onClick.AddListener(Execute);
 		codingGrid.SetMaxCardsNumber(instructionsSize);

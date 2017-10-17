@@ -45,7 +45,7 @@ public class PixelArtGameType : BaseGridRobyGameType {
 		}
 
 		if (usePath) {
-			gridRobyManager.codingGrid.gameObject.SetActive(true);
+			gridRobyManager.codingGrid.Show();
 		}
     }
 

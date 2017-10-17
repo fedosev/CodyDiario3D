@@ -44,7 +44,7 @@ public class DuelGameType : BaseGridRobyGameType {
 			gridRobyManager.deck = new Deck("AAAAAAAAAAAAAAAAAAAAAAAASSSSSSSSDDDDDDDD");
 			gridRobyManager.deck.Shuffle();
 		}
-		gridRobyManager.codingGrid.gameObject.SetActive(true);
+		gridRobyManager.codingGrid.Show();
 		gridRobyManager.codingGrid.HideUI();
 		gridRobyManager.codingGrid.text.SetText(gridRobyManager.deck.GetRichText());
 

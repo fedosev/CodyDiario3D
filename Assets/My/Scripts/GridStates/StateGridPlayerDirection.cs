@@ -20,12 +20,14 @@ public class StateGridPlayerDirection : GameObjectState, IPointerClickHandler {
 
 	public override void OnEnter() {
 		grid.InitDirectionalQuads();
+		//grid.gameTypeManager.codingGrid.HideTemporarily();
 	}
 
 	public override void OnExit() {
 		grid.ClearDirectionalQuads();
 		grid.inPause = false;
 		grid.SetActiveUI(true);
+		//grid.gameTypeManager.codingGrid.ShowIfWasVisible();
 	}
 
 	public void OnPointerClick(PointerEventData eventData) {

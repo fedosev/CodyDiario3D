@@ -42,7 +42,7 @@ public class SnakeGameType : BaseGridRobyGameType {
 
         if (deck.Length > 0) {
             gridRobyManager.deck = new Deck(deck);
-    		gridRobyManager.codingGrid.gameObject.SetActive(true);
+    		gridRobyManager.codingGrid.Show();
             gridRobyManager.codingGrid.HideUI();
             gridRobyManager.codingGrid.text.SetText(gridRobyManager.deck.GetRichText());
             if (gridRobyManager.handCards != null) {

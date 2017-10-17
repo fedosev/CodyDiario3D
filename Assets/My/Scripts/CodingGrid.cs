@@ -34,12 +34,36 @@ public class CodingGrid : MonoBehaviour {
     bool shouldBeHiddenUI = false;
     bool shouldBeHiddenExec = false;
 
+    bool couldBeVisible = false;
+    int temporarilyHiddenTimes = 0;
+
+
     public void HideUI(bool hide = true) {
         shouldBeHiddenUI = hide;
     }
 
     public void HideExec(bool hide = true) {
         shouldBeHiddenExec = hide;
+    }
+
+    public void HideTemporarily() {
+        temporarilyHiddenTimes++;
+        if (!gameObject.activeSelf)
+            return;
+        //wasVisible = gameObject.activeSelf;
+        gameObject.SetActive(false);
+    }
+
+    public void ShowIfWasVisible() {
+        temporarilyHiddenTimes--;
+        if (temporarilyHiddenTimes <= 0 && couldBeVisible)
+            gameObject.SetActive(true);
+    }
+
+    public void Show() {
+        couldBeVisible = true;
+        if (temporarilyHiddenTimes <= 0)
+            gameObject.SetActive(true);
     }
 
     public static char GetLetterFromType(CardTypes cardType) {
@@ -158,7 +182,7 @@ public class CodingGrid : MonoBehaviour {
 
         // /*
         if (!shouldBeHiddenUI && cardsNumber > 0 && !controlsUI.activeSelf) {
-            if (!(grid.state is StateGridPlayerPosition || grid.state is StateGridPlayerDirection))
+            if (!(grid.state is StateGridPlayerPosition || grid.state is StateGridPlayerDirection || grid.state is StateGridLettersSelector))
                 controlsUI.SetActive(true);
         } else if ((shouldBeHiddenUI || cardsNumber == 0) && controlsUI.activeSelf) {
             controlsUI.SetActive(false);

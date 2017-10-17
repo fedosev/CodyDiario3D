@@ -61,7 +61,7 @@ public class PathGameType : BaseGridRobyGameType {
 
 		grid.Init();
 
-		gridRobyManager.codingGrid.gameObject.SetActive(true);
+		gridRobyManager.codingGrid.Show();
 		
 		
 		if (code.Length > 0) {

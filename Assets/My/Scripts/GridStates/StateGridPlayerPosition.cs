@@ -10,10 +10,15 @@ public class StateGridPlayerPosition : GameObjectState, IPointerClickHandler {
 	public override void OnEnter() {
 		grid.inPause = true;
 		grid.SetActiveUI(false);
+		//grid.gameTypeManager.codingGrid.HideTemporarily();
+	}
+
+	public override void OnExit() {
+		//grid.gameTypeManager.codingGrid.ShowIfWasVisible();
 	}
 
 	public override GameObjectState NextState() {
-
+		
 		return GoToState<StateGridPlayerDirection>();
 	}
 

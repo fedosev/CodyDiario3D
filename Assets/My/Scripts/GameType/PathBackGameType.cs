@@ -48,7 +48,7 @@ public class PathBackGameType : BaseGridRobyGameType {
 
 		grid.Init();
 
-		gridRobyManager.codingGrid.gameObject.SetActive(true);
+		gridRobyManager.codingGrid.Show();
 		gridRobyManager.codingGrid.executeButton.onClick.RemoveAllListeners();
 		gridRobyManager.codingGrid.executeButton.onClick.AddListener(ExacuteForwardCode);
 	}
@@ -62,6 +62,7 @@ public class PathBackGameType : BaseGridRobyGameType {
             grid.AddAction(CodingGrid.GetTypeFromLetter(code[i]));
         }
 		grid.NextAction();
+		grid.SetActiveUIAnimated(false);
 		gridRobyManager.codingGrid.HideUI();
 	}
 
