@@ -61,7 +61,6 @@ public class MainGameManager : MonoBehaviour {
 
 	public DebugPanel debugPanel;
 
-
 	[HideInInspector] public bool isLoading;
 	[HideInInspector] public bool isBackground;
 
@@ -84,7 +83,6 @@ public class MainGameManager : MonoBehaviour {
 
     bool isDebug;
     bool isDebugOnScreen;
-
 
     public void SetDebugMode(bool isOn) {
 		isDebug = isOn;
@@ -206,6 +204,7 @@ public class MainGameManager : MonoBehaviour {
 
 		if (SceneManager.sceneCount > 1) {
 			#if F_AR_ENABLED
+				aRCamera.enabled = false;
 				imageTracker.StopTrack();
 			#endif
 			yield return StartCoroutine(FadeOverlay(true, fadeDuration));
@@ -213,7 +212,7 @@ public class MainGameManager : MonoBehaviour {
 			if (!useAR) {
 				noARCamera.gameObject.SetActive(true);
 			}
-			yield return new WaitUntil(() => asyncOp.isDone && (Time.time - t) > fadeDuration);
+            yield return new WaitUntil(() => asyncOp.isDone && (Time.time - t) > fadeDuration);
 		} else if (!useAR) {
 			noARCamera.gameObject.SetActive(true);
 		}
@@ -331,7 +330,7 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	void GameTypeStart() {
-		StartCoroutine(GameTypeStartDelayed(fadeDuration * 2));
+		StartCoroutine(GameTypeStartDelayed(fadeDuration * 1.5f));
 	}
 
 	public IEnumerator GameTypeStartDelayed(float delay) {

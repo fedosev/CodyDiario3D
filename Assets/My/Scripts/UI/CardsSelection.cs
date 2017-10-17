@@ -14,11 +14,13 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 	public event Action<CardTypes[]> OnUseCards;
 
 	public float interpolationSpeed = 15f;
+	public float animationInterval = 0.1f;
 	public float padding = 20f;
 	float col0;
 	float[] cols;
 	float row0;
 	float row1;
+	float row2;
 
 	CardInHand[] cardsInHand;
 	CardInHand[] cardsSelected;
@@ -56,13 +58,14 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 		var cardRect = cardLeftPrefab.GetComponent<RectTransform>().rect;
 		var canvasScale = GetComponentInParent<Canvas>().transform.localScale.x;
 		col0 = -40f - cardRect.width * canvasScale;
-		row0 = corners[0].y + offsetY * canvasScale;
-		row1 = corners[0].y + (cardRect.height + padding + offsetY) * canvasScale;
+		row0 = -40f - cardRect.height * canvasScale;
+		row1 = corners[0].y + offsetY * canvasScale;
+		row2 = corners[0].y + (cardRect.height + padding + offsetY) * canvasScale;
 		for (int i = 0; i < n; i++) {
 			cols[i] = corners[0].x + (cardRect.width + padding) * canvasScale * i;
 		}
 		okButton.onClick.AddListener(UseCards);
-		okButton.transform.position = new Vector3(okButton.transform.position.x, row0, 0f);
+		okButton.transform.position = new Vector3(okButton.transform.position.x, row1, 0f);
 		okButton.gameObject.SetActive(false);
 	}
 
@@ -74,7 +77,8 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 			if (card == null)
 				return;
 			nCardsInHand++;
-			InstantiateCard(i, card, true);
+			//StartCoroutine(InstantiateCardDelayed(i, card, InstantiateCardInterval * (maxCards - 1 - i)));
+			StartCoroutine(InstantiateCardDelayed(i, card, animationInterval * i));
 		}
 	}
 
@@ -84,7 +88,6 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 
 		for (var i = nSelectedCards; i < nCardsInHand; i++) {
 			deck.ReturnCard();
-			
 		}
 		for (int i = 0; i < nSelectedCards; i++) {
 			cards[i] = cardsSelected[i].type;
@@ -95,15 +98,42 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 		if (OnUseCards != null) {
 			OnUseCards(cards);
 		}
+		StartCoroutine(DestroyCards());
+	}
 
-		foreach (var card in cardsInHand) {
-			if (card != null)
-				Destroy(card.gameObject);
+	IEnumerator DestroyCards() {
+
+		var waitForInterval = new WaitForSeconds(animationInterval);
+
+		for (int i = 0; i < nSelectedCards; i++) {
+			cardsSelected[i].SetPosition(new Vector3(col0, row2, 0f));
+			yield return waitForInterval;
 		}
+		for (var i = 0; i < nCardsInHand; i++) {
+			var card = cardsInHand[maxCards - 1 - i];
+			if (card != null && !card.isSelected) {
+				card.SetPosition(new Vector3(cols[maxCards - 1 - i], row0, 0f));
+				yield return waitForInterval;
+			}
+		}
+		yield return new WaitForSeconds(0.5f);
+		foreach (var card in cardsInHand) {
+			if (card == null)
+				break;
+			Destroy(card.gameObject);
+		}
+
 		nCardsInHand = 0;
 		nSelectedCards = 0;
 		Array.Clear(cardsInHand, 0, maxCards);
 		Array.Clear(cardsSelected, 0, maxCards);
+	}
+
+
+	public IEnumerator InstantiateCardDelayed(int i, CardTypes? type, float delay) {
+		yield return new WaitForSeconds(delay);
+		InstantiateCard(i, type, true);
+
 	}
 
 	public void InstantiateCard(int i, CardTypes? type, bool animation = false) {
@@ -122,8 +152,8 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 			var card = cardObj.GetComponent<CardInHand>();
 			card = cardObj.GetComponent<CardInHand>();
 			if (animation)
-				card.SetPosition(new Vector3(col0, row0 ,0f), true);
-			card.SetPosition(new Vector3(cols[i], row0 ,0f), true);
+				card.SetPosition(new Vector3(cols[i], row0, 0f), true);
+			card.SetPosition(new Vector3(cols[i], row1, 0f));
 			card.Init(this, i);
 			cardsInHand[i] = card;
 		} else {
@@ -134,14 +164,14 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 	public void HandleClick(CardInHand card) {
 
 		if (card.isSelected) {
-			card.SetPosition(new Vector3(cols[card.index], row0, 0f));
+			card.SetPosition(new Vector3(cols[card.index], row1, 0f));
 			for (int i = Array.FindIndex(cardsSelected, c => c == card) + 1; i < nSelectedCards; i++) {
-				cardsSelected[i].SetPosition(new Vector3(cols[i - 1], row1, 0f));
+				cardsSelected[i].SetPosition(new Vector3(cols[i - 1], row2, 0f));
 				cardsSelected[i - 1] = cardsSelected[i];
 			}
 			nSelectedCards--;
 		} else {
-			card.SetPosition(new Vector3(cols[nSelectedCards], row1, 0f));
+			card.SetPosition(new Vector3(cols[nSelectedCards], row2, 0f));
 			cardsSelected[nSelectedCards] = card;
 			nSelectedCards++;
 		}

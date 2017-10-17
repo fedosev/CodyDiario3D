@@ -330,11 +330,11 @@ public class QuadBehaviour : MonoBehaviour {
         GetText().text = c.ToString();
     }
 
-	public void UseLetter() {
-		StartCoroutine(AnimateLetter());
+	public void UseLetter(int line = 0) {
+		StartCoroutine(AnimateLetter(line));
 	}
 
-	public IEnumerator AnimateLetter() {
+	public IEnumerator AnimateLetter(int line = 0) {
 
 		var animTime = 0.75f;
 		if (grid.gameTypeConfig.withLetters && letter != ' ') {
@@ -348,7 +348,7 @@ public class QuadBehaviour : MonoBehaviour {
 			//textCloneObj.transform.DOScale(textObj.transform.localScale * 2, animTime).SetEase(Ease.InQuad);
 			textCloneObj.transform.DOLookAt(Camera.main.transform.forward, animTime).SetEase(Ease.InQuad);
 			//yield return new WaitForSeconds(animTime - 0.1f);
-			yield return StartCoroutine(grid.gameTypeManager.AppendLetterDelayed(letter, animTime - 0.1f));
+			yield return StartCoroutine(grid.gameTypeManager.AppendLetterDelayed(letter, animTime - 0.1f, line));
 			yield return new WaitForSeconds(0.1f);
 			Destroy(textCloneObj);
 		}

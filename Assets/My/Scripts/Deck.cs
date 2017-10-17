@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -26,7 +27,28 @@ public class Deck {
 		}
 	}
 
-    // public int CardsInHand { get => cardsInHand; }
+	public void Init() {
+		index = 0;
+		foreach (var card in cards) {
+			card.isInHand = false;
+		}
+	}
+
+    public void Shuffle() {
+		Init();
+		var rnd = new System.Random();
+		// /*
+		var i = cards.Length;
+        while (i > 1) {
+            int k = rnd.Next(i--);
+            var tmp = cards[i];
+            cards[i] = cards[k];
+            cards[k] = tmp;
+			
+		}		
+		// */
+		// cards = cards.OrderBy(x => rnd.Next()).ToArray();
+	}
 
     public CardTypes? TakeCard() {
 

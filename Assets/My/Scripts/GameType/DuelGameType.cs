@@ -14,14 +14,19 @@ public class DuelGameType : BaseGridRobyGameType {
 		return "@todo";
 	} }
 
+    public bool onePlayer = false;
     public string deck = "";
 
     const int cardsNumber = 5;
 
+	bool didWin;
+
     public override void InitBody() {
 
+		didWin = false;
+
         grid.gameType = GameTypes.DUEL;
-        grid.playersNumber = 2;
+        grid.playersNumber = onePlayer ? 1 : 2;
 
 		grid.OnNextTurn += NextTurn;
 		grid.OnLose += Lose;
@@ -35,8 +40,9 @@ public class DuelGameType : BaseGridRobyGameType {
         if (deck.Length > 0) {
             gridRobyManager.deck = new Deck(deck);
 		} else {
-			//gridRobyManager.deck = new Deck("ASADASDASAADASDASAADASDASADSADSAADASDAAD");
-			gridRobyManager.deck = new Deck("ADASAADSADAASDAADAAASADAAAADSSAASAADSAAA");
+			//gridRobyManager.deck = new Deck("ADASAADSADAASDAADAAASADAAAADSSAASAADSAAA");
+			gridRobyManager.deck = new Deck("AAAAAAAAAAAAAAAAAAAAAAAASSSSSSSSDDDDDDDD");
+			gridRobyManager.deck.Shuffle();
 		}
 		gridRobyManager.codingGrid.gameObject.SetActive(true);
 		gridRobyManager.codingGrid.HideUI();
@@ -44,8 +50,13 @@ public class DuelGameType : BaseGridRobyGameType {
 
 		gridRobyManager.cardsSelection.Init(gridRobyManager.deck, cardsNumber, withLetters ? 0f : -100f);
 		gridRobyManager.cardsSelection.OnUseCards += UseCards;
+		gridRobyManager.OnGameTypeStart += NextTurn;
+		/*
 		gridRobyManager.cardsSelection.TakeCards();
 		gridRobyManager.codingGrid.text.SetText(gridRobyManager.deck.GetRichText());
+		// */
+		if (!onePlayer)
+			gridRobyManager.InitLettersTextLine(1);
     }
 
     void UseCards(CardTypes[] cards) {
@@ -58,12 +69,18 @@ public class DuelGameType : BaseGridRobyGameType {
     }
 
     void NextTurn() {
+		if (didWin)
+			return;
 
         if (gridRobyManager.deck.RemainingCards() <= 0) {
             gridRobyManager.WinTextAction("Finite le carte...");
         } else {
 			gridRobyManager.cardsSelection.TakeCards();
 			gridRobyManager.codingGrid.text.SetText(gridRobyManager.deck.GetRichText());
+			/*
+			if (gridRobyManager.GetLettersText(grid.GetNextPlayerTurn()).Length > 0)
+				gridRobyManager.AppendLetter(' ', false, grid.GetNextPlayerTurn());
+			*/
 		}
     }
 
@@ -73,6 +90,7 @@ public class DuelGameType : BaseGridRobyGameType {
 
 		if (nextQuad.otherState == QuadStates.ON) {
             nextQuad.SetState(QuadStates.ACTIVE);
+			didWin = true;
 			grid.ClearActions();
 			robot.OnStopMove += () => {
 				gridRobyManager.WinTextAction("IL GIOCATORE " + (robot.index + 1) + " VINCE!");

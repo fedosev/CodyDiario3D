@@ -93,7 +93,7 @@ public class RobotController : MonoBehaviour, IDirection {
 		}
 		*/
 		if (grid.gameTypeConfig.withLetters) {
-			StartCoroutine(quadBh.AnimateLetter());
+			StartCoroutine(quadBh.AnimateLetter(index));
 			//MyDebug.Log(quadBh.letter);
 		}
 		

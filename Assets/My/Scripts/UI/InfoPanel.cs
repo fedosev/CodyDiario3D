@@ -31,11 +31,13 @@ public class InfoPanel : MonoBehaviour {
 		onClose += OnFirstClose;
 	}
 
+	/*
 	void OnDisable() {
 		if (!wasClosed || OnFirstClose != null) {
 			OnFirstClose();
 			wasClosed = true;
 		}
 	}
+	*/
 	
 }

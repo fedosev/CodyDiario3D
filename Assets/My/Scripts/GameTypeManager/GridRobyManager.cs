@@ -48,7 +48,7 @@ public class GridRobyManager : BaseGameTypeManager {
 		return isDevBoardMode ? devBoardTargetCanvas : targetCanvas;
 	} }
 
-	string text;
+	string[] text = new string[2];
 
 	Text lettersText;
 
@@ -71,7 +71,8 @@ public class GridRobyManager : BaseGameTypeManager {
 		if (panelLetters != null) {
 			panelLetters.SetActive(grid.gameTypeConfig.withLetters);
 			lettersText = panelLetters.GetComponentInChildren<Text>();
-			text = "";
+			text[0] = "";
+			text[1] = null;
 			lettersText.text = "";
 		}
 
@@ -93,23 +94,40 @@ public class GridRobyManager : BaseGameTypeManager {
 		}		
 	}
 
-	public string GetLettersText() {
-		return text;
+	public void InitLettersTextLine(int line) {
+		text[line] = "";
 	}
 
-	public void AppendLetter(char letter, bool skipText = false) {
-		if (!skipText)
-			text += letter.ToString();
+	public string GetLettersText(int line = 0) {
+		return text[line];
+	}
+
+	public void AppendLetter(char letter, bool skipText = false, int line = 0) {
+		if (!skipText) {
+			AddLetter(letter, line);
+		}
 		if (!panelLetters.gameObject.activeSelf) {
 			panelLetters.gameObject.SetActive(true);
 		}
-		lettersText.text = text;
+		lettersText.text = text[0];
+		if (text[1] != null) {
+			lettersText.text += "\n" + text[1];
+		}
 	}
 
-	public IEnumerator AppendLetterDelayed(char letter, float delay) {
-		text += letter;
+	public IEnumerator AppendLetterDelayed(char letter, float delay, int line = 0) {
+		AddLetter(letter, line);
 		yield return new WaitForSeconds(delay);
-		AppendLetter(letter, true);
+		AppendLetter(letter, true, line);
+	}
+
+	void AddLetter(char letter, int line) {
+		if (text[line] == null) {
+			text[line] = "";
+		} else if (text[line].Length > 40) {
+			text[line] = text[line].Substring(1);
+		}
+		text[line] += letter;
 	}
 
 	public void RemoveLastLetter() {

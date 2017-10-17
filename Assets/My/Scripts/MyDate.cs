@@ -41,11 +41,17 @@ public class MyDate {
 	}
 
 	public bool IsGTE(MyDate date) {
-		return new DateTime(year, month, day) >= new DateTime(date.year, date.month, date.day);
+		//return new DateTime(year, month, day) >= new DateTime(date.year, date.month, date.day);
+		return NumForSorting(year, month, day) >= NumForSorting(date.year, date.month, date.day);
 	}
 
 	public bool IsMonthGTE(int year, int month) {
-		return new DateTime(this.year, this.month, 1) >= new DateTime(year, month, 1);
+		//return new DateTime(this.year, this.month, 1) >= new DateTime(year, month, 1);
+		return NumForSorting(this.year, this.month, 1) >= NumForSorting(year, month, 1);
+	}
+
+	int NumForSorting(int year, int month, int day) {
+		return year * 10000 + month * 100 + day;
 	}
 
 }

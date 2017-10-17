@@ -101,7 +101,8 @@ public class DaySelector : MonoBehaviour {
 
 	void OnEnable() {
 
-		Init();
+		if (!wasInit)
+			Init();
 	}
 
 	void Start () {

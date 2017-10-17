@@ -171,6 +171,7 @@ public class MainMenu : MonoBehaviour {
 	public void ShowInfoOnStart() {
 		disableFadeIn = true;
 		ShowPanel(infoPanelIndex);
+		prevPanelIndex = daySelectorPanelIndex;
 	}
 
 	public void Hide() {

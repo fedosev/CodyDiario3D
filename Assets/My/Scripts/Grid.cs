@@ -80,6 +80,10 @@ public class Grid : MonoBehaviour {
 		return null;
 	} }
 
+	public int GetNextPlayerTurn() {
+		return (playerTurn + 1) % playersNumber;
+	}
+
     public void UpdateSize(float size) {
         uiSize = size;
 		this.transform.localScale = baseScale * size;
