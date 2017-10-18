@@ -97,9 +97,10 @@ public class Grid : MonoBehaviour {
 
 		var quadSize = quadTransforms[0].lossyScale.x;
 		var ratio = quadSize / config.size;
-		var a = quadSize + config.borderSize * ratio;
-		var bx = (quadSize - transform.lossyScale.x) / 2;
-		var bz = (quadSize - transform.lossyScale.y) / 2;
+		var borderSize = config.borderSize * ratio;
+		var a = quadSize + borderSize;
+		var bx = (quadSize - transform.lossyScale.x) / 2 + borderSize;
+		var bz = (quadSize - transform.lossyScale.y) / 2 + borderSize;
 		
 		return new Vector3(
 			col * a + bx,

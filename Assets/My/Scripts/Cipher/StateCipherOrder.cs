@@ -11,6 +11,8 @@ public class StateCipherOrder : GameObjectState {
 	InputEncodeDecode inputSequence;
 	Button okButton;
 
+	Vector3 originalPosition;
+
 	public override void OnEnter() {
 
 		foreach (var rotCyl in rotCode.rotCylinders) {
@@ -18,7 +20,9 @@ public class StateCipherOrder : GameObjectState {
 		}
 		BaseGameTypeManager.Instance.shouldBeVisibleTargetCanvas = false;
 		BaseGameTypeManager.Instance.UpdateVisibility();
-		rotCode.fixedRotCylinder.gameObject.SetActive(false);
+		//rotCode.fixedRotCylinder.gameObject.SetActive(false);
+		originalPosition = rotCode.transform.position;
+		rotCode.transform.position = new Vector3(0f, 0f, -1000f);
 		inputSequence = inputsEncodeDecode[0].GetField(true);
 		okButton = inputSequence.keyboard.okButton.GetComponent<Button>();
 		inputSequence.OnAddLetter += AddLetterHandler;
@@ -50,12 +54,13 @@ public class StateCipherOrder : GameObjectState {
 			inputSequence.SetPlaceholder("Lettere nel tuo ordine");
 			rotText.SetText("SELEZIONA...");
 		}
-		StartCoroutine(ShowKeyboard(0f));
+		CipherRotManager.Instance.OnGameTypeStart += ShowKeyboard;
+		//StartCoroutine(ShowKeyboard(0f));
 	}
 
-	IEnumerator ShowKeyboard(float delay = 1f) {
+	void ShowKeyboard(/*float delay = 1f*/) {
 		inputSequence.keyboard.couldBeHidden = false;
-		yield return new WaitForSeconds(delay);
+		//yield return new WaitForSeconds(delay);
 		inputSequence.keyboard.Show();
 	}
 
@@ -64,7 +69,8 @@ public class StateCipherOrder : GameObjectState {
 		foreach (var rotCyl in rotCode.rotCylinders) {
 			rotCyl.gameObject.SetActive(true);
 		}
-		rotCode.fixedRotCylinder.gameObject.SetActive(true);
+		//rotCode.fixedRotCylinder.gameObject.SetActive(true);
+		rotCode.transform.position = originalPosition;
 		rotCode.sequence = inputSequence.GetText();
 		rotCode.Init();
 		foreach (var inputED in inputsEncodeDecode) {
@@ -82,8 +88,13 @@ public class StateCipherOrder : GameObjectState {
 
 		PlayerPrefs.SetString("CipherSequence", rotCode.sequence);
 		BaseGameTypeManager.Instance.shouldBeVisibleTargetCanvas = true;
-		BaseGameTypeManager.Instance.UpdateVisibility();
+		BaseGameTypeManager.Instance.UpdateVisibility(true);
+		//StartCoroutine(UpdateVisibility());
+	}
 
+	IEnumerator UpdateVisibility() {
+		yield return null;
+		BaseGameTypeManager.Instance.UpdateVisibility(true);
 	}
 
 	void OkButtonHandler() {

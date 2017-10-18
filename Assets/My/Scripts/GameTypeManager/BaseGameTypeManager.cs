@@ -59,12 +59,12 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
     public void UpdateVisibility(bool force = false) {
 
-		UpdateGameVisibility();
+		UpdateGameVisibility(force);
 		UpdateUIVisibility(force);
 		UpdateTargetCanvasVisibility();
 	}
 
-	void UpdateGameVisibility() {
+	void UpdateGameVisibility(bool force) {
 
 		bool showGame = true;
 		
@@ -80,7 +80,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		}
 		*/
 
-		if (showGame != isGameVisible) {
+		if (showGame != isGameVisible || force) {
 			SetVisible(GameObj, showGame);
 			isGameVisible = showGame;
 		}

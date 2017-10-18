@@ -158,7 +158,7 @@ public class RobotController : MonoBehaviour, IDirection {
 			currentState = RobotStates.Idle;
 		}
 
-		StopCoroutine("WaitAndFixTransform");
+		//StopCoroutine("WaitAndFixTransform");
 	}
 
 	IEnumerator WaitAndFixTransform() {
@@ -180,7 +180,7 @@ public class RobotController : MonoBehaviour, IDirection {
 
 		currentState = RobotStates.Idle;
 		
-		StopCoroutine("WaitAndFixTransform");
+		//StopCoroutine("WaitAndFixTransform");
 
 		if (OnFinishMovementOnce != null) {
 			OnFinishMovementOnce();
