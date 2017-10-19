@@ -21,6 +21,7 @@ public class DayButton : MonoBehaviour, IPointerClickHandler {
 	public void OnPointerClick(PointerEventData eventData) {
 		if (MainGameManager.Instance.today.IsGTE(date)) {
 			MainGameManager.Instance.LoadGameType(gameType);
+			SoundManager.Instance.PlayMenu();
 			//DaySelector.Instance.Hide();
 			//MainGameManager.Menu.ToggleMenu();
 		}

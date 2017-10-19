@@ -139,6 +139,7 @@ public class MainGameManager : MonoBehaviour {
     }
 
 	public virtual void TurnSoundOn(bool isOn) {
+		SoundManager.Instance.audioSource.mute = !isOn;
 		if (gameTypeManager) {
 			gameTypeManager.TurnSoundOn(isOn);
 		} else {
@@ -295,6 +296,8 @@ public class MainGameManager : MonoBehaviour {
 	}
 
 	public IEnumerator InitBackground() {
+
+		TurnSoundOn(gameConfig.isSoundOn);
 
 		AsyncOperation asyncOp;
 

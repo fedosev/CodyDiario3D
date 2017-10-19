@@ -193,6 +193,8 @@ public class MainMenu : MonoBehaviour {
 
 	public IEnumerator ShowAnimated(bool show, bool animated, int panelIndex = -1) {
 
+		if (show && !disableFadeIn)
+			SoundManager.Instance.PlayMenu();
 		var slowFade = disableFadeIn;
 		gameManager.PauseGame(show);
 		if (animated && !disableFadeIn) {

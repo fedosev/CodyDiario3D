@@ -45,7 +45,7 @@ public class Popup : MonoBehaviour {
 		buttonRetry.SetActive(true);
 		buttonPlayAgain.SetActive(true);
 		Show();
-
+		SoundManager.Instance.PlayWin();
 	}
 
 	public void ShowLose() {

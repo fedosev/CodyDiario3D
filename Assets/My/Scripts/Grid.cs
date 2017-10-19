@@ -69,6 +69,9 @@ public class Grid : MonoBehaviour {
 
     public event Action<QuadBehaviour> OnQuadStateChange;
 
+    [HideInInspector] public float nextActionDelay;
+	
+
 	public float QuadSize { get {
 		return quadTransforms[0].lossyScale.x;
 	} }
@@ -607,6 +610,24 @@ public class Grid : MonoBehaviour {
 		// }
 	}
 
+	IEnumerator DoActionDelayed(CardTypes? cardType) {
+		if (nextActionDelay > 0f)
+			yield return new WaitForSeconds(nextActionDelay);
+
+		switch (cardType) {
+			case CardTypes.LEFT:
+				CurrentRobotController.TurnLeft();
+				break;
+			case CardTypes.FORWARD:
+				CurrentRobotController.MoveForward();
+				break;
+			case CardTypes.RIGHT:
+				CurrentRobotController.TurnRight();
+				break;
+		}
+		nextActionDelay = 0f;
+	}
+
     public void NextAction() {
 
         if (gameType == GameTypes.SNAKE) {
@@ -615,18 +636,7 @@ public class Grid : MonoBehaviour {
             if (actionsQueue.Count > 0) {
                 InExecution = true;
                 var cardType = actionsQueue.Dequeue();
-                switch (cardType) {
-                    case CardTypes.LEFT:
-                        CurrentRobotController.TurnLeft();
-                        break;
-                    case CardTypes.FORWARD:
-                        CurrentRobotController.MoveForward();
-                        break;
-                    case CardTypes.RIGHT:
-                        CurrentRobotController.TurnRight();
-                        break;
-                }
-
+				StartCoroutine(DoActionDelayed(cardType));
             } else {
                 NextTurn();
                 InExecution = false;

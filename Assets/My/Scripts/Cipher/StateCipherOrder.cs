@@ -30,7 +30,7 @@ public class StateCipherOrder : GameObjectState {
 		okButton.onClick.AddListener(OkButtonHandler);
 		
 		var rotText = GameObject.FindObjectOfType<RotNumberText>();
-		var sequence = PlayerPrefs.GetString("CipherSequence");
+		var sequence = PlayerPrefs.GetString(GetSaveString());
 		if (sequence.Length == 26 || sequence.Length == 27) {
 			rotCode.sequence = sequence;
 			inputsEncodeDecode[0].SetEditSequenceMode(true);
@@ -86,10 +86,15 @@ public class StateCipherOrder : GameObjectState {
 		inputSequence.keyboard.couldBeHidden = true;
 		rotCode.TriggerCodeChange();
 
-		PlayerPrefs.SetString("CipherSequence", rotCode.sequence);
+		PlayerPrefs.SetString(GetSaveString(), rotCode.sequence);
 		BaseGameTypeManager.Instance.shouldBeVisibleTargetCanvas = true;
 		BaseGameTypeManager.Instance.UpdateVisibility(true);
 		//StartCoroutine(UpdateVisibility());
+	}
+
+	string GetSaveString() {
+		return BaseGameTypeManager.Instance.gameType.month.ToString() + "-" +
+			   BaseGameTypeManager.Instance.gameType.name + "/cipherSequence";
 	}
 
 	IEnumerator UpdateVisibility() {

@@ -25,10 +25,13 @@ public class QuadBehaviour : MonoBehaviour {
 	public int player = -1;
 	public int number = -1;
 
+	[HideInInspector] public bool isFake = false;
+
 	Grid grid;
 	ConfigScriptableObject config;
 
 	Renderer rend;
+
 
 	MeshFilter meshFilter;
 	MeshFilter MyMeshFilter { get {
@@ -96,9 +99,57 @@ public class QuadBehaviour : MonoBehaviour {
 		RecordUndo();
 	}
 	
+	public void SetStateAnimated(QuadStates quadState, bool animateIn, float speed = 15f, float targetY = 0.07f, float delay = 0f) {
 
-	public void SetState(QuadStates quadState) {
+		if (isFake || isWaitingForAnimation)
+			return;
+		
+		StartCoroutine(SetStateEnum(quadState, animateIn, speed, targetY, delay));
+	}
 
+	IEnumerator SetStateEnum(QuadStates quadState, bool animateIn, float speed, float targetY, float delay) {
+
+		isWaitingForAnimation = true;
+		if (delay > 0f) {
+			yield return new WaitForSeconds(delay);
+		}
+		var startOffset = new Vector3(0f, targetY, 0f);
+		var newQuad = Instantiate(this.gameObject, transform.position, transform.rotation, grid.transform);
+		var newQuadTr = newQuad.transform;
+		//newQuadTr.localScale = transform.localScale;
+		var newQuadBh = newQuadTr.GetComponent<QuadBehaviour>();
+		if (animateIn)
+			newQuadTr.position += startOffset;
+		var targetPos = transform.position;
+		if (animateIn) { // in
+			newQuadBh.SetState(quadState, true);
+			newQuadBh.isFake = true;
+			targetPos.y -= 0.0001f;
+			while (newQuadTr.position.y > transform.position.y + 0.0002f) {
+				newQuadTr.position = Vector3.Lerp(newQuadTr.position, targetPos, Time.deltaTime * speed);
+				yield return null;
+			}
+		} else { // out
+			targetPos += startOffset;
+			newQuadBh.SetState(mainState, true);
+			newQuadBh.isFake = true;
+			SetState(quadState, true);
+			while (newQuadTr.position.y < targetPos.y - 0.0001f) {
+				newQuadTr.position = Vector3.Lerp(newQuadTr.position, targetPos, Time.deltaTime * speed);
+				yield return null;
+			}
+		}
+		if (animateIn && isWaitingForAnimation)
+			SetState(quadState, true);
+		Destroy(newQuadTr.gameObject);
+		isWaitingForAnimation = false;
+	}
+
+	public void SetState(QuadStates quadState, bool force = false) {
+
+		if (isFake && isWaitingForAnimation && !force)
+			return;
+		//isWaitingForAnimation = false;
 		//direction = Vector3.zero;
 
 		rend = GetComponent<Renderer>();
@@ -308,8 +359,9 @@ public class QuadBehaviour : MonoBehaviour {
 
 
 	TextMeshPro text;
+    private bool isWaitingForAnimation;
 
-	public TextMeshPro GetText() {
+    public TextMeshPro GetText() {
 
 		#if UNITY_EDITOR
 			if (!UnityEditor.EditorApplication.isPlaying && grid == null) {

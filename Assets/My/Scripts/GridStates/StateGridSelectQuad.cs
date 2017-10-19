@@ -22,8 +22,10 @@ public class StateGridSelectQuad : GameObjectState, IPointerClickHandler {
 
 	public void OnPointerClick(PointerEventData eventData) {
 		
-		if (eventData.pointerEnter.tag == "Quad" && OnSelect != null) {
+		if (eventData.pointerEnter != null && eventData.pointerEnter.tag == "Quad" && OnSelect != null) {
 			var quad = eventData.pointerEnter.GetComponent<QuadBehaviour>();
+			if (quad.isFake)
+				return;
 			OnSelect(this, quad);
 		}
 	}

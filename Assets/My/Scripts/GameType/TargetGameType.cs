@@ -59,10 +59,12 @@ public class TargetGameType : BaseGridRobyGameType {
 
 		if (quad.mainState == QuadStates.DEFAULT && quad.otherState == QuadStates.DEFAULT) {
 			starsNumber++;
-			quad.SetState(QuadStates.STAR);
+			//quad.SetState(QuadStates.STAR);
+			quad.SetStateAnimated(QuadStates.STAR, true);
 		} else if (quad.mainState == QuadStates.STAR) {
 			starsNumber--;
 			quad.SetState(QuadStates.DEFAULT);
+			//quad.SetStateAnimated(QuadStates.DEFAULT, false, 10f, 0.04f);
 		}
 	}
 
@@ -101,8 +103,11 @@ public class TargetGameType : BaseGridRobyGameType {
 		}
 		
 		if (shouldTakeStar) {
-			currentQuad.SetMainState(QuadStates.DEFAULT);
-			currentQuad.SetOtherState(QuadStates.ACTIVE);
+			//currentQuad.SetMainState(QuadStates.DEFAULT);
+			currentQuad.SetStateAnimated(QuadStates.DEFAULT, false, 10f, 0.04f);
+			currentQuad.SetState(QuadStates.ACTIVE, true);
+			SoundManager.Instance.PlayStar();
+			grid.nextActionDelay = 0.75f;
 			shouldTakeStar = false;
 		}		
 
