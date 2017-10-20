@@ -25,8 +25,12 @@ public class DaySelector : MonoBehaviour {
 	AllGameTypes.Month month;
 
 	bool wasInit = false;
+	bool daysWereInit = false;
+
     List<AllGameTypes.Month> months;
     MonthButton[] monthButtons;
+
+	DayButton[] dayButtons;
 
 	public void RefreshNextTime() {
 		wasInit = false;
@@ -61,19 +65,41 @@ public class DaySelector : MonoBehaviour {
 		gameObject.SetActive(false);
 	}
 
+	public float _delay = 0.028f;
+	public float _speed = 7f;
+	public float _offset = 6;
+
 	public void InitDays() {
 
 		GameObject dayObj;
 		BaseGameType day;
 
-		for (var i = 0; i < daysPanel.transform.childCount; i++) {
-			Destroy(daysPanel.transform.GetChild(i).gameObject);
+		if (dayButtons == null) {
+			var dayButtonsCount = daysPanel.transform.childCount;
+			dayButtons = new DayButton[dayButtonsCount];
+			for (var i = 0; i < dayButtonsCount; i++) {
+				//Destroy(daysPanel.transform.GetChild(i).gameObject);
+				dayButtons[i] = daysPanel.transform.GetChild(i).GetComponent<DayButton>();
+			}
 		}
 		for (var i = 0; i < month.days.Count; i++) {
 			day = month.days[i];
-			dayObj = Instantiate(dayButtonPrefab);
-			dayObj.transform.SetParent(daysPanel.transform, false);
-			dayObj.GetComponent<DayButton>().Init(day, new MyDate(day.year, day.month, i * 2 + 1));
+			var dayB = dayButtons[i];
+			dayB.gameObject.SetActive(true);
+			dayB.transform.SetParent(daysPanel.transform, false);
+			dayB.Init(day, new MyDate(day.year, day.month, i * 2 + 1));
+			if (daysWereInit) {
+				if (i < 8)
+					dayB.Animate(i * _delay, _speed);
+				else
+					dayB.Animate((i - _offset) * _delay, _speed);
+				//dayB.Animate((i % 8) * 0.016f);
+				//dayB.Animate(0f);
+			}
+		}
+		daysWereInit = true;
+		for (var i = month.days.Count; i < dayButtons.Length; i++) {
+			dayButtons[i].gameObject.SetActive(false);
 		}
 	}
 
