@@ -71,6 +71,9 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 
 	public void TakeCards() {
 
+		if (deck == null)
+			return;
+
 		CardTypes? card;
 		for (int i = 0; i < maxCards; i++) {
 			card = deck.TakeCard();
@@ -86,13 +89,20 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 
 		var cards = new CardTypes[nSelectedCards];
 
-		for (var i = nSelectedCards; i < nCardsInHand; i++) {
-			deck.ReturnCard();
+		if (deck != null) {
+			for (var i = nSelectedCards; i < nCardsInHand; i++) {
+				deck.ReturnCard();
+			}
+			for (int i = 0; i < nSelectedCards; i++) {
+				cards[i] = cardsSelected[i].type;
+			}
+			deck.UseAllCards();
+		} else {
+			cards = new CardTypes[nCardsInHand];
+			for (int i = 0; i < nCardsInHand; i++) {
+				cards[i] = cardsInHand[i].type;
+			}
 		}
-		for (int i = 0; i < nSelectedCards; i++) {
-			cards[i] = cardsSelected[i].type;
-		}
-		deck.UseAllCards();
 		okButton.gameObject.SetActive(false);
 
 		if (OnUseCards != null) {
@@ -111,7 +121,7 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 		}
 		for (var i = 0; i < nCardsInHand; i++) {
 			var card = cardsInHand[maxCards - 1 - i];
-			if (card != null && !card.isSelected) {
+			if (card != null && (!card.isSelected || deck == null)) {
 				card.SetPosition(new Vector3(cols[maxCards - 1 - i], row0, 0f));
 				yield return waitForInterval;
 			}
@@ -129,6 +139,11 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 		Array.Clear(cardsSelected, 0, maxCards);
 	}
 
+	IEnumerator DestroySingleCard(CardInHand card) {
+		card.SetPosition(new Vector3(cols[card.index], row0, 0f));
+		yield return new WaitForSeconds(0.5f);
+		Destroy(card.gameObject);
+	}
 
 	public IEnumerator InstantiateCardDelayed(int i, CardTypes? type, float delay) {
 		yield return new WaitForSeconds(delay);
@@ -159,13 +174,38 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 		} else {
 			cardsInHand[i] = null;
 		}
-	}	
+	}
+
+	public void AppendCard(CardTypes type) {
+
+		if (deck != null || nCardsInHand >= maxCards)
+			return;
+
+		InstantiateCard(nCardsInHand, type, true);
+		nCardsInHand++;
+		okButton.gameObject.SetActive(nCardsInHand > 0);
+	}
 
 	public void HandleClick(CardInHand card) {
 
+		if (deck == null) {
+			//var i = Array.FindIndex(cardsInHand, c => c == card);
+			var i = card.index;
+			StartCoroutine(DestroySingleCard(card));
+			while (++i < nCardsInHand) {
+				cardsInHand[i].SetPosition(new Vector3(cols[i - 1], row1, 0f));
+				cardsInHand[i - 1] = cardsInHand[i];
+				cardsInHand[i].index = i - 1;
+			}
+			nCardsInHand--;
+			okButton.gameObject.SetActive(nCardsInHand > 0);
+
+			return;
+		}
+
 		if (card.isSelected) {
 			card.SetPosition(new Vector3(cols[card.index], row1, 0f));
-			for (int i = Array.FindIndex(cardsSelected, c => c == card) + 1; i < nSelectedCards; i++) {
+			for (var i = Array.FindIndex(cardsSelected, c => c == card) + 1; i < nSelectedCards; i++) {
 				cardsSelected[i].SetPosition(new Vector3(cols[i - 1], row2, 0f));
 				cardsSelected[i - 1] = cardsSelected[i];
 			}

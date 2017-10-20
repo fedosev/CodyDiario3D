@@ -10,6 +10,8 @@ public class Card : MonoBehaviour, IPointerClickHandler {
 
     public CardTypes cardType;
 
+    public Action<CardTypes> OnClick;
+
     CodingGrid codingGrid;
     Grid grid;
 
@@ -24,6 +26,11 @@ public class Card : MonoBehaviour, IPointerClickHandler {
 
         if (grid.inPause)
             return;
+            
+        if (OnClick != null) {
+            OnClick(cardType);
+            return;
+        }
 
         if (grid.gameType == GameTypes.PATH ||
             grid.gameType == GameTypes.AUTO ||

@@ -281,7 +281,11 @@ public class MainGameManager : MonoBehaviour {
 		
 		Menu.popup.Init();
 
-		if (gameType.showInfoOnStart) {
+		var showInfoOnStart = gameType.showInfoOnStart;
+		#if UNITY_EDITOR && F_DEBUG
+			showInfoOnStart = false;
+		#endif
+		if (showInfoOnStart) {
 			Menu.ShowInfoOnStart();
 			Menu.InfoPanelObj.OnFirstClose += GameTypeStart;
 		} else {
@@ -647,14 +651,17 @@ public class MainGameManager : MonoBehaviour {
 			LoadNextGameType();
 		}
 		*/
-		#if UNITY_EDITOR
+			var inputStr = Input.inputString;
 			if (Input.GetKeyDown(KeyCode.W) && Input.inputString == "w") {
 				Time.timeScale *= 2;
 				MyDebug.Log(Time.timeScale + "x");
 			} else if (Input.GetKeyDown(KeyCode.Q) && Input.inputString == "q") {
 				Time.timeScale *= 0.5f;
 				MyDebug.Log(Time.timeScale + "x");
+			} else if (Input.GetKeyDown("`")) {
+				RestartGameType();
 			}
+		#if UNITY_EDITOR
 		#endif
 	}
 }

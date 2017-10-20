@@ -4,7 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 
-public enum GameTypes { FREE, TAP, SNAKE, PATH, DUEL, ART, AUTO };
+public enum GameTypes { FREE, TAP, SNAKE, PATH, DUEL, CONQUEST, ART, AUTO };
 
 public enum PlayerTypes { VIRTUAL, REAL };
 
@@ -71,17 +71,33 @@ public class Grid : MonoBehaviour {
 
     [HideInInspector] public float nextActionDelay;
 	
+	RobotController[] robots;
+
 
 	public float QuadSize { get {
 		return quadTransforms[0].lossyScale.x;
 	} }
 
 	public RobotController CurrentRobotController { get {
-		if (playerTurn >= 0 && players.Length > 0 && players[playerTurn] != null)
-			return players[playerTurn].GetComponent<RobotController>();
+		if (playerTurn >= 0 && players.Length > 0 && robots[playerTurn] != null)
+			return robots[playerTurn];
 
 		return null;
 	} }
+
+	public RobotController NextRobotController { get {
+		var nextTurn = (playerTurn + 1) % playersNumber;
+		if (playerTurn >= 0 && players.Length > nextTurn && robots[nextTurn] != null)
+			return robots[nextTurn];
+
+		return null;
+	} }
+
+	public RobotController GetRobotController(int index, bool next = false) {
+		if (next)
+			index = (index + 1) % playersNumber;
+		return robots[index];
+	}
 
 	public int GetNextPlayerTurn() {
 		return (playerTurn + 1) % playersNumber;
@@ -200,6 +216,8 @@ public class Grid : MonoBehaviour {
 		players[index] = Instantiate(config.robotPrefabs[index], pos, Quaternion.AngleAxis(GetAngleFromDirection(direction), Vector3.up));
 		players[index].name = name;
 		RobotController rc = players[index].GetComponent<RobotController>();
+		robots[index] = rc;
+		rc.Init(this);
 		rc.index = index;
 		rc.SetRowCol(z, x);
 		rc.SetDirection(RobyStartPosition.GetDirection(direction));
@@ -319,6 +337,7 @@ public class Grid : MonoBehaviour {
 		);
 
 		players = new GameObject[playersNumber];
+		robots = new RobotController[playersNumber];
 
 		// BORDERS
 

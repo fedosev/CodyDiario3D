@@ -347,6 +347,10 @@ public class RobotController : MonoBehaviour, IDirection {
 		//currentQuad = grid.GetQuad(currentQuadRow, currentQuadCol);
 	}
 
+	public void Init(Grid grid) {
+		this.grid = grid;
+	}
+
     void Start() {
         animator = GetComponent<Animator>();
 		sounds = GetComponent<RobotSounds>();
@@ -358,7 +362,8 @@ public class RobotController : MonoBehaviour, IDirection {
 
 		nextDirection = direction;
 		
-		grid = gridGameObj.GetComponent<Grid>();
+		if (grid == null)
+			grid = gridGameObj.GetComponent<Grid>();
 
 		currentState = RobotStates.Idle;
 
