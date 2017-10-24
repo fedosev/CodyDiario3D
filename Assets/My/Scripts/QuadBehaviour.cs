@@ -361,25 +361,32 @@ public class QuadBehaviour : MonoBehaviour {
 	TextMeshPro text;
     private bool isWaitingForAnimation;
 
-    public TextMeshPro GetText() {
-
+    public TextMeshPro TextLetter { get {
 		#if UNITY_EDITOR
 			if (!UnityEditor.EditorApplication.isPlaying && grid == null) {
 				grid = FindObjectOfType<Grid>();
 			}
-		#endif		
+		#endif
 		if (text == null) {
 			text = Instantiate(grid.config.quadLetterPrefab).GetComponent<TextMeshPro>();
 			text.transform.position = transform.position + new Vector3(0f, 0.0009f, 0f);
 			text.transform.SetParent(transform);
 		}
 		return text;
-	}
+	} }
 
     public void SetLetter(char c) {
 		letter = c;
 		isSetLetter = true;
-        GetText().text = c.ToString();
+		TextLetter.gameObject.SetActive(true);
+        TextLetter.text = c.ToString();
+    }
+
+    public void UnsetLetter() {
+		letter = ' ';
+		isSetLetter = false;
+        TextLetter.text = " ";
+		TextLetter.gameObject.SetActive(false);
     }
 
 	public void UseLetter(int line = 0) {
@@ -390,7 +397,7 @@ public class QuadBehaviour : MonoBehaviour {
 
 		var animTime = 0.75f;
 		if (grid.gameTypeConfig.withLetters && letter != ' ') {
-			var textObj = GetText().gameObject;
+			var textObj = TextLetter.gameObject;
 			var textCloneObj = Instantiate(textObj, text.transform.position, text.transform.rotation, transform);
 			if (textCloneObj.transform.childCount == 1) {
 				Destroy(textCloneObj.transform.GetChild(0).gameObject);

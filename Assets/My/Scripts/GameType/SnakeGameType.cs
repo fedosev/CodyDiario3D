@@ -11,12 +11,12 @@ public class SnakeGameType : BaseGridRobyGameType {
 	} }
 
 	public override string generalInfo { get {
-		string str;
+		var str = base.generalInfo;
 		if (deck.Length > 0) {
-            str = "Oggi il mazzo di carte è nella seguente sequenza:\n";
+            str += "Oggi il mazzo di carte è nella seguente sequenza:\n";
 			str += deck + ".\n";
 		} else {
-			str = "Oggi puoi usare tutte le istruzioni che vuoi.\n";
+			str += "Oggi puoi usare tutte le istruzioni che vuoi.\n";
 		}
 		return str;
 	} }

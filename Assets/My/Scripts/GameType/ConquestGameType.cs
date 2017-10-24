@@ -12,7 +12,16 @@ public class ConquestGameType : BaseGridRobyGameType {
 	} }
 
 	public override string generalInfo { get {
-		var str = "@todo\n";
+		var str = "";
+		if (deck.Length > 0) {
+			str += "Oggi hai il mazzo di carte nel seguente ordine:\n" + deck + ".\n";
+		} else {
+			str += "Oggi hai il mazzo di carte nell'ordine casuale.\n";
+		}
+		str += "Ad ogni turno il giocatore può usare fino a cinque carte. ";
+		str += "Per esempio se decidi di usare tre carte. Devi selezionare le prime tre ma puoi seleizonarle nell'ordine che preferisci. ";
+		str += "Quindi se hai selezionato un carta, devi usare anche tutte le carte precedenti ad essa.\n";
+		str += "Se il mazzo finisce prima, verrà rimescolato.\n";
 		if (vsComputer) {
 			str += "Oggi giocherai contro il computer";
 				if (computerSequence.Length > 0)
@@ -23,11 +32,12 @@ public class ConquestGameType : BaseGridRobyGameType {
 	} }
 
     public string deck = "";
+    public bool shuffleWithConstraints = true;
     public bool vsComputer = false;
     public string[] computerSequence;
 
     int cardsNumber = 5;
-	readonly char[] letters = new char[] { 'X', 'O' };
+	readonly char[] chars = new char[] { 'X', 'O' };
 
 	bool didWin;
 	int nQuads;
@@ -52,8 +62,8 @@ public class ConquestGameType : BaseGridRobyGameType {
 
 		grid.CurrentRobotController.score = 1;
 		grid.NextRobotController.score = 1;
-		grid.GetRobotController(0).CurrentQuadBh.SetLetter(letters[0]);
-		grid.GetRobotController(1).CurrentQuadBh.SetLetter(letters[1]);
+		grid.GetRobotController(0).CurrentQuadBh.SetLetter(chars[0]);
+		grid.GetRobotController(1).CurrentQuadBh.SetLetter(chars[1]);
         
 		if (!vsComputer) {
 			grid.SetActiveUI(false);
@@ -67,7 +77,7 @@ public class ConquestGameType : BaseGridRobyGameType {
 				gridRobyManager.deck = new Deck("AAAAAAAAAAAAAAAAAAAAAAAASSSSSSSSDDDDDDDD"); // page 345
 				//gridRobyManager.deck = new Deck("AAAAAAAAAAAAAAAAAAAAAAAASSSSSSSSDDDDDDDDAAAAAAAAAAAAAAAAAAAAAAAASSSSSSSSDDDDDDDD"); // page 345 x2
 				//gridRobyManager.deck = new Deck("AAAAAAAAAAAAAAAAAAAASSSSSSSSSSDDDDDDDDDD");
-				gridRobyManager.deck.Shuffle(true);
+				gridRobyManager.deck.Shuffle(shuffleWithConstraints);
 			}
 			gridRobyManager.codingGrid.Show();
 			gridRobyManager.codingGrid.HideUI();
@@ -128,7 +138,7 @@ public class ConquestGameType : BaseGridRobyGameType {
 			}
 		} else {
 			if (gridRobyManager.deck.RemainingCards() <= 0 /* @tmp: */|| cardsNumber == 6) {
-				gridRobyManager.deck.Shuffle();
+				gridRobyManager.deck.Shuffle(shuffleWithConstraints);
 			}
 			gridRobyManager.cardsSelection.TakeCards();
 			gridRobyManager.codingGrid.text.SetText(gridRobyManager.deck.GetRichText());
@@ -138,13 +148,13 @@ public class ConquestGameType : BaseGridRobyGameType {
     public override void ChangeQuad(RobotController robot, QuadBehaviour prevQuad, QuadBehaviour nextQuad) {
         
 		var otherRobot = grid.GetRobotController(robot.index, true);
-		var letter = letters[robot.index];
+		var letter = chars[robot.index];
 		prevQuad.SetState(QuadStates.DEFAULT);
 
 		if (nextQuad.letter != letter) {
 			robot.score++;
 		}
-		if (nextQuad.letter == letters[(robot.index + 1) % 2]) {
+		if (nextQuad.letter == chars[(robot.index + 1) % 2]) {
 			otherRobot.score--;
 		}
 
@@ -176,5 +186,16 @@ public class ConquestGameType : BaseGridRobyGameType {
     public override bool QuadIsFreeToGoIn(QuadBehaviour quad) {
         return quad.otherState != QuadStates.ON;
     }
+
+	public override void Lose(int player) {
+		if (vsComputer) {
+			gridRobyManager.LoseAction();
+		} else {
+			gridRobyManager.WinTextAction("IL GIOCATORE " +
+				((grid.GetNextPlayerTurn()) + 1) + " VINCE!"
+			);
+		}
+	}
+	
 
 }

@@ -240,7 +240,7 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 		} else {
 			if (text.Length > 0) {
 				input.SetText(text);
-				UpdateText();
+				input.UpdateText();
 			}
 		}
 	}

@@ -11,7 +11,7 @@ public class MyDate {
 	public int day;
 
 	static string[] monthNames = new string[12] {
- 		"Gennaio", "Febbraio", "Marzo","Aprile",
+ 		"Gennaio", "Febbraio", "Marzo", "Aprile",
 		 "Maggio", "Giugno", "Luglio", "Agosto",
 		 "Settembre", "Ottobre", "Novembre", "Dicembre"
  	};

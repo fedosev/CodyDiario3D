@@ -53,7 +53,7 @@ public class MainMenu : MonoBehaviour {
     bool disableFadeIn = false;
 
     bool isAfterFirstDay = false;
-
+    bool isAnimating = false;
 
     void Awake() {
 
@@ -131,6 +131,8 @@ public class MainMenu : MonoBehaviour {
 	}
 
 	public void ShowMain() {
+		if (isAnimating)
+			return;
 		prevPanelIndex = -1;
 		panelIndex = mainPanelIndex;
 		StartCoroutine(ShowAnimated(true, true, mainPanelIndex));
@@ -142,6 +144,8 @@ public class MainMenu : MonoBehaviour {
 	}
 
 	public void ShowPanel(int panelIndex) {
+		if (isAnimating)
+			return;
 		prevPanelIndex = panelIndex == mainPanelIndex ? -1 : mainPanelIndex;
 		this.panelIndex = panelIndex;
 
@@ -175,12 +179,16 @@ public class MainMenu : MonoBehaviour {
 	}
 
 	public void Hide() {
+		if (isAnimating)
+			return;		
 		prevPanelIndex = -1;
 		panelIndex = -1;		
 		StartCoroutine(ShowAnimated(false, true));
 	}
 
 	public void Hide(bool animated) {
+		if (isAnimating)
+			return;
 		StartCoroutine(ShowAnimated(false, animated));
 	}
 
@@ -193,6 +201,7 @@ public class MainMenu : MonoBehaviour {
 
 	public IEnumerator ShowAnimated(bool show, bool animated, int panelIndex = -1) {
 
+		isAnimating = true;
 		if (show && !disableFadeIn)
 			SoundManager.Instance.PlayMenu();
 		var slowFade = disableFadeIn;
@@ -210,6 +219,7 @@ public class MainMenu : MonoBehaviour {
 		if (panelIndex != -1)
 			panels[panelIndex].SetActive(show);
 		menuButton.gameObject.SetActive(!show);
+		isAnimating = false;
 		if (animated)
 			yield return StartCoroutine(gameManager.FadeOverlay(false, slowFade ? 2f : 0.5f));
 

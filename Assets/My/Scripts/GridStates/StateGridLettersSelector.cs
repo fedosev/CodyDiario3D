@@ -131,9 +131,10 @@ public class StateGridLettersSelector : GameObjectState, IPointerClickHandler {
 	}
 
 	void UnsetLetter() {
-		if (quad.isSetLetter)
-			quad.SetLetter(' ');
 		Select(-1);
+		if (quad.isSetLetter)
+			quad.UnsetLetter();
+		grid.keyboard.okButton.SetActive(false);
 	}
 
 	void OkButtonHandler() {
@@ -158,6 +159,9 @@ public class StateGridLettersSelector : GameObjectState, IPointerClickHandler {
 		for (int i = 0; i < n && i < text.Length; i++) {
 			qb.SetLetter(text[i]);
 			qb = GetQuad(qb.index, 1);
+		}
+		if (grid.QuadCount(quad => quad.isSetLetter) == n) {
+			grid.keyboard.okButton.SetActive(true);
 		}
 	}
 

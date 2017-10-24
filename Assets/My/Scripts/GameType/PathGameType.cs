@@ -11,15 +11,15 @@ public class PathGameType : BaseGridRobyGameType {
 	} }
 
 	public override string generalInfo { get {
-		var str = "";
+		var str = base.generalInfo;
 		var strSelPos = "Seleziona la posizione di partenza facendo il tap sulla casella desiderata e poi sulla direzione.\n";
 		if (code.Length > 0 && path.Length == 0) {
-			str = "La sequenza di istruzioni è nota. Devi trovare il percorso.\n";
+			str += "La sequenza di istruzioni è nota. Devi trovare il percorso.\n";
 			if (!startPosition.IsSet())
 				str += strSelPos;
 			str += "Seleziona le caselle della scacchiera che faranno parte del percorso e premi su \"Esegui\".\n";
 		} else if (code.Length == 0 && path.Length > 0 && !ignoreCheckPath) {
-			str = "Il percorso è noto. Devi trovare trovare la sequenza di istruzioni.\n";
+			str += "Il percorso è noto. Devi trovare trovare la sequenza di istruzioni.\n";
 			if (useDevBoard && MainGameManager.Instance && MainGameManager.Instance.useAR) {
 				str += "Annerisci bene le caselle opportune del programmatore sulla pagina del diario. ";
 				str += "Assicurati di trovarti in un posto ben illuminato. Stendi bene la pagina con la mano senza coprire il programmatore. ";

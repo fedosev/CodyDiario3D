@@ -18,7 +18,7 @@ public class DaySelector : MonoBehaviour {
 	public GameObject dayButtonPrefab;
 
 	public Color disabledColor = new Color(0.53f, 0.53f, 0.53f);
-	public Color enabledColor = new Color(0.53f, 0.53f, 0.53f);
+	public Color enabledColor;
 
 	int monthNumber;
 
@@ -54,7 +54,7 @@ public class DaySelector : MonoBehaviour {
 				} while(--m > 0);
 				m = 12;
 			}
-		} else {
+		} else if (!daysWereInit) {
 			InitDays();
 		}
 		gameObject.SetActive(true);
@@ -71,7 +71,7 @@ public class DaySelector : MonoBehaviour {
 
 	public void InitDays() {
 
-		GameObject dayObj;
+		//GameObject dayObj;
 		BaseGameType day;
 
 		if (dayButtons == null) {
@@ -88,7 +88,7 @@ public class DaySelector : MonoBehaviour {
 			dayB.gameObject.SetActive(true);
 			dayB.transform.SetParent(daysPanel.transform, false);
 			dayB.Init(day, new MyDate(day.year, day.month, i * 2 + 1));
-			if (daysWereInit) {
+			if (true || daysWereInit) {
 				if (i < 8)
 					dayB.Animate(i * _delay, _speed);
 				else

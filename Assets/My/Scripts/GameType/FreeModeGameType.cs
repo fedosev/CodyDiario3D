@@ -11,7 +11,7 @@ public class FreeModeGameType : BaseGridRobyGameType {
 	} }
 
 	public override string generalInfo { get {
-		return 
+		return base.generalInfo +
             (!startPosition.IsSet() ?
                 "Seleziona la posizione di partenza facendo il tap sulla casella desiderata e poi sulla direzione.\n" : "")
             + "Puoi far muovere il robot sulla scacchiera in modalità libera usando la carte.";

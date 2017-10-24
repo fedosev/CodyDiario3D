@@ -9,6 +9,7 @@ public class CipherRotGameType : BaseGameType {
 	public override string title { get {
 		return "Cifrario";
 	} }
+	
     public override string generalInfo { get {
         return 
 			isOrderCipher ? (
@@ -24,8 +25,7 @@ public class CipherRotGameType : BaseGameType {
 					"\nPuoi scrivere e modificare il testo da cifrare facendo il tap sulla casella \"Testo in chiaro\"." : "")
 				+ (!isEncodedTextFixed ?
 					"\nPuoi scrivere e modificare il testo da decifrare facendo il tap sulla casella \"Testo cifrato\"." : "")
-			)
-        ;
+			);
     } }
 
 	public enum EncodingMode { StartEncoding, StartDecoding }

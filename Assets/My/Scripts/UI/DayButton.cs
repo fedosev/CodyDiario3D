@@ -24,14 +24,18 @@ public class DayButton : MonoBehaviour, IPointerClickHandler {
 		this.gameType = gameType;
 		GetComponentInChildren<Text>().text = gameType.name;
 		this.date = date;
-		if (!MainGameManager.Instance.today.IsGTE(date)) {
-			GetComponent<Image>().color = DaySelector.Instance.disabledColor;
-		}
 		if (!wasInit) {
 			image = GetComponent<Image>();
+		}
+		if (!MainGameManager.Instance.today.IsGTE(date)) {
+			color = DaySelector.Instance.disabledColor;
+		} else {
+			color = DaySelector.Instance.enabledColor;
+		}
+		image.color = color;
+		if (!wasInit) {
 			text = GetComponentInChildren<Text>();
 			pos = transform.localPosition;
-			color = image.color;
 			textColor = text.color;
 			wasInit = true;
 		}

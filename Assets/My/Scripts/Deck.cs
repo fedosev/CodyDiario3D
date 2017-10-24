@@ -72,11 +72,11 @@ public class Deck {
 			#endif
 
 			CardTypes lastCard = cards[0].type;
-			var count = 1;
-			var lastIsNotForward = cards[0].type != CardTypes.FORWARD;
-			var countNotForward = 1;
 			var cycles = 0;
 			while (cycles++ < maxCycles) {
+				var count = 1;
+				var lastIsNotForward = cards[0].type != CardTypes.FORWARD;
+				var countNotForward = lastIsNotForward ? 1 : 0;
 				var emptyCycle = true;
 				for (i = 1; i < nCards; i++) {
 					if (cards[i].type != lastCard) {
@@ -86,7 +86,7 @@ public class Deck {
 						count++;
 					}
 					if (cards[i].type == CardTypes.FORWARD) {
-						countNotForward = 1;
+						countNotForward = 0;
 					} else {
 						countNotForward++;
 					}

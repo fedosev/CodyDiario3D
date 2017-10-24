@@ -11,11 +11,23 @@ public class DuelGameType : BaseGridRobyGameType {
 	} }
 
 	public override string generalInfo { get {
-		return "@todo";
+		var str = "";
+		if (deck.Length > 0) {
+			str += "Oggi hai il mazzo di carte nel seguente ordine:\n" + deck + ".\n";
+		} else {
+			str += "Oggi hai il mazzo di carte nell'ordine casuale.\n";
+		}
+		str += "Ad ogni turno il giocatore può usare fino a cinque carte. ";
+		str += "Per esempio se decidi di usare tre carte. Devi selezionare le prime tre ma puoi seleizonarle nell'ordine che preferisci. ";
+		str += "Quindi se hai selezionato un carta, devi usare anche tutte le carte precedenti ad essa.\n";
+		if (onePlayer)
+			str += "Oggi giocherai da solo.\n";
+		return str;
 	} }
 
     public bool onePlayer = false;
     public string deck = "";
+    public bool shuffleWithConstraints = true;
 
     const int cardsNumber = 5;
 
@@ -42,7 +54,7 @@ public class DuelGameType : BaseGridRobyGameType {
 		} else {
 			//gridRobyManager.deck = new Deck("ADASAADSADAASDAADAAASADAAAADSSAASAADSAAA");
 			gridRobyManager.deck = new Deck("AAAAAAAAAAAAAAAAAAAAAAAASSSSSSSSDDDDDDDD");
-			gridRobyManager.deck.Shuffle();
+			gridRobyManager.deck.Shuffle(shuffleWithConstraints);
 		}
 		gridRobyManager.codingGrid.Show();
 		gridRobyManager.codingGrid.HideUI();
@@ -106,5 +118,15 @@ public class DuelGameType : BaseGridRobyGameType {
     public override bool QuadIsFreeToGoIn(QuadBehaviour quad) {
         return true;
     }
+
+	public override void Lose(int player) {
+		if (onePlayer) {
+			gridRobyManager.LoseAction();
+		} else {
+			gridRobyManager.WinTextAction("IL GIOCATORE " +
+				((grid.GetNextPlayerTurn()) + 1) + " VINCE!"
+			);
+		}
+	}
 
 }

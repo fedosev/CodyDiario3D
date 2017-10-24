@@ -29,9 +29,15 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 	int nCardsInHand;
 	int nSelectedCards;
 
+	const float maxAspect = 1.8f;
+	bool isVeryWideAspect = false;
+    float cardWidth;
+    float cardHeight;
+
 	Deck deck;
 
-	public void Init(Deck deck, int n = 5, float offsetY = 0f) {
+
+    public void Init(Deck deck, int n = 5, float offsetY = 0f) {
 
 		if (cardsInHand != null) {
 			foreach (var card in cardsInHand) {
@@ -57,12 +63,20 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 		*/
 		var cardRect = cardLeftPrefab.GetComponent<RectTransform>().rect;
 		var canvasScale = GetComponentInParent<Canvas>().transform.localScale.x;
-		col0 = -40f - cardRect.width * canvasScale;
-		row0 = -40f - cardRect.height * canvasScale;
+		cardWidth = cardRect.width;
+		cardHeight = cardRect.height;
+		if (Camera.main.aspect > maxAspect && offsetY == 0f) {
+			isVeryWideAspect = true;
+			cardWidth *= 0.75f;
+			cardHeight *= 0.75f;
+			offsetY -= padding * 0.625f;
+		}
+		col0 = -40f - cardWidth * canvasScale;
+		row0 = -40f - cardHeight * canvasScale;
 		row1 = corners[0].y + offsetY * canvasScale;
-		row2 = corners[0].y + (cardRect.height + padding + offsetY) * canvasScale;
+		row2 = corners[0].y + (cardHeight + padding + offsetY) * canvasScale;
 		for (int i = 0; i < n; i++) {
-			cols[i] = corners[0].x + (cardRect.width + padding) * canvasScale * i;
+			cols[i] = corners[0].x + (cardWidth + padding) * canvasScale * i;
 		}
 		okButton.onClick.AddListener(UseCards);
 		okButton.transform.position = new Vector3(okButton.transform.position.x, row1, 0f);
@@ -163,6 +177,12 @@ public class CardsSelection : MonoBehaviour, ICardsContainer {
 		if (cardObj != null) {
 			cardObj.transform.SetParent(transform, false);
 			//cardObj.GetComponent<RectTransform>().anchoredPosition = positions[i];
+			if (isVeryWideAspect) {
+				var rt = cardObj.GetComponent<RectTransform>();
+				var rect = rt.rect;
+				rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, cardWidth);
+				rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, cardHeight);
+			}
 			cardObj.transform.position = new Vector3(cols[i], 0f ,0f);
 			var card = cardObj.GetComponent<CardInHand>();
 			card = cardObj.GetComponent<CardInHand>();

@@ -42,6 +42,10 @@ public class RobyStartPosition {
 
 public abstract class BaseGridRobyGameType : BaseGameType {
 
+	public override string generalInfo { get {
+        return (withLetters && (letters == null || letters.Length == 0)) ? lettersSelectorInstructions : "";
+    } }
+
     [System.NonSerialized]
     public Grid grid;
 
@@ -101,5 +105,8 @@ public abstract class BaseGridRobyGameType : BaseGameType {
 		"Assicurati di trovarti in un posto ben illuminato. Stendi bene la pagina con la mano senza coprire il programmatore. " +
 		"Con l'altra mano inquadra il programmatore. Quando compariranno i valori premi su \"Usa la sequenza\". " +
 		"Se i valori sono stati presi male potrai correggerli nella fase successiva.\n";
+
+	protected const string lettersSelectorInstructions = 
+		"Puoi personalizzare gliglia con le lettere a tuo piacimento usando la tastiera.\n";
 
 }
