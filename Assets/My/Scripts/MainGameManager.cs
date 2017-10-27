@@ -90,6 +90,11 @@ public class MainGameManager : MonoBehaviour {
 		debugPanel.gameObject.SetActive(isOn);
 		logText.gameObject.SetActive(isOn);
 		Menu.aRCheck.gameObject.SetActive(isOn);
+		if (isOn) {
+			Menu.aRCheck.onValueChanged.AddListener(ChangeWithAR);
+		} else {
+			Menu.aRCheck.onValueChanged.RemoveListener(ChangeWithAR);
+		}
 		Menu.debugOptions.SetActive(isOn);
 	}
 
