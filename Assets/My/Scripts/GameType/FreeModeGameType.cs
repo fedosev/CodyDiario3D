@@ -31,10 +31,10 @@ public class FreeModeGameType : BaseGridRobyGameType {
     public override void ChangeQuad(RobotController robot, QuadBehaviour prevQuad, QuadBehaviour nextQuad) {
 
         if (trace) {
-            if (!robot.isFirstMove)
-                prevQuad.SetState(QuadStates.PATH);
-            else
+            if (robot.isFirstMove && !useFirstQuad)
                 prevQuad.SetState(QuadStates.DEFAULT);
+            else
+                prevQuad.SetState(QuadStates.PATH);
         } else {
             prevQuad.SetState(QuadStates.DEFAULT);
         }

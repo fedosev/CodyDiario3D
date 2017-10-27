@@ -27,7 +27,7 @@ public class AboutText : MonoBehaviour, IPointerClickHandler {
 					#elif UNITY_IOS
 						hash = "#ios";
 					#endif
-					Application.OpenURL("https://fedosev.com/codydiario3d/" + hash);
+					Application.OpenURL("http://fedosev.com/codydiario3d/" + hash);
 					break;
 			}			
 		}

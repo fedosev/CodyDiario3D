@@ -201,6 +201,12 @@ public class ARMarkerFormContainer : MonoBehaviour {
         return avg / (texturePixelScale * texturePixelScale);
     }
 
+    void OnDestroy() {
+        if (cam) {
+            Destroy(cam.gameObject);
+        }
+    }
+
 }
 
 }

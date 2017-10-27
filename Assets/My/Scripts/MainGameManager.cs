@@ -214,6 +214,7 @@ public class MainGameManager : MonoBehaviour {
 				noARCamera.gameObject.SetActive(true);
 			}
             yield return new WaitUntil(() => asyncOp.isDone && (Time.time - t) > fadeDuration);
+			System.GC.Collect();
 		} else if (!useAR) {
 			noARCamera.gameObject.SetActive(true);
 		}

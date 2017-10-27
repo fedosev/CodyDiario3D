@@ -29,6 +29,7 @@ public class TargetGameType : BaseGridRobyGameType {
     public override void InitBody() {
 
 		starsNumber = 0;
+		shouldTakeStar = false;
 		//actions.Clear();
 
 		if (!startPosition.IsSet()) {

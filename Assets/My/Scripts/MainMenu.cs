@@ -208,6 +208,8 @@ public class MainMenu : MonoBehaviour {
 		gameManager.PauseGame(show);
 		if (animated && !disableFadeIn) {
 			yield return StartCoroutine(gameManager.FadeOverlay(true, 0.2f));
+			if (!show)
+				System.GC.Collect();
 		}
 		disableFadeIn = false;
 		gameManager.PauseAR(show);
