@@ -52,16 +52,18 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 
 	bool isGameVisible = true;
 	bool isGameUIVisible = true;
+    float tUpdateVisibility = -1f;
+	const float targetCanvasLatency = 0.5f;
 
     Canvas uICanvas;
     float canvasScaleFactor;
-
+	
 
     public void UpdateVisibility(bool force = false) {
 
 		UpdateGameVisibility(force);
 		UpdateUIVisibility(force);
-		UpdateTargetCanvasVisibility();
+		UpdateTargetCanvasVisibility(force);
 	}
 
 	void UpdateGameVisibility(bool force) {
@@ -105,7 +107,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		}		
 	}
 
-	void UpdateTargetCanvasVisibility() {
+	void UpdateTargetCanvasVisibility(bool force) {
 
 		bool show = false;
 
@@ -119,8 +121,19 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 			show = false;
 		}
 		*/
-		if (TargetCanvas)
-			TargetCanvas.SetActive(show);
+		if (TargetCanvas) {
+			if (show) {
+				if (force || tUpdateVisibility + targetCanvasLatency < Time.time) {
+					TargetCanvas.SetActive(true);
+					tUpdateVisibility = float.MaxValue;
+				} else {
+					tUpdateVisibility = Time.time;
+				}
+			} else {
+				TargetCanvas.SetActive(false);
+				tUpdateVisibility = float.MaxValue;
+			}
+		}
 	}
 
 	public void StartGameType() {
@@ -228,6 +241,13 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 			StartCoroutine(Init());
 		}
     }
+
+	void Update() {
+		if (tUpdateVisibility + targetCanvasLatency < Time.time) {
+			UpdateTargetCanvasVisibility(true);
+		}
+
+	}
 
 	void OnDestroy() {
 		
