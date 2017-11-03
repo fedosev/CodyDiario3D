@@ -84,6 +84,13 @@ public class MainGameManager : MonoBehaviour {
     bool isDebug;
     bool isDebugOnScreen;
 
+	#if F_AR_ENABLED
+		const int gameTypeSceneIndex = 1;
+	#else
+		const int gameTypeSceneIndex = 2;
+	#endif
+
+
     public void SetDebugMode(bool isOn) {
 		isDebug = isOn;
 		isDebugOnScreen = isOn;
@@ -206,23 +213,35 @@ public class MainGameManager : MonoBehaviour {
 		this.gameType = gameType;
 		var t = Time.time;
 		isLoading = true;
+
+		#if !F_AR_ENABLED
+			if (isBackground) {
+				var light = GameObject.Find("RealityDirectionalLight").GetComponent<Light>();
+				light.enabled = true;
+				light.intensity = 1f;
+			}
+		#endif
+
 		isBackground = false;
 
-		if (SceneManager.sceneCount > 1) {
+		if (SceneManager.sceneCount > gameTypeSceneIndex) {
 			#if F_AR_ENABLED
 				aRCamera.enabled = false;
 				imageTracker.StopTrack();
 			#endif
 			yield return StartCoroutine(FadeOverlay(true, fadeDuration));
-			asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
+			asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(gameTypeSceneIndex));
 			if (!useAR) {
 				noARCamera.gameObject.SetActive(true);
 			}
             yield return new WaitUntil(() => asyncOp.isDone && (Time.time - t) > fadeDuration);
 			System.GC.Collect();
-		} else if (!useAR) {
-			noARCamera.gameObject.SetActive(true);
 		}
+		#if F_AR_ENABLED
+			else if (!useAR) {
+				noARCamera.gameObject.SetActive(true);
+			}
+		#endif
 		SetUseAR();
 
 		// Scene unloaded here
@@ -325,9 +344,9 @@ public class MainGameManager : MonoBehaviour {
 
 		noARCamera.gameObject.SetActive(true);
 
-		if (SceneManager.sceneCount > 1) {
+		if (SceneManager.sceneCount > gameTypeSceneIndex) {
 			//yield return StartCoroutine(FadeOverlay(true, fadeDuration));
-			asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
+			asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(gameTypeSceneIndex));
 			yield return new WaitUntil(() => asyncOp.isDone);
 		}
 
@@ -601,6 +620,12 @@ public class MainGameManager : MonoBehaviour {
 		fadeOverlay.gameObject.SetActive(true);
 		fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, 1f);
 
+		#if !F_AR_ENABLED
+			if (SceneManager.sceneCount == 1) {
+				SceneManager.LoadScene("Reality", LoadSceneMode.Additive);
+			}
+		#endif
+
 		StartCoroutine(InitBackground());
 	}
 	
@@ -646,9 +671,40 @@ public class MainGameManager : MonoBehaviour {
 		Time.timeScale = timeScale;
 	}
 
-	void LoadNextGameType() {
-		// @tmp
-		StartCoroutine(Init(allGameTypes.items[(++gameTypeIndex) % allGameTypes.items.Count].name));
+	void LoadNextGameType(int offset = 1) {
+		//StartCoroutine(Init(allGameTypes.items[(++gameTypeIndex) % allGameTypes.items.Count].name));
+
+		if (gameType == null)
+			return;
+		AllGameTypes.Month month;
+		var monthNumber = gameType.month;
+		if (allGameTypes.TryGetMonth(monthNumber, out month)) {
+			var i = -1;
+			var dayFound = false;
+			foreach (var day in month.days) {
+				i++;
+				if (gameType == day) {
+					dayFound = true;
+					break;
+				}
+			}
+			if (dayFound) {
+				i += offset;
+				if (i < 0) {
+					monthNumber--;
+					if (monthNumber < 1)
+						monthNumber = 12;
+				} else if (i >= month.days.Count) {
+					monthNumber++;
+					if (monthNumber > 12)
+						monthNumber = 1;
+					i = 0;
+				}
+				if (allGameTypes.TryGetMonth(monthNumber, out month)) {
+					StartCoroutine(Init(month.days[i < 0 ? month.days.Count - 1 : i]));
+				}
+			}
+		}
 	}
 
 	void Update () {
@@ -657,6 +713,7 @@ public class MainGameManager : MonoBehaviour {
 			LoadNextGameType();
 		}
 		*/
+		#if UNITY_EDITOR
 			var inputStr = Input.inputString;
 			if (Input.GetKeyDown(KeyCode.W) && Input.inputString == "w") {
 				Time.timeScale *= 2;
@@ -664,10 +721,13 @@ public class MainGameManager : MonoBehaviour {
 			} else if (Input.GetKeyDown(KeyCode.Q) && Input.inputString == "q") {
 				Time.timeScale *= 0.5f;
 				MyDebug.Log(Time.timeScale + "x");
+			} else if (Input.GetKeyDown(KeyCode.Alpha1)) {
+				LoadNextGameType(-1);
+			} else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+				LoadNextGameType();
 			} else if (Input.GetKeyDown("`")) {
 				RestartGameType();
 			}
-		#if UNITY_EDITOR
 		#endif
 	}
 }

@@ -71,7 +71,7 @@ public class InputEncodeDecode : MonoBehaviour, IPointerClickHandler {
 	string EncodeDecode(string str, bool encode) {
 
 		if (!isEditSequenceMode) {
-			return rotCode.EncodeDecode(inputField.text, !isEncoded);
+			return rotCode.EncodeDecode(str, encode);
 		} else {
 			if (encode) {
 				return str;

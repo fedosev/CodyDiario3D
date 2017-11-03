@@ -76,6 +76,8 @@ public class Keyboard : MonoBehaviour {
 	}
 
 	public void Show() {
+		if (gameObject == null)
+			return;
 		if (!isAnimating && !isVisible) {
 			gameObject.SetActive(true);
 			StartCoroutine(ShowAnimated(true));
@@ -144,7 +146,8 @@ public class Keyboard : MonoBehaviour {
 		rectRatio = posY / rt.anchoredPosition.y * transform.localScale.y;
 		posYHidden = - rectRatio * rt.rect.height - posY;
 
-		okButton.SetActive(false);
+		if (okButton)
+			okButton.SetActive(false);
 		if (isHiddenOnStart)
 			Hide(true);
 	}

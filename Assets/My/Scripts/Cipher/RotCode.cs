@@ -124,10 +124,14 @@ public class RotCode : MonoBehaviour {
 	}
 	
 	public void UpdateCodeFromCylinders() {
+		var codeChanged = false;
 		for (var i = 0; i < code.Length; i++) {
-			code[i] = rotCylinders[i].RotNumber;
+			if (code[i] != rotCylinders[i].RotNumber) {
+				code[i] = rotCylinders[i].RotNumber;
+				codeChanged = true;
+			}
 		}
-		if (onCodeChange != null) {
+		if (codeChanged && onCodeChange != null) {
 			onCodeChange.Invoke();
 		}
 	}

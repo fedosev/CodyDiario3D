@@ -37,9 +37,6 @@ public class SnakeGameType : BaseGridRobyGameType {
 
         grid.Init();
 
-        grid.CurrentRobotController.score = 1;
-        
-
         if (deck.Length > 0) {
             gridRobyManager.deck = new Deck(deck);
     		gridRobyManager.codingGrid.Show();
@@ -53,6 +50,11 @@ public class SnakeGameType : BaseGridRobyGameType {
                 gridRobyManager.codingGrid.text.SetText(gridRobyManager.deck.GetRichText());
             }
         }
+    }
+
+    public override void OnInitRobot(RobotController robot, QuadBehaviour quad) {
+		base.OnInitRobot(robot, quad);
+        robot.score = 1;
     }
 
     bool CanUseCard(CardInHand card) {

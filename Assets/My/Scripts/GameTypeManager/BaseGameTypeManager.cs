@@ -53,7 +53,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 	bool isGameVisible = true;
 	bool isGameUIVisible = true;
     float tUpdateVisibility = -1f;
-	const float targetCanvasLatency = 0.5f;
+	const float targetCanvasLatency = 1f;
 
     Canvas uICanvas;
     float canvasScaleFactor;
@@ -155,9 +155,8 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		}
 	}
 
-	public virtual void InitConfig() {
-		//@todo remove me
-	}
+	public virtual void InitConfig() { }
+	public virtual void AfterInit() { }
 
 	public virtual IEnumerator Init() {
 
@@ -202,14 +201,16 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 			uICanvas.scaleFactor = canvasScaleFactor;
 		}
 		// }
-
+		AfterInit();
 	}
 
 	public void SetUseAR(bool useAR) {
 		this.useAR = useAR;
-		if (NoARObj != null) {
-			NoARObj.SetActive(!useAR);
-		}
+		#if F_AR_ENABLED
+			if (NoARObj != null) {
+				NoARObj.SetActive(!useAR);
+			}
+		#endif
 	}
 
 	public virtual void TurnMusicOn(bool isOn) {
