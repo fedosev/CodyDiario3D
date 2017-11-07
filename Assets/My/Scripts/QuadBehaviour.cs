@@ -389,14 +389,39 @@ public class QuadBehaviour : MonoBehaviour {
 		TextLetter.gameObject.SetActive(false);
     }
 
-	public void UseLetter(int line = 0) {
-		StartCoroutine(AnimateLetter(line));
+	public void UseLetter(int line = 0, float delay = 0.5f) {
+		StartCoroutine(AnimateLetter(line, delay));
 	}
 
-	public IEnumerator AnimateLetter(int line = 0) {
+	public IEnumerator AnimateLetter(int line = 0, float delay = 0.5f) {
 
-		var animTime = 0.75f;
+		var speed = 10f;
 		if (grid.gameTypeConfig.withLetters && letter != ' ') {
+			yield return StartCoroutine(grid.gameTypeManager.AppendLetterDelayed(letter, delay, line));
+			//yield return new WaitForSeconds(delay);
+			var targetY = 0.04f;
+			var startOffset = new Vector3(0f, targetY, 0f);
+			var quadLetter = Instantiate(TextLetter.gameObject, grid.transform, true);
+			quadLetter.transform.GetChild(0)
+				.GetComponent<Renderer>().material = config.quadLetterAnimationMaterial;
+			// /*
+			var textMesh = quadLetter.GetComponent<TextMeshPro>();
+			var color = textMesh.faceColor;
+			color.a = 224;
+			textMesh.faceColor = color;
+			// */
+			var quadLetterTr = quadLetter.transform;
+			var targetPos = transform.position;
+			targetPos += startOffset;
+			//SoundManager.Instance.PlayStar();
+			while (quadLetterTr.position.y < targetPos.y - 0.0001f) {
+				quadLetterTr.position = Vector3.Lerp(quadLetterTr.position, targetPos, Time.deltaTime * speed);
+				yield return null;
+			}
+			Destroy(quadLetterTr.gameObject);
+
+			/*
+			var animTime = 0.75f;
 			var textObj = TextLetter.gameObject;
 			var textCloneObj = Instantiate(textObj, text.transform.position, text.transform.rotation, transform);
 			if (textCloneObj.transform.childCount == 1) {
@@ -407,9 +432,10 @@ public class QuadBehaviour : MonoBehaviour {
 			//textCloneObj.transform.DOScale(textObj.transform.localScale * 2, animTime).SetEase(Ease.InQuad);
 			textCloneObj.transform.DOLookAt(Camera.main.transform.forward, animTime).SetEase(Ease.InQuad);
 			//yield return new WaitForSeconds(animTime - 0.1f);
-			yield return StartCoroutine(grid.gameTypeManager.AppendLetterDelayed(letter, animTime - 0.1f, line));
+			*/
+			//yield return StartCoroutine(grid.gameTypeManager.AppendLetterDelayed(letter, animTime - 0.1f, line));
 			yield return new WaitForSeconds(0.1f);
-			Destroy(textCloneObj);
+			//Destroy(textCloneObj);
 		}
 		yield return null;
 	}

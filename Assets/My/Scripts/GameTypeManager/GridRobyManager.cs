@@ -124,7 +124,7 @@ public class GridRobyManager : BaseGameTypeManager {
 	void AddLetter(char letter, int line) {
 		if (text[line] == null) {
 			text[line] = "";
-		} else if (text[line].Length > 40) {
+		} else if (text[line].Length >= 40) {
 			text[line] = text[line].Substring(1);
 		}
 		text[line] += letter;

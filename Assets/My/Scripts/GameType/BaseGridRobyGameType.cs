@@ -68,7 +68,7 @@ public abstract class BaseGridRobyGameType : BaseGameType {
 
     public virtual void OnInitRobot(RobotController robot, QuadBehaviour quad) {
         if (useFirstQuad && withLetters) {
-            quad.UseLetter();
+            quad.UseLetter(0, 0.75f);
         }
     }
 
