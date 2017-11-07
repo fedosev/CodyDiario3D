@@ -66,7 +66,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		UpdateTargetCanvasVisibility(force);
 	}
 
-	void UpdateGameVisibility(bool force) {
+	public void UpdateGameVisibility(bool force) {
 
 		bool showGame = true;
 		

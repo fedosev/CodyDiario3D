@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
-using DG.Tweening;
-
+using UnityEngine.EventSystems;
 
 
 /* @todo {
@@ -59,11 +58,13 @@ public class RotCylinder : MonoBehaviour {
 
 	[HideInInspector] public bool isPaused = false;
 
+	Rigidbody mainRotCylinderRB;
+
 	int nChars { get {
 		return 26 + (withSpace ? 1 : 0);
 	}}
 
-	bool isTouching = false;
+	//bool isTouching = false;
 	RaycastHit lastHit;
 	float lastRotationAngle = 0f;
 	int rotNumber = 0;
@@ -79,7 +80,7 @@ public class RotCylinder : MonoBehaviour {
 	);
 	*/
 
-	Rigidbody rb;
+	public Rigidbody rb;
 	
 	const int nFramesAvgMomentum = 3;
 	int index = 0;
@@ -92,6 +93,9 @@ public class RotCylinder : MonoBehaviour {
 	public UnityEvent onRotNumberChange;
 
     RotCode rotCode;
+    List<RaycastResult> raycastResults = new List<RaycastResult>();
+    float tPointingUICheck = -1f;
+	bool isPointingUI = false;
 
     public void GenerateChars() {
 
@@ -139,6 +143,7 @@ public class RotCylinder : MonoBehaviour {
 
 		//nChars = 26 + (withSpace ? 1 : 0);
 		rb = GetComponent<Rigidbody>();
+		mainRotCylinderRB = mainRotCylinder.GetComponent<Rigidbody>();
 
 		for (var i = 0; i < nFramesAvgMomentum; i++) {
 			rotationAngles[i] = 0f;
@@ -161,10 +166,12 @@ public class RotCylinder : MonoBehaviour {
 	
 	void Update () {
 
-		if (isPaused)
+		if (isPaused || rotCode == null)
 			return;
 
-		if (!isFixed && mainRotCylinder != null && (isTouching || rb.angularVelocity != Vector3.zero)) {
+		if (!isFixed && mainRotCylinder != null &&
+			(IsTouching(this) || rb.angularVelocity != Vector3.zero)
+		) {
 			var rotNum = GetRotNumber();
 			if (rotNum != rotNumber) {
 
@@ -181,14 +188,15 @@ public class RotCylinder : MonoBehaviour {
 		
 	}
 
-	public IEnumerator RotateQuaternionAnimation(Quaternion to, float duration) {
+	IEnumerator RotateQuaternionAnimation(Quaternion to, float duration) {
+
 		float t0 = Time.time;
 		var from = transform.rotation;
 		float t;
 		do {
 			t = (Time.time - t0) / duration;
 			transform.rotation = Quaternion.Slerp(from, to, t * (2 - t));
-			yield return 0;
+			yield return null;
 		} while(t < 1);
 
 		yield return null;
@@ -257,19 +265,46 @@ public class RotCylinder : MonoBehaviour {
 
 	}
 
+	bool IsPointingUI() {
+		if (tPointingUICheck + 0.2f > Time.time) {
+			return isPointingUI;
+		}
+		tPointingUICheck = Time.time;
+		var pointerData = new PointerEventData(EventSystem.current);
+		pointerData.position = Input.mousePosition;
+		EventSystem.current.RaycastAll(pointerData, raycastResults);
+		isPointingUI = false;
+		foreach (var res in raycastResults) {
+			if (res.gameObject.layer == 5 && res.gameObject.tag != "IgnoreRaycast") {
+				isPointingUI = true;
+			}
+		}
+		return isPointingUI;
+	}
+
+	bool IsTouching(RotCylinder rotCyl) {
+		return /*rotCode != null && */
+			!rotCode.isFixed || rotCyl == null ? rotCode.touchingCyl == rotCyl : rotCode.touchingCyl != null;
+	}
+
     void FixedUpdate() {
 		
-		if (isPaused)
+		if (isPaused || rotCode == null)
 			return;
 
 		if (Input.GetMouseButton(0)) {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
 			Quaternion rot = Quaternion.identity;
+			
 			if (Physics.Raycast(ray, out hit, 100)) {
-				if (hit.transform.gameObject == gameObject) {
-					isTouching = true;
-					if (isFixed) {
+
+				if (hit.transform.gameObject == gameObject &&
+					(IsTouching(this) || IsTouching(null) && !IsPointingUI())
+				) {
+					//isTouching = true;
+					rotCode.touchingCyl = this;
+					if (isFixed || mainRotCylinderRB.angularVelocity != Vector3.zero) {
 						//List<RotCylinder> rotCylinders = new List<RotCylinder>();
 						foreach (var rotCylRB in rotCylindersRB) {
 							rotCylRB.angularVelocity = Vector3.zero;
@@ -278,13 +313,15 @@ public class RotCylinder : MonoBehaviour {
 						foreach (var rotCyl in rotCylinders) {
 							if (!rotCyl.isFixed) {
 								//rotCyl.SetRotNumber(rotCyl.RotNumber);
-								rotCyl.transform.DOKill();
+								//rotCyl.transform.DOKill();
+								rotCyl.StopAllCoroutines();
 							}
 						}
 						// */
 					} else {
 						rb.angularVelocity = Vector3.zero;
 					}
+					StopAllCoroutines();
 					if (lastHit.point != Vector3.zero) {
 						rot = Quaternion.FromToRotation(lastHit.point, hit.point);
 						didTouch = true;
@@ -293,7 +330,10 @@ public class RotCylinder : MonoBehaviour {
 				}
 			}
 			else {
-				isTouching = false;
+				//isTouching = false;
+				if (IsTouching(this)) {
+					rotCode.touchingCyl = null;
+				}
 			}
 			lastRotationAngle = rot.eulerAngles.x;
 			lastRotationAngle = (lastRotationAngle > 180) ? lastRotationAngle - 360 : lastRotationAngle;
@@ -310,53 +350,78 @@ public class RotCylinder : MonoBehaviour {
 			index = (index + 1) % nFramesAvgMomentum;
 			
 		}
-		else if (isTouching || !isTouching && didTouch) { // Mouse UP
+		else if (IsTouching(this) || !IsTouching(this) && didTouch) { // Mouse UP (and other)
 			var sumRotationAngles = 0f;
 			for (var i = 0; i < nFramesAvgMomentum; i++) {
 				sumRotationAngles += rotationAngles[i];
 				rotationAngles[i] = 0;
 			}
 			index = 0;
-			isTouching = false;
+			//isTouching = false;
+			rotCode.touchingCyl = null;
 			didTouch = false;
 			lastHit.point = Vector3.zero;
 			var angularVelocity = new Vector3(sumRotationAngles / nFramesAvgMomentum * Mathf.Deg2Rad / Time.deltaTime, 0, 0);
-			if (isFixed) {
-				//List<RotCylinder> rotCylinders = new List<RotCylinder>();
-				if (Mathf.Abs(angularVelocity.x) > minAngularSpeed) {
+
+			if (Mathf.Abs(angularVelocity.x) > minAngularSpeed) {
+				if (isFixed) {
 					foreach (var rotCylRB in rotCylindersRB) {
 						rotCylRB.angularVelocity = angularVelocity;
 					}
 				} else {
+					rb.angularVelocity = angularVelocity;
+				}
+			} else {
+				if (isFixed) {
 					foreach (var rotCyl in rotCylinders) {
 						// /*
 						if (!rotCyl.isFixed)
-							rotCyl.SetRotNumber(rotCyl.RotNumber, true);
+							rotCyl.SetRotNumber(rotCyl.RotNumber, true, false);
 						// */
 					}
-				}
-			} else { // Is not fixed
-				if (Mathf.Abs(angularVelocity.x) > minAngularSpeed) {
-					rb.angularVelocity = angularVelocity;
 				} else {
-					SetRotNumber(rotNumber, true);
+					//if (mainRotCylinder.rb.angularVelocity.x == 0)
+					SetRotNumber(rotNumber, true, false);
 				}
-
+				
 			}
 			
 			//rb.angularVelocity = new Vector3(sumRotationAngles / nFramesAvgMomentum * Mathf.Deg2Rad / Time.deltaTime, 0, 0);
-			isTouching = false;
+			//isTouching = false;
+			rotCode.touchingCyl = null;
 		}
 
 		if (rb.angularVelocity != Vector3.zero && Mathf.Abs(rb.angularVelocity.x) < minAngularSpeed) {
 			rb.angularVelocity = Vector3.zero;
-			if (!isFixed) {
-				SetRotNumber(rotNumber, true);
+			if (isFixed) {
+				StartCoroutine(FixCylindersOnStop());
 			} else {
-				foreach (var rotCyl in rotCylinders) {
-					if (!rotCyl.isFixed)
-						rotCyl.SetRotNumber(rotCyl.RotNumber, true);
+				if (mainRotCylinderRB.angularVelocity == Vector3.zero) {
+					SetRotNumber(rotNumber, true, false);
 				}
+			}
+		}
+		
+		if (didTouch && rotCode.isFixed && rotCode.touchingCyl != null && rotCode.touchingCyl != this) {
+			index = 0;
+			didTouch = false;
+			lastHit.point = Vector3.zero;
+		}
+		
+	}
+
+	IEnumerator FixCylindersOnStop() {
+
+		yield return new WaitForEndOfFrame();
+		var allNotMoving = true;
+		foreach (var rotCylRB in rotCylindersRB) {
+			if (rotCylRB.angularVelocity != Vector3.zero)
+				allNotMoving = false;
+		}
+		if (allNotMoving) {
+			foreach (var rotCyl in rotCylinders) {
+				if (!rotCyl.isFixed)
+					rotCyl.SetRotNumber(rotCyl.RotNumber, true, false);
 			}
 		}
 	}

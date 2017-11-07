@@ -25,6 +25,8 @@ public class RotCode : MonoBehaviour {
 
 	public string sequence = "";
 
+	[HideInInspector] public RotCylinder touchingCyl;
+
 
 	public void InitInputEncodeDecode(bool isEditSequenceMode = false) {
 		var inputFields = FindObjectsOfType<InputEncodeDecode>();
@@ -67,6 +69,7 @@ public class RotCode : MonoBehaviour {
 				rotCylinders[i].isFixed = true;
 			}
 		}
+		fixedRotCylinder.Init(this);
 		if (withSpace) {
 			fixedRotCylinder.withSpace = true;
 			fixedRotCylinder.Init(this);
@@ -93,10 +96,12 @@ public class RotCode : MonoBehaviour {
 			System.Array.Resize<int>(ref code, l + 1);
 			code[l] = 0;
 			rotCylinders[l].gameObject.SetActive(true);
-			rotCylinders[l].SetRotNumber(code[l], false, true);
+			rotCylinders[l].SetRotNumber(code[l], false, false);
+			rotCylinders[l].rb.angularVelocity = fixedRotCylinder.rb.angularVelocity;
 			if (onCodeChange != null) {
 				onCodeChange.Invoke();
 			}
+			BaseGameTypeManager.Instance.UpdateGameVisibility(true);
 		}
 	}
 
