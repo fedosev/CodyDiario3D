@@ -213,7 +213,12 @@ public class Grid : MonoBehaviour {
 
 	public void InitRobot(int index, string name, Vector3 pos, int x, int z, RobyDirection direction, GameObject quad, QuadStates quadState) {
 
-		players[index] = Instantiate(config.robotPrefabs[index], pos, Quaternion.AngleAxis(GetAngleFromDirection(direction), Vector3.up));
+		GameObject robotObj;
+		if (index == 0 && (MainGameManager.Instance.today.IsChristmasPeriod() || gameTypeConfig.isChristmasPeriod))
+			robotObj = config.robotWithHatPrefab;
+		else
+			robotObj = config.robotPrefabs[index];
+		players[index] = Instantiate(robotObj, pos, Quaternion.AngleAxis(GetAngleFromDirection(direction), Vector3.up));
 		players[index].name = name;
 		RobotController rc = players[index].GetComponent<RobotController>();
 		robots[index] = rc;

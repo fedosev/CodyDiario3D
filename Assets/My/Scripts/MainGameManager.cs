@@ -192,19 +192,22 @@ public class MainGameManager : MonoBehaviour {
 	}
 
     public void LoadTodayGameType() {
+		/*
 		if (!today.IsGTE(allGameTypes.startDate) || today.IsGTE(allGameTypes.endDate)) {
 			LoadCover();
 			return;
 		}
+		*/
 		foreach (var month in allGameTypes.months) {
 			if (month.month == today.month) {
 				int dayIndex = (today.day - 1) / 2;
 				if (dayIndex < month.days.Count) {
 					StartCoroutine(Init(month.days[dayIndex]));
+					return;
 				}
-				return;
 			}
 		}
+		LoadCover();
 	}
 
     public IEnumerator Init(BaseGameType gameType) {

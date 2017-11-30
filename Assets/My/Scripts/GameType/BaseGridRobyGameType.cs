@@ -60,6 +60,8 @@ public abstract class BaseGridRobyGameType : BaseGameType {
 
     public bool useDevBoard = false;
 
+    public bool isChristmasPeriod = false;
+
     protected GridRobyManager gridRobyManager;
 
     public virtual void SetupQuad(QuadBehaviour quad, int col, int row) { }

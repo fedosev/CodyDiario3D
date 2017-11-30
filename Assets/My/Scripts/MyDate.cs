@@ -50,6 +50,10 @@ public class MyDate {
 		return NumForSorting(this.year, this.month, 1) >= NumForSorting(year, month, 1);
 	}
 
+	public bool IsChristmasPeriod() {
+		return month == 12 || month == 1 && day < 3;
+	}
+
 	int NumForSorting(int year, int month, int day) {
 		return year * 10000 + month * 100 + day;
 	}

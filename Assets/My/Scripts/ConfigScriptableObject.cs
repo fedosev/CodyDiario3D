@@ -27,6 +27,7 @@ public class ConfigScriptableObject : ScriptableObject {
     public GameObject quadLetterPrefab;
     public GameObject particleSystemShowRobyPrefab;
 	public GameObject[] robotPrefabs;
+	public GameObject robotWithHatPrefab;
 
 	public GameConfig gameConfig;
 
