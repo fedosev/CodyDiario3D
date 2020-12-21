@@ -26,7 +26,7 @@ public class UIManager : MonoBehaviour {
 	public void CloseConfigMenu() {
 		panelConfig.SetActive(false);
 		panelControlls.SetActive(true);
-		grid.movableBehaviour.isActive = false;
+		// grid.movableBehaviour.isActive = false;
 		moveGrid.isOn = false;
 		//grid.switchQuadStateBehaviour.enabled = false;
 		grid.inPause = false;
@@ -78,7 +78,7 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void SwitchMoveGrid() {
-		grid.movableBehaviour.isActive = moveGrid.isOn;
+		// grid.movableBehaviour.isActive = moveGrid.isOn;
 		//grid.switchQuadStateBehaviour.enabled = !moveGrid.isOn;
 	}
 

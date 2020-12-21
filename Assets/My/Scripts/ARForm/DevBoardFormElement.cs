@@ -71,14 +71,19 @@ public class DevBoardFormElement : ARFormElement {
 
 	public override void CheckValues() {
 
-        float bestColorIntensity;
-        float avgColorIntensity;
+		float bestColorIntensity;
+		float avgColorIntensity;
+
+		Vec2 d0 = new Vec2(colStarting - 1, rowRightCard + 2);
+		Vec2 d1 = new Vec2(colStarting, 1);
+		minColorIntensityDifference = Mathf.Clamp((formContainer.GetAvgGrayscale(d1) - formContainer.GetAvgGrayscale(d0)) * 0.25f, 0.03f, 0.09f);
+
 
 		// @tmp:
 		StringBuilder sb = new StringBuilder();
 
 		int i;
-        for (i = 0; i < boadLength; i++) {
+		for (i = 0; i < boadLength; i++) {
 			bestCard = CardType.Null;
 			bestColorIntensity = 1f;
 			avgColorIntensity = 0f;

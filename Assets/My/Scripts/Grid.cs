@@ -20,7 +20,7 @@ public class Grid : MonoBehaviour {
 	//public Vector3[] quadPositions;
 	public GameObject[] robotPrefabs;
 
-	public GridMovableBehaviour movableBehaviour;
+	// public GridMovableBehaviour movableBehaviour;
 
 	public GameTypes gameType;
 
@@ -522,7 +522,7 @@ public class Grid : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 
-		movableBehaviour = GetComponent<GridMovableBehaviour>();
+		// movableBehaviour = GetComponent<GridMovableBehaviour>();
 
 		state = GameObjectState.Init(this.gameObject, newState => { state = newState; });
 

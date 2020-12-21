@@ -38,6 +38,7 @@ public class OutputPixelsFormElement : ARFormElement {
             for (var i = 0; i < formContainer.gridCols; i++) {
                 for (var j = 0; j < formContainer.gridRows; j++) {
                     float avgGr = formContainer.GetAvgGrayscale(new Vec2(i, j));
+                    // if (i == j) avgGr = i % 2;
                     tex.SetPixel(i, j, new Color(avgGr, avgGr, avgGr, 1f));
                 }
             }

@@ -36,3 +36,5 @@ RegisterIcalls.cpp
 /screenshots
 /profiler
 /webgl
+
+.DS_Store

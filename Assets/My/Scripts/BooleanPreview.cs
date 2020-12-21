@@ -10,6 +10,10 @@ public class BooleanPreview : MonoBehaviour {
 	public void SetValue(bool val) {
 		offObj.SetActive(!val);
 		onObj.SetActive(val);
+		MeshRenderer rend = (val ? onObj : offObj).GetComponent<MeshRenderer>();
+		if (rend) {
+			rend.enabled = true;
+		}
 	}
 
 	public void Init() {

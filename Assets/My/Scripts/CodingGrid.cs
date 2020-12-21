@@ -164,6 +164,8 @@ public class CodingGrid : MonoBehaviour {
         cardsNumber = 0;
         grid.state.GoToState<StateNull>();
         grid.NextAction();
+        // DisableEdit();
+        grid.SetActiveUIAnimated(false);
     }
 
     public void DisableEdit(bool disable = true) {

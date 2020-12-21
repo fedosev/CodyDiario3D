@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using EasyAR;
+using easyar;
 using ARFormOptions;
 
 public class ScanOptionsManager : BaseGameTypeManager {
@@ -14,7 +14,7 @@ public class ScanOptionsManager : BaseGameTypeManager {
 		return instance;
 	} }
 
-	public ImageTargetBehaviour imageTargetOptions;
+	public ImageTargetController imageTargetOptions;
 	public GameObject optionsTargetCanvas;
 
 	public GameConfig gameConfig;
@@ -32,8 +32,8 @@ public class ScanOptionsManager : BaseGameTypeManager {
 
 	int areGood = 0;
 
-	bool isGood = false;
-    bool wasGood = false;
+	const float minGoodFrames = 0.5f;
+	AvgVal goodFramesAvg = new AvgVal(120, 1f);
 
 	float allGoodChangedTime = -10f;
 
@@ -43,7 +43,7 @@ public class ScanOptionsManager : BaseGameTypeManager {
 
 	IEnumerator showInfoDelayedCoroutine;
 
-    public override GameObject TargetCanvas { get {
+	public override GameObject TargetCanvas { get {
 		return optionsTargetCanvas;
 	} }
 
@@ -75,23 +75,25 @@ public class ScanOptionsManager : BaseGameTypeManager {
 		gameManager.SetMainImgTargetsActive(!activate, true);
 
 		if (activate) {
-			if (!imageTargetOptions.ActiveTargetOnStart) {
-				imageTargetOptions.SetupWithImage(imageTargetOptions.Path, imageTargetOptions.Storage, imageTargetOptions.Name, imageTargetOptions.Size);
-				imageTargetOptions.TargetFound += (TargetAbstractBehaviour behaviour) => {
-					optionsTargetCanvas.SetActive(false);
-				};
-				imageTargetOptions.TargetLost += (TargetAbstractBehaviour behaviour) => {
-					optionsTargetCanvas.SetActive(true);
-				};
-				imageTargetOptions.ActiveTargetOnStart = true;
-			}
-			imageTargetOptions.Bind(gameManager.imageTracker);
-			imageTargetOptions.gameObject.SetActive(false);
+			// if (!imageTargetOptions.ActiveTargetOnStart) {
+			// 	// imageTargetOptions.SetupWithImage(imageTargetOptions.Path, imageTargetOptions.Storage, imageTargetOptions.Name, imageTargetOptions.Size);
+			// 	imageTargetOptions.TargetFound += (TargetAbstractBehaviour behaviour) => {
+			// 		optionsTargetCanvas.SetActive(false);
+			// 	};
+			// 	imageTargetOptions.TargetLost += (TargetAbstractBehaviour behaviour) => {
+			// 		optionsTargetCanvas.SetActive(true);
+			// 	};
+			// 	// imageTargetOptions.ActiveTargetOnStart = true;
+			// }
+			// imageTargetOptions.Bind(gameManager.imageTracker);
+			imageTargetOptions.Tracker = gameManager.imageTracker;
+			// imageTargetOptions.gameObject.SetActive(false);
 		}
 		else { // Deactivate
 			if (imageTargetOptions) {
-				gameManager.imageTracker.UnloadImageTargetBehaviour(imageTargetOptions);
-				optionsTargetCanvas.SetActive(false);
+				// gameManager.imageTracker.LoadImageTarget(imageTargetOptions, __callback__);
+				//@@ gameManager.imageTracker.LoadTarget(imageTargetOptions);
+				// optionsTargetCanvas.SetActive(false);
 			}
 		}
 		UpdateVisibility(true);
@@ -151,10 +153,31 @@ public class ScanOptionsManager : BaseGameTypeManager {
 
 	public void UpdateInfo() {
 
+		if (!gameManager.IsARTracked) return;
+
+		// (areGood & 15) == 15 --> All good
+
+		int goodItems = 0;
+		int n = areGood;
+		while (n > 0) { 
+				n &= (n - 1); 
+				goodItems++; 
+		}
+		
+		goodFramesAvg.Add((float)goodItems / 4f);
+
+		// if (goodItems > 0) {
+		// 	goodFramesAvg.Add(1, goodItems / 2);
+		// } else {
+		// 	goodFramesAvg.Add(0);
+		// }
+
+		float goodFrames = goodFramesAvg.Get();
+
 		var isTimeOk = Time.time - allGoodChangedTime > 1.5f;
 
 		if (isTimeOk) {
-			if (isGood && (areGood & 15) != 15) {
+			if (goodFrames < minGoodFrames) {
 				/*
 				if (showInfoDelayedCoroutine == null) {
 					showInfoDelayedCoroutine = ShowInfoDelayed();
@@ -164,9 +187,8 @@ public class ScanOptionsManager : BaseGameTypeManager {
 				}
 				*/
 				checkBetterInfo.SetActive(true);
-				isGood = false;
 				allGoodChangedTime = Time.time;
-			} else if (!isGood && (areGood & 15) == 15) { // All good
+			} else {
 				/*
 				if (showInfoDelayedCoroutine != null) {
 					StopCoroutine(showInfoDelayedCoroutine);
@@ -175,12 +197,10 @@ public class ScanOptionsManager : BaseGameTypeManager {
 				*/
 				checkBetterInfo.SetActive(false);
 				allGoodChangedTime = Time.time;
-				isGood = true;
-				wasGood = true;
 				//MyDebug.Log("StopCoroutine " + areGood, true);
 			}
 		}
-		if (wasGood) {
+		if (goodFrames >= minGoodFrames) {
 			quadPreview.color = quadColor;
 			borderPreview.color = borderColor;
 		}

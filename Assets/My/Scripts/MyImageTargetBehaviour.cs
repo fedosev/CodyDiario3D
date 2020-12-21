@@ -5,17 +5,18 @@
 */
 
 using UnityEngine;
-using EasyAR;
+using easyar;
 
-namespace EasyAR
+namespace easyar
 {
-    public class MyImageTargetBehaviour : ImageTargetBehaviour
+    public class MyImageTargetBehaviour : ImageTargetController // : ImageTargetBehaviour
     {
         protected MainGameManager gameManager;
 
-        protected override void Awake()
+        protected override void Start()
         {
-            base.Awake();
+            base.Start();
+            MyDebug.Log("MyImageTargetBehaviour - Start", true);
             TargetFound += OnTargetFound;
             TargetLost += OnTargetLost;
             //gameObject = GameObject.Find("Game2").transform.GetChild(0).gameObject;
@@ -33,27 +34,28 @@ namespace EasyAR
             gameManager.mainMenu.ShowInfoOnStart();
         }
 
-        void OnTargetFound(TargetAbstractBehaviour behaviour) {
+        void OnTargetFound(/* TargetAbstractBehaviour behaviour */) {
 
             //gameObj.SetActive(true);
-            MyDebug.Log("TargetFound " + this.Name, true);
+            // MyDebug.Log("TargetFound " + this.Name, true);
+            MyDebug.Log("TargetFound", true);
             /*
             if (!gameManager.wasTargetFound) {
                 StartCoroutine(ShowInfo());
             }
             */
             gameManager.wasTargetFound = true;
-            //gameManager.gameTypeManager.wasShowBeforeMenu = true;
-            //gameManager.isARTracked = true;
+            gameManager.gameTypeManager.wasShowBeforeMenu = true;
+            gameManager.IsARTracked = true;
             gameManager.UpdateVisibility();
         }
 
-        void OnTargetLost(TargetAbstractBehaviour behaviour) {
+        void OnTargetLost(/* TargetAbstractBehaviour behaviour */) {
 
             //gameObj.SetActive(false);
-            //MyDebug.Log("TargetLost", true);
-            //gameManager.gameTypeManager.wasShowBeforeMenu = false;
-            //gameManager.isARTracked = false;
+            MyDebug.Log("TargetLost", true);
+            gameManager.gameTypeManager.wasShowBeforeMenu = false;
+            gameManager.IsARTracked = false;
             gameManager.UpdateVisibility();
         }
     }

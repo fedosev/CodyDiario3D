@@ -3,7 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using easyar;
+
 namespace ARFormOptions {
+
+// class TransformCopy {
+//     public Vector3 pos;
+//     public Quaternion rot;
+//     public Vector3 localScale;
+
+//     public TransformCopy(Transform transform) {
+//         pos = transform.position;
+//         rot = transform.rotation;
+//         localScale = transform.localScale;
+//     }
+
+//     public void CopyTo(Transform transform) {
+//         transform.position = pos;
+//         transform.rotation = rot;
+//         transform.localScale = localScale;
+//     }
+// }
 
 public class ARMarkerFormContainer : MonoBehaviour {
 
@@ -17,15 +37,20 @@ public class ARMarkerFormContainer : MonoBehaviour {
 
     public int gridCols = 15;
     public int gridRows = 15;
-    public int texturePixelScale = 1;
+    public int texturePixelScale = 5;
+    public int texturePixelPadding = 0;
+    
 
-    [Range(0f, 1f)]
+    [Range(0.01f, 0.2f)]
     public float minChangeToApply = 0.03f;
+
+    public int avgFrames = 15;
 
     int textureWidth;
     int textureHeight;
 
     Camera cam;
+    // TransformCopy camTransform;
 
     [HideInInspector]
     public int screenWidth = 0;
@@ -56,10 +81,24 @@ public class ARMarkerFormContainer : MonoBehaviour {
 
         form = GetComponentInChildren<ARForm>();
         form.FormContainer = this;
+
+    }
+
+    ARSession arSession;
+    void Update() {
+        
+        if (arSession) return;
+        arSession = FindObjectOfType<ARSession>();
+        if (!arSession) return;
+        // arSession.FrameChange += OnFrameChange;
+        arSession.FrameUpdate += OnFrameUpdate;
     }
 
     // Update is called once per frame
-    void Update() {
+
+    // public void UpdateFrame() {
+    // private void OnFrameChange(OutputFrame outputFrame, Matrix4x4 displayCompensation) {
+    private void OnFrameUpdate(OutputFrame outputFrame) {
 
         gameObject.layer = 16;
 
@@ -74,26 +113,31 @@ public class ARMarkerFormContainer : MonoBehaviour {
     void _OnWillRenderObject() {
 
         if (!cam) {
-            GameObject go = new GameObject("_myCam");
+            GameObject go = new GameObject("_ARFormCamera");
             cam = go.AddComponent<Camera>();
             //go.transform.parent = transform.parent;
             cam.hideFlags = HideFlags.HideAndDontSave;
         }
         cam.CopyFrom(Camera.main);
+        // if (camTransform != null) {
+        //     camTransform.Load(cam.transform);
+        // }
+        // camTransform = new StoredTransform(Camera.main.transform);
         cam.depth = 0;
-        cam.cullingMask = 1 << 16;
+        cam.cullingMask = 1 << 8;
+        // MyDebug.Log(cam.cullingMask, true);
         cam.backgroundColor = bgColor;
         //cam.orthographic = true;
         //cam.orthographicSize = 10f;
 
-        // Viewport frustum width and heigth
+
+        // Viewport frustum width and height
         var distanceY = (cam.ViewportToWorldPoint(new Vector3(0, 0, offset)) - cam.ViewportToWorldPoint(new Vector3(0, 1, offset))).magnitude;
         var distanceX = (cam.ViewportToWorldPoint(new Vector3(0, 0, offset)) - cam.ViewportToWorldPoint(new Vector3(1, 0, offset))).magnitude;
         
-        /*
-        var distance = Mathf.Min(distanceX, distanceY);
-        transform.localScale = Vector3.one * distance;
-        */
+        // var distance = Mathf.Min(distanceX, distanceY);
+        // transform.localScale = Vector3.one * distance;
+        
         float ratioScreen = (float)Screen.width / (float)Screen.height;
         float ratioObject = (float)gridCols / (float)gridRows;
 
@@ -113,7 +157,7 @@ public class ARMarkerFormContainer : MonoBehaviour {
                 width -= (textureWidth - width) % texturePixelScale; // ?
                 texOffset = new Vec2((width - textureWidth) / 2, 0);
                 renderTexture = new RenderTexture(width, textureWidth, -50);
-                */
+                // */
                 int heightWithPadding = (int)(textureHeight * ratioObject / ratioScreen);
                 // @todo: edge cases (remainder int conversion)
                 texOffset = new Vec2(0, (heightWithPadding - textureHeight) / 2);
@@ -126,7 +170,7 @@ public class ARMarkerFormContainer : MonoBehaviour {
                 height -= (textureHeight - height) % texturePixelScale; // ?
                 texOffset = new Vec2(0, (height - textureHeight) / 2);
                 renderTexture = new RenderTexture(textureHeight, height, -50);
-                */
+                // */
                 int widthWithPadding = (int)(textureWidth * ratioScreen);
                 // @todo: edge cases (remainder int conversion)
                 texOffset = new Vec2((widthWithPadding - textureWidth) / 2, 0);
@@ -161,8 +205,8 @@ public class ARMarkerFormContainer : MonoBehaviour {
             tex2d.filterMode = FilterMode.Point;
         }
 
-
         // https://support.unity3d.com/hc/en-us/articles/206486626-How-can-I-get-pixels-from-unreadable-textures-
+
         RenderTexture tmp = RenderTexture.GetTemporary(tex2d.width, tex2d.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
         Graphics.Blit(renderTexture, tmp);
         RenderTexture previous = RenderTexture.active;
@@ -173,9 +217,7 @@ public class ARMarkerFormContainer : MonoBehaviour {
         RenderTexture.ReleaseTemporary(tmp);
 
         //tex2dColors = tex2d.GetPixels();
-
         //outObj2.GetComponent<RawImage>().texture = tex2d;
-
         //tex2d.ReadPixels(new Rect(0, 0, 150*3, 150), 0, 0);
         //tex2d.Apply();
 
@@ -186,27 +228,96 @@ public class ARMarkerFormContainer : MonoBehaviour {
 
     }
 
+    Dictionary<int, AvgVal> avgFramesVals = new Dictionary<int, AvgVal>();
+
     public float GetAvgGrayscale(Vec2 pos) {
         float avg = 0;
-        for (var i = 0; i < texturePixelScale; i++) {
-            for (var j = 0; j < texturePixelScale; j++) {
+        int n = texturePixelScale - texturePixelPadding * 2;
+        int pd = texturePixelPadding;
+        if (n < 1) {
+            n = texturePixelScale;
+            pd = 0;
+        }
+        for (var i = 0; i < n; i++) {
+            for (var j = 0; j < n; j++) {
                 avg += tex2d.GetPixel(
                 //avg += GetText2dPixel(
-                    i + texOffset.x + pos.x * texturePixelScale,
-                    j + texOffset.y + pos.y * texturePixelScale
+                    i + texOffset.x + pd + pos.x * texturePixelScale,
+                    j + texOffset.y + pd + pos.y * texturePixelScale
                 ).grayscale;
             }
         }
 
-        return avg / (texturePixelScale * texturePixelScale);
+        avg = avg / (n * n);
+
+        int key = pos.y * gridCols + pos.x;
+        
+        AvgVal avgVal;
+        if (!avgFramesVals.TryGetValue(key, out avgVal)) {
+            avgVal = new AvgVal(avgFrames);
+            avgFramesVals.Add(key, avgVal);
+        }
+        
+        avgVal.Add(avg);
+
+        return avgVal.Get();
     }
 
     void OnDestroy() {
         if (cam) {
             Destroy(cam.gameObject);
         }
+        if (arSession) {
+            arSession.FrameUpdate -= OnFrameUpdate;
+        }
     }
 
 }
 
+}
+
+class AvgVal {
+
+    float val;
+    float[] vals;
+
+    int size;
+    int index = 0;
+    float weight;
+
+    public AvgVal(int size) {
+        this.size = size;
+        vals = new float[size];
+        weight = 1f / size;
+    }
+
+    public AvgVal(int size, float avg) : this(size) {
+        val = avg;
+        for (int i = 0; i < size; i++) {
+            vals[i] = avg;
+        }
+        index = size;
+    }
+
+    public void Add(float v) {
+        if (index < size) {
+            vals[index] = v;
+            val = val * index / ++index + v / index;
+        } else {
+            val += (v - vals[index % size]) * weight;
+            vals[index % size] = v;
+            index = (index + 1) % size + size;
+        }
+    }
+
+    public void Add(float v, int times) {
+        for (int i = 0; i < times; i++) {
+            this.Add(v);
+        }
+    }
+
+    public float Get() {
+        return val;
+    }
+    
 }

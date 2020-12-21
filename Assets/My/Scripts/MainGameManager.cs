@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using EasyAR;
+using easyar;
 using System;
 using System.Diagnostics;
 
@@ -25,7 +25,7 @@ public class MainGameManager : MonoBehaviour {
 		return MainGameManager.Instance.mainMenu;
 	}}
 
-    public ARCameraBaseBehaviour aRCamera;
+  // public ARCameraBaseBehaviour aRCamera;
 
 	public bool shoudUseAR;
 	public bool useAR;
@@ -34,7 +34,7 @@ public class MainGameManager : MonoBehaviour {
 
 	public GameObject targetsCanvas;
 
-    public ImageTrackerBaseBehaviour imageTracker;
+	public ImageTrackerFrameFilter imageTracker;
 	public MyImageTargetBehaviour[] mainImageTargets;
 
 	[HideInInspector] public bool wasTargetFound = false;
@@ -70,8 +70,8 @@ public class MainGameManager : MonoBehaviour {
 
 	int gameTypeIndex = 0;
 
-	CameraDeviceBehaviour cameraDevice;
-	EasyARBehaviour easyARBehaviour;
+	// CameraDeviceBehaviour cameraDevice;
+	// EasyARBehaviour easyARBehaviour;
 
     bool useARchanged = true;
     bool isGameVisible;
@@ -79,7 +79,7 @@ public class MainGameManager : MonoBehaviour {
     [HideInInspector] public bool isARPaused;
 
     //IEnumerator coroutine;
-    TargetInstance currentARTarget;
+    TargetController currentARTarget;
 
     bool isDebug;
     bool isDebugOnScreen;
@@ -109,12 +109,14 @@ public class MainGameManager : MonoBehaviour {
 		SetDebugMode(!isDebug);
 	}
 
-    public bool IsARTracked { get {
-		if (currentARTarget != null && currentARTarget.Status == TargetInstance.TrackStatus.Tracked) {
-			return true;
-		}
-		return false;
-	} }
+		public bool IsARTracked = false;
+
+  //   public bool IsARTracked { get {
+	// 	if (currentARTarget != null && currentARTarget.Status == TargetInstance.TrackStatus.Tracked) {
+	// 		return true;
+	// 	}
+	// 	return false;
+	// } }
 
 	public void Unlock() {
 		isUnlocked = true;
@@ -229,15 +231,15 @@ public class MainGameManager : MonoBehaviour {
 
 		if (SceneManager.sceneCount > gameTypeSceneIndex) {
 			#if F_AR_ENABLED
-				aRCamera.enabled = false;
-				imageTracker.StopTrack();
+				// aRCamera.enabled = false;
+				// imageTracker.StopTrack();
 			#endif
 			yield return StartCoroutine(FadeOverlay(true, fadeDuration));
 			asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(gameTypeSceneIndex));
 			if (!useAR) {
 				noARCamera.gameObject.SetActive(true);
 			}
-            yield return new WaitUntil(() => asyncOp.isDone && (Time.time - t) > fadeDuration);
+			yield return new WaitUntil(() => asyncOp.isDone && (Time.time - t) > fadeDuration);
 			System.GC.Collect();
 		}
 		#if F_AR_ENABLED
@@ -420,7 +422,7 @@ public class MainGameManager : MonoBehaviour {
 			if (targetsCanvas)
 				targetsCanvas.SetActive(true);
 			foreach (var target in mainImageTargets) {
-				imageTracker.LoadImageTargetBehaviour(target);
+				imageTracker.LoadTarget(target);
 			}
 			isMainImageTargetsActive = true;
 		}
@@ -428,7 +430,7 @@ public class MainGameManager : MonoBehaviour {
 			if (targetsCanvas)
 				targetsCanvas.SetActive(false);
 			foreach (var target in mainImageTargets) {
-				imageTracker.UnloadImageTargetBehaviour(target);
+				imageTracker.UnloadTarget(target);
 			}
 			isMainImageTargetsActive = false;
 		}
@@ -457,12 +459,14 @@ public class MainGameManager : MonoBehaviour {
 		if (useAR) {
 			//easyARBehaviour.gameObject.SetActive(true);
 			aRGameObject.gameObject.SetActive(true);
-			aRCamera.enabled = true;
-			EasyAR.Engine.Resume();
-			cameraDevice.OpenAndStart();
+			// aRCamera.enabled = true;
+			// EasyAR.Engine.Resume();
+			// easyar.Engine.onResume();
+			// cameraDevice.OpenAndStart();
 		} else {
-			EasyAR.Engine.Pause();
-			cameraDevice.Close();
+			// EasyAR.Engine.Pause();
+			// easyar.Engine.onPause();
+			// cameraDevice.Close();
 			//easyARBehaviour.gameObject.SetActive(false);
 			aRGameObject.gameObject.SetActive(false);
 		}
@@ -525,15 +529,29 @@ public class MainGameManager : MonoBehaviour {
 
 		if (pause && !isARPaused) {
 			//EasyAR.Engine.Pause();
-			aRCamera.enabled = false;
+			// aRCamera.enabled = false;
 			if (gameTypeManager)
 				gameTypeManager.wasShowBeforeMenu = IsARTracked;
-			imageTracker.StopTrack();
+			// imageTracker.StopTrack();
+			// aRGameObject.gameObject.SetActive(false);
+
+			//@@ easyar.Engine.onPause();
+			if (imageTracker.Tracker != null) imageTracker.Tracker.stop();
+			ARSession aRSession = FindObjectOfType<ARSession>();
+			if (aRSession != null) FindObjectOfType<ARSession>().Assembly.Pause();
 
 		} else if (!pause && isARPaused) {
+
 			//EasyAR.Engine.Resume();
-			aRCamera.enabled = true;
-			imageTracker.StartTrack();
+			// aRCamera.enabled = true;
+			// imageTracker.StartTrack();
+			// aRGameObject.gameObject.SetActive(true);
+
+			easyar.Engine.onResume();
+			ARSession aRSession = FindObjectOfType<ARSession>();
+			if (aRSession) FindObjectOfType<ARSession>().Assembly.Resume();
+			if (imageTracker  != null&& imageTracker.Tracker != null) imageTracker.Tracker.start();
+			
 		}
 		isARPaused = pause;
 		//ShowTargetCanvas(!pause);
@@ -597,19 +615,19 @@ public class MainGameManager : MonoBehaviour {
 		gameConfig.Init();
 
 		#if F_AR_ENABLED
-			easyARBehaviour = FindObjectOfType<EasyARBehaviour>();
-			cameraDevice = FindObjectOfType<CameraDeviceBehaviour>();
-			if (imageTracker == null) {
-				imageTracker = FindObjectOfType<ImageTrackerBaseBehaviour>();
-			}
-			aRCamera = FindObjectOfType<ARCameraBaseBehaviour>();
-			aRCamera.FrameUpdate += (ARCameraBaseBehaviour aRCam, Frame frame) => {
-				if (frame.Targets.Count > 0) {
-					currentARTarget = frame.Targets[0];
-				} else {
-					currentARTarget = null;
-				}
-			};
+			// easyARBehaviour = FindObjectOfType<EasyARBehaviour>();
+			// cameraDevice = FindObjectOfType<CameraDeviceBehaviour>();
+			// if (imageTracker == null) {
+			// 	imageTracker = FindObjectOfType<ImageTrackerBaseBehaviour>();
+			// }
+			// aRCamera = FindObjectOfType<ARCameraBaseBehaviour>();
+			// aRCamera.FrameUpdate += (ARCameraBaseBehaviour aRCam, Frame frame) => {
+			// 	if (frame.Targets.Count > 0) {
+			// 		currentARTarget = frame.Targets[0];
+			// 	} else {
+			// 		currentARTarget = null;
+			// 	}
+			// };
 		#endif
 
 		TurnMusicOnAction(gameConfig.isMusicOn);

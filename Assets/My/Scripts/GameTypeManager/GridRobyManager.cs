@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using EasyAR;
+using easyar;
 using System.Diagnostics;
 
 public class GridRobyManager : BaseGameTypeManager {
@@ -25,7 +25,7 @@ public class GridRobyManager : BaseGameTypeManager {
     public HandCards handCards;
     public CardsSelection cardsSelection;
 
-	public ImageTargetBehaviour imageTargetDevBoard;
+	public ImageTargetController imageTargetDevBoard;
 	public GameObject devBoardTargetCanvas;
 
 	public BaseGridRobyGameType GetGameType() {
@@ -160,18 +160,20 @@ public class GridRobyManager : BaseGameTypeManager {
 			gameCanBeShown = false;
 			//imageTargetDevBoard.gameObject.SetActive(true);
 
-			if (!imageTargetDevBoard.ActiveTargetOnStart) {
-				imageTargetDevBoard.SetupWithImage(imageTargetDevBoard.Path, imageTargetDevBoard.Storage, imageTargetDevBoard.Name, imageTargetDevBoard.Size);
-				imageTargetDevBoard.TargetFound += (TargetAbstractBehaviour behaviour) => {
-					devBoardTargetCanvas.SetActive(false);
-				};
-				imageTargetDevBoard.TargetLost += (TargetAbstractBehaviour behaviour) => {
-					if (isDevBoardMode)
-						devBoardTargetCanvas.SetActive(true);
-				};
-				imageTargetDevBoard.ActiveTargetOnStart = true;
-			}
-			imageTargetDevBoard.Bind(gameManager.imageTracker);
+			// if (!imageTargetDevBoard.ActiveTargetOnStart) {
+				// imageTargetDevBoard.SetupWithImage(imageTargetDevBoard.Path, imageTargetDevBoard.Storage, imageTargetDevBoard.Name, imageTargetDevBoard.Size);
+				// imageTargetDevBoard.TargetFound += () => {
+				// 	devBoardTargetCanvas.SetActive(false);
+				// };
+				// imageTargetDevBoard.TargetLost += () => {
+				// 	if (isDevBoardMode)
+				// 		devBoardTargetCanvas.SetActive(true);
+				// };
+				// imageTargetDevBoard.ActiveTargetOnStart = true;
+			// }
+			// imageTargetDevBoard.Bind(gameManager.imageTracker);
+			imageTargetDevBoard.Tracker = gameManager.imageTracker;
+
 			//gameManager.imageTracker.LoadImageTargetBehaviour(imageTargetDevBoard);
 			imageTargetDevBoard.gameObject.SetActive(false);
 			imageTargetDevBoard.GetComponentInChildren<ARFormOptions.DevBoardFormElement>().OnSendToCodingGrid += (string code) => {
@@ -186,7 +188,8 @@ public class GridRobyManager : BaseGameTypeManager {
 				isDevBoardMode = false;
 				EnableAllGameObjects(true);
 				gameCanBeShown = true;
-				gameManager.imageTracker.UnloadImageTargetBehaviour(imageTargetDevBoard);
+				// gameManager.imageTracker.UnloadImageTargetBehaviour(imageTargetDevBoard);
+				gameManager.imageTracker.UnloadTarget(imageTargetDevBoard);
 				devBoardTargetCanvas.SetActive(false);
 			//Destroy(imageTargetDevBoard);
 			}

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using EasyAR;
+using easyar;
 using System.Globalization;
 
 public class GridHexaManager : GridRobyManager {
