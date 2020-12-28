@@ -25,9 +25,9 @@ public class MainGameManager : MonoBehaviour {
 		return MainGameManager.Instance.mainMenu;
 	}}
 
-  // public ARCameraBaseBehaviour aRCamera;
+  public Camera aRCamera;
 
-	public bool shoudUseAR;
+	public bool shouldUseAR;
 	public bool useAR;
 
 	public GameObject aRGameObject;
@@ -236,17 +236,13 @@ public class MainGameManager : MonoBehaviour {
 			#endif
 			yield return StartCoroutine(FadeOverlay(true, fadeDuration));
 			asyncOp = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(gameTypeSceneIndex));
-			if (!useAR) {
-				noARCamera.gameObject.SetActive(true);
-			}
-			yield return new WaitUntil(() => asyncOp.isDone && (Time.time - t) > fadeDuration);
+			yield return new WaitUntil(() => asyncOp.isDone);
+			aRCamera.gameObject.SetActive(true);
+			yield return new WaitUntil(() => (Time.time - t) > fadeDuration);
 			System.GC.Collect();
+		} else {
+				aRCamera.gameObject.SetActive(true);
 		}
-		#if F_AR_ENABLED
-			else if (!useAR) {
-				noARCamera.gameObject.SetActive(true);
-			}
-		#endif
 		SetUseAR();
 
 		// Scene unloaded here
@@ -266,11 +262,12 @@ public class MainGameManager : MonoBehaviour {
 			return gameTypeManager != null;
 		});
 
-		if (!useAR) {
-			noARCamera.gameObject.SetActive(false);
-		}
+		// if (!useAR) {
+		// 	noARCamera.gameObject.SetActive(false);
+		// }
 
 		gameTypeManager.gameType = gameType;
+		aRCamera.gameObject.SetActive(useAR);
 		gameTypeManager.SetUseAR(useAR);
 
 		gameTypeManager.targetCanvas = targetsCanvas;
@@ -347,7 +344,7 @@ public class MainGameManager : MonoBehaviour {
 
 		SetUseAR();
 
-		noARCamera.gameObject.SetActive(true);
+		// noARCamera.gameObject.SetActive(true);
 
 		if (SceneManager.sceneCount > gameTypeSceneIndex) {
 			//yield return StartCoroutine(FadeOverlay(true, fadeDuration));
@@ -356,12 +353,12 @@ public class MainGameManager : MonoBehaviour {
 		}
 
 		SceneManager.LoadScene("Background", LoadSceneMode.Additive);
-		noARCamera.gameObject.SetActive(false);
+		// noARCamera.gameObject.SetActive(false);
 
 		Menu.ShowMainOnStart();
 
 		#if F_AR_ENABLED
-			useAR = !isDebug || shoudUseAR;
+			useAR = !isDebug || shouldUseAR;
 			useARchanged = true;
 		#endif
 	}
@@ -489,9 +486,15 @@ public class MainGameManager : MonoBehaviour {
 		} else {
 			this.useAR = useAR;
 			useARchanged = true;
-			SetUseAR();
-			if (gameTypeManager)
-				gameTypeManager.SetUseAR(useAR);
+			if (gameTypeManager) {
+				if (gameTypeManager.isGameInit) {
+					RestartWithAR(useAR);
+				} else {
+					SetUseAR();
+					gameTypeManager.SetUseAR(useAR);
+					aRCamera.gameObject.SetActive(useAR);
+				}
+			}
 			if (mainMenu.isVisible && useAR) {
 				isARPaused = false;
 				PauseAR(true);
@@ -577,7 +580,7 @@ public class MainGameManager : MonoBehaviour {
 	void Awake() {
 
 		#if !UNITY_EDITOR && F_AR_ENABLED
-			shoudUseAR = true;
+			shouldUseAR = true;
 		#endif
 
 		#if F_ALLOW_DEBUG
@@ -587,7 +590,7 @@ public class MainGameManager : MonoBehaviour {
 		#if F_DEBUG
 			isDebug = true;
 			Menu.aRCheck.gameObject.SetActive(true);
-			Menu.aRCheck.isOn = shoudUseAR;
+			Menu.aRCheck.isOn = shouldUseAR;
 			Menu.aRCheck.onValueChanged.AddListener(ChangeWithAR);
 			Menu.debugOptions.SetActive(true);
 		#else
@@ -604,7 +607,15 @@ public class MainGameManager : MonoBehaviour {
 			debugPanel.gameObject.SetActive(false);
 		#endif
 
-		useAR = shoudUseAR;
+		#if F_AR_SWITCH_ENABLED
+			Menu.aRCheck.gameObject.SetActive(true);
+			Menu.aRCheck.isOn = shouldUseAR;
+			Menu.aRCheck.onValueChanged.AddListener(ChangeWithAR);
+		#else
+			Menu.aRCheck.gameObject.SetActive(false);
+		#endif
+
+		useAR = shouldUseAR;
 
 		today = new MyDate();
 

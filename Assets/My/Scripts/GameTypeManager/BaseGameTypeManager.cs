@@ -204,7 +204,7 @@ public abstract class BaseGameTypeManager : MonoBehaviour {
 		AfterInit();
 	}
 
-	public void SetUseAR(bool useAR) {
+	public virtual void SetUseAR(bool useAR) {
 		this.useAR = useAR;
 		#if F_AR_ENABLED
 			if (NoARObj != null) {

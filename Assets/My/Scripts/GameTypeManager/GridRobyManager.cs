@@ -200,6 +200,13 @@ public class GridRobyManager : BaseGameTypeManager {
 		//gameManager.imageTracker.StartTrack();
 	}
 
+	// public override void SetUseAR(bool useAR) {
+	// 	base.SetUseAR(useAR);
+	// 	if (isGameInit && GetGameType().useDevBoard) {
+	// 		gameManager.RestartWithAR(useAR);
+	// 	}
+	// }
+
 	public override void TurnMusicOn(bool isOn) {
 		base.TurnMusicOn(isOn);
 		//@todo

@@ -758,8 +758,8 @@ PlayerSettings:
   webGLWasmStreaming: 0
   scriptingDefineSymbols:
     1: 
-    4: F_AR_ENABLED;F_ALLOW_DEBUG;__F_DEBUG;__F_UNLOCK;__F_DEBUG_ON_SCREEN
-    7: F_AR_ENABLED;F_ALLOW_DEBUG;__F_DEBUG;__F_UNLOCK;__F_DEBUG_ON_SCREEN
+    4: F_AR_ENABLED;F_AR_SWITCH_ENABLED;F_ALLOW_DEBUG;__F_DEBUG;__F_UNLOCK;__F_DEBUG_ON_SCREEN
+    7: F_AR_ENABLED;F_AR_SWITCH_ENABLED;F_ALLOW_DEBUG;__F_DEBUG;__F_UNLOCK;__F_DEBUG_ON_SCREEN
     13: __F_AR_ENABLED;F_ALLOW_DEBUG;__F_DEBUG;F_UNLOCK;__F_DEBUG_ON_SCREEN
   platformArchitecture:
     iPhone: 1
@@ -767,7 +767,8 @@ PlayerSettings:
     Android: 1
     iPhone: 1
   il2cppCompilerConfiguration: {}
-  managedStrippingLevel: {}
+  managedStrippingLevel:
+    Android: 3
   incrementalIl2cppBuild: {}
   allowUnsafeCode: 0
   additionalIl2CppArgs: 
