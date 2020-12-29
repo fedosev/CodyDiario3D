@@ -18,7 +18,7 @@ public class DuelGameType : BaseGridRobyGameType {
 			str += "Oggi hai il mazzo di carte nell'ordine casuale.\n";
 		}
 		str += "Ad ogni turno il giocatore può usare fino a cinque carte. ";
-		str += "Per esempio se decidi di usare tre carte. Devi selezionare le prime tre ma puoi seleizonarle nell'ordine che preferisci. ";
+		str += "Per esempio se decidi di usare tre carte. Devi selezionare le prime tre ma puoi selezionarle nell'ordine che preferisci. ";
 		str += "Quindi se hai selezionato un carta, devi usare anche tutte le carte precedenti ad essa.\n";
 		if (onePlayer)
 			str += "Oggi giocherai da solo.\n";

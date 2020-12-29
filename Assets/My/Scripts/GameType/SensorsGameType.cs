@@ -13,8 +13,8 @@ public class SensorsGameType : BaseGridRobyGameType {
 	public override string generalInfo { get {
 		return "Oggi Roby è programmato con il codice descritto nel diario. " +
 			"Devi trovare la sequenza che eseguirà Roby e la sua posizione finale.\n" + 
-			"Premi sulla casella della scacchiera per selezionare la posizione finale, " +
-			"premi sulle carte per aggiungerle alla sequenza di istruzioni e poi premi su \"Esegui\".\n";
+			"1. Premi sulla casella della scacchiera per selezionare la posizione finale.\n" +
+			"2. Premi sulle carte per aggiungerle alla sequenza di istruzioni e poi premi su \"Esegui\".\n";
 	} }
 
 	[HideInInspector] public CodingGrid codingGrid;

@@ -43,32 +43,32 @@ public class PathBackGameType : BaseGridRobyGameType {
 		grid.gameType = GameTypes.PATH;
 		grid.playersNumber = 1;
 
-		grid.OnNextTurn += ExacuteBackCode;
+		grid.OnNextTurn += ExecuteBackCode;
 		grid.OnLose += Lose;
 
 		grid.Init();
 
 		gridRobyManager.codingGrid.Show();
 		gridRobyManager.codingGrid.executeButton.onClick.RemoveAllListeners();
-		gridRobyManager.codingGrid.executeButton.onClick.AddListener(ExacuteForwardCode);
+		gridRobyManager.codingGrid.executeButton.onClick.AddListener(ExecuteForwardCode);
 	}
 
-	void ExacuteForwardCode() {
+	void ExecuteForwardCode() {
 		// /*
-        if (grid.inPause)
-            return;
+			if (grid.inPause)
+					return;
 		// */
-        for (var i = 0; i < code.Length; i++) {
-            grid.AddAction(CodingGrid.GetTypeFromLetter(code[i]));
-        }
+		for (var i = 0; i < code.Length; i++) {
+				grid.AddAction(CodingGrid.GetTypeFromLetter(code[i]));
+		}
 		grid.NextAction();
 		grid.SetActiveUIAnimated(false);
 		gridRobyManager.codingGrid.HideUI();
 	}
 
-	void ExacuteBackCode() {
+	void ExecuteBackCode() {
 		ignoreCheckPath = false;
-		grid.OnNextTurn -= ExacuteBackCode;
+		grid.OnNextTurn -= ExecuteBackCode;
 		grid.OnNextTurn += CheckWin;
 		gridRobyManager.codingGrid.Execute();
 	}
@@ -81,11 +81,11 @@ public class PathBackGameType : BaseGridRobyGameType {
 		base.OnInitRobot(robot, quad);
 	}
 
-    public override void ChangeQuad(RobotController robot, QuadBehaviour prevQuad, QuadBehaviour nextQuad) {
-        
+	public override void ChangeQuad(RobotController robot, QuadBehaviour prevQuad, QuadBehaviour nextQuad) {
+			
 		prevQuad.SetState(QuadStates.PATH);
 		prevQuad.SetOtherState(QuadStates.DEFAULT);
-        
+				
 		if (ignoreCheckPath) { // Forward
 			if (robot.isFirstMove) {
 				prevQuad.number = 0;
@@ -97,18 +97,18 @@ public class PathBackGameType : BaseGridRobyGameType {
 			}
 		}
 
-        if (nextQuad.IsFreeToGoIn()) {
-            nextQuad.SetState(QuadStates.ACTIVE);
-			nextQuad.player = 0;
-        } else {
-            nextQuad.SetState(QuadStates.ERROR);
-            robot.DoLose();
-        }
-    }
+		if (nextQuad.IsFreeToGoIn()) {
+				nextQuad.SetState(QuadStates.ACTIVE);
+				nextQuad.player = 0;
+		} else {
+				nextQuad.SetState(QuadStates.ERROR);
+				robot.DoLose();
+		}
+	}
 
-    public override bool QuadIsFreeToGoIn(QuadBehaviour quad) {
-        return ignoreCheckPath || quad.mainState == QuadStates.PATH;
-    }
+	public override bool QuadIsFreeToGoIn(QuadBehaviour quad) {
+			return ignoreCheckPath || quad.mainState == QuadStates.PATH;
+	}
 
 	public void CheckWin() {
 
