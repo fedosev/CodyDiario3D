@@ -38,3 +38,5 @@ RegisterIcalls.cpp
 /webgl
 
 .DS_Store
+
+*.keystore
